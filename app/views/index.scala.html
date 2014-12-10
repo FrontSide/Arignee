@@ -1,14 +1,12 @@
 <!-- Project Arignee ** autor: David Rieger ** 2014 -->
 
-@(message: String)
-
-@main("Home") {
+@main("Home"){
 
     <div class="label label-success">OKOK</div>
 
-    <form action="#" method="get">
-        <input type="text" name="keyword" placeholder="Keyword(s)" />
-        <input type="submit" value="GO" />
-    </form>
-
+    <input type="text" id="keyphrase" name="keyphrase" placeholder="Keyword(s)" />
+    <button id="trends_kw_send_btn" class="btn btn-success" /> GO </button>
+}{
+    <script src="@routes.Assets.at("javascripts/trends_kw.js")" type="text/javascript"></script>    
+    <script src="@routes.Assets.at("javascripts/http_eh.js")" type="text/javascript"></script>
 }
