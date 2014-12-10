@@ -19,6 +19,7 @@ public class Application extends Controller {
      *******/
     public static Result kwpot(String kp) {
         //return ok(index.render(GoogleTrendsController.getKeywordTimePopularity(kp)));
+        new GoogleTrendsController().getKeywordTimePopularity(kp);
         return index();
     }
 
