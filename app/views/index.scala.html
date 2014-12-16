@@ -1,3 +1,8 @@
+
+@(htmlresults: Map[String, List[String]])
+<!-- FUN FACT :: The parameter list (as above) 
+     always has to be the first thing in the template
+     even before a comments -->
 <!-- Project Arignee ** autor: David Rieger ** 2014 -->
 
 @main("Home"){
@@ -20,8 +25,18 @@
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div>
+    
+    <hr />
         
+    <div id="html_eval_res">
+    
+        <span class="label label-default"> TITLE </span> <span id="her_title"></span><br />
+        <span class="label label-default"> LINKS </span> <span id="her_links"></span>
+    
+    </div>
+                
 }{
+    <script src="@routes.Assets.at("javascripts/html_eval_render.js")" type="text/javascript"></script> 
     <script src="@routes.Assets.at("javascripts/http_req.js")" type="text/javascript"></script>    
     <script src="@routes.Assets.at("javascripts/http_eh.js")" type="text/javascript"></script>
 }

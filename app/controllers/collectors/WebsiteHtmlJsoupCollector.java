@@ -16,9 +16,9 @@ import java.lang.String.*;
 
 import play.Logger; 
 
-public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector {
+public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Document> {
 
-    public String fetchHtml(final String URL) {
+    public Document fetchHtml(final String URL) {
     
         Logger.debug("Request HTML from URL :: " + URL);
     
@@ -33,15 +33,18 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector {
              * else or at least additionally on client side --> real-time feedback */
             Logger.warn("Malformed URL :: " + URL);
             Logger.debug("Check if url starts with \"http://\" or \"https://\" and try variations...");
-            if (!URL.startsWith("http://") && !URL.startsWith("https://")) return fetchHtml("http://" + URL);
-            if (URL.startsWith("http://")) return fetchHtml("https://" + URL.substring(7));
-            if (URL.startsWith("https://")) return fetchHtml("https://" + URL.substring(8));
+            if (!URL.startsWith("http://") && !URL.startsWith("https://")) 
+                return fetchHtml("http://" + URL);
+            if (URL.startsWith("http://")) 
+                return fetchHtml("https://" + URL.substring(7));
+            if (URL.startsWith("https://")) 
+                return fetchHtml("https://" + URL.substring(8));
             Logger.error("Invalid URL :: " + URL);
             return null;
         }
         
         Logger.debug("HTML is ::" + doc.html());
-        return doc.html();
+        return doc;
     
     }
 

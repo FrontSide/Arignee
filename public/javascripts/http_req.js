@@ -39,8 +39,8 @@ function trends_kw_request(keyphrase){
 /* ------------------------- */
 
 function send(URL) {
-    $.ajax({ url: URL, type: "GET" }).done(function() {
-        alert( "success" )
+    $.ajax({ url: URL, type: "GET" }).done(function( data ) {
+        html_eval_render(data)
     })
 }
 

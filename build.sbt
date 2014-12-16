@@ -11,5 +11,6 @@ libraryDependencies ++= Seq(
   javaEbean,
   cache,
   javaWs,
-  "org.jsoup"%"jsoup"%"1.8.1"
+  "org.jsoup"%"jsoup"%"1.8.1",
+  "org.json"%"json"%"20140107"
 )
