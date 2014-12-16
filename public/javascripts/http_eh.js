@@ -12,3 +12,8 @@ $("#trends_kw_send_btn").click(function(){
     trends_kw_request($("#keyphrase").val()); 
 });
 
+$("#url_send_btn").click(function(){ 
+    console.log("url_send_btn TRIGGERED");
+    /* from html_content.js */
+    html_content_request($("#url").val()); 
+});

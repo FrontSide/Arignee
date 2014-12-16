@@ -15,7 +15,7 @@ import play.api.libs.ws.DefaultWSClientConfig;
 import play.api.libs.ws.ssl.SSLConfig;
 import play.api.libs.ws.ning.NingAsyncHttpClientConfigBuilder;
 
-public class GoogleTrendsJavaWSCollector implements GoogleTrendsCollector {
+public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector {
 
    
     
@@ -24,7 +24,7 @@ public class GoogleTrendsJavaWSCollector implements GoogleTrendsCollector {
       */
     public String fetchTimeseries(String keyphrase) {
     
-        Logger.debug("Request Response of GoogleTrends Timeseries as JOSN for keyphrase :: " + keyphrase);
+        Logger.debug("Request Response from GoogleTrends Timeseries as JOSN for keyphrase :: " + keyphrase);
 
         /*// Set up the client config (you can also use a parser here):
         scala.Option<Object> none = scala.None$.empty();
