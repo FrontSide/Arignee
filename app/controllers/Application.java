@@ -39,7 +39,7 @@ public class Application extends Controller {
      *******/
     @BodyParser.Of(Json.class)
     public static Result htmlfetch(String url) {
-        return ok(new JSONObject(new WebsiteHtmlController().evalHtml(url)).toString());
+        return ok(new JSONObject(new WebsiteHtmlController().evaluate(url)).toString());
     }
     
 }

@@ -1,11 +1,16 @@
-package request;
+package collectors.request;
 
 /*
  * This is an HTTP Connector that sends and receives HTTP Requests/Responses
  * throught the Play JabaWS Library
  */
  
- public JavaWSHTTPConnector implements HTTPConnector<String> {
+import play.Logger; 
+import play.libs.ws.*;
+import play.libs.F.Function;
+import play.libs.F.Promise;
+ 
+ public class JavaWSHTTPConnector implements HTTPConnector<String> {
  
     public String request(final String URL) {
     

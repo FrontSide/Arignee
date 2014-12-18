@@ -1,4 +1,4 @@
-package request;
+package collectors.request;
 
 /**
   * This is a Factory for HTTPConnectors
@@ -11,14 +11,16 @@ package request;
   * Singleton
   */
 
+import collectors.Collector;
+import collectors.WebsiteHtmlJsoupCollector;
+
 public class HTTPConnectorFactory {
 
     private HTTPConnectorFactory() {}
     
-    private static HTTPConnectorFactory instance;
-    public HTTPConnectorFactory createFactory() {
-        if (this.instance == null) this.instance = new HTTPConnectorFactory();
-        return this.instance;
+    private static final HTTPConnectorFactory INSTANCE = new HTTPConnectorFactory();
+    public static final HTTPConnectorFactory getInstance() {
+        return HTTPConnectorFactory.INSTANCE;
     }
     
     /*
@@ -26,7 +28,7 @@ public class HTTPConnectorFactory {
      */
     public HTTPConnector create(Collector c) {
     
-        if (c instanceof WebsiteHtmlCollector) {
+        if (c instanceof WebsiteHtmlJsoupCollector) {
             return new JsoupHTTPConnector();
         }
         

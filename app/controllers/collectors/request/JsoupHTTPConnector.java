@@ -1,4 +1,4 @@
-package request;
+package collectors.request;
 
 /*
  * This is an HTTP Connector that sends and receives HTTP Requests/Responses
@@ -9,7 +9,11 @@ import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
-public JsoupHTTPConnector implements HTTPConnector<Document> {
+import play.Logger;
+
+import java.io.IOException;
+
+public class JsoupHTTPConnector implements HTTPConnector<Document> {
 
     public Document request(final String URL) {
     
@@ -25,13 +29,14 @@ public JsoupHTTPConnector implements HTTPConnector<Document> {
             /* TODO: Checking if the URL is malformed should happen somewhere 
              * else or at least additionally on client side --> real-time feedback */
             Logger.warn("Malformed URL :: " + URL);
-            Logger.debug("Checking if url starts with \"http://\" or \"https://\" and trying variations...");
+            Logger.debug("Checking if url starts with \"http://\" or " + 
+                                    " \"https://\" and trying variations...");
             if (!URL.startsWith("http://") && !URL.startsWith("https://")) 
-                return fetchHtml("http://" + URL);
+                return request("http://" + URL);
             if (URL.startsWith("http://")) 
-                return fetchHtml("https://" + URL.substring(7));
+                return request("https://" + URL.substring(7));
             if (URL.startsWith("https://")) 
-                return fetchHtml("https://" + URL.substring(8));
+                return request("https://" + URL.substring(8));
             Logger.error("Invalid URL :: " + URL);
             return null;
         }

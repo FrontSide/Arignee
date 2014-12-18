@@ -7,9 +7,12 @@ package collectors;
  */
 
 import java.lang.RuntimeException;
+import java.util.Map;
+import java.util.List;
+import collectors.enums.Key;
 
 public interface Collector {   
-
+    
     /**
      * Defines the method that is accessed publicly.
      * Takes the url stored in the Collector object (handed through constructor)
@@ -17,29 +20,29 @@ public interface Collector {
      *      that contains all necessary data which is later processed by
      *      an Evaluator
      */
-    public Map<String, List<String>> get() throws RuntimeException;
-
+    public Map<? extends Key, List<String>> get() throws RuntimeException;
+        
     /**
-     * Uses an before instanziated HTTPConnector and triggers its HTTP-Request
-     * Result is saved in 
-     */
-    protected void fetch();
-    
-    /**
-     * Extracts the useful data that is later used by an Evaluator
-     * from the fetched (raw) data returned from the HTTPConnector
-     */
-    protected void extract();
+      * Sets the url
+      */
+    public Collector url(String url);
     
     /**
      * @returns: the Collectors accessed url
      */
     public String url();
-    
+        
     /**
       * @returns: the raw data returned by the HTTPConnector as a String
       */
     public String raw();
     
+    /**
+      * This method needs to be implemented by Collectors that have
+      * to assemble the URL to be requested themselves.
+      * This is necessary when the Class that invokes the get method 
+      * of the Controller does not already deliver a URL.
+      */
+    void buildUrl();
 
 }

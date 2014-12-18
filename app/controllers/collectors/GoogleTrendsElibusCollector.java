@@ -18,13 +18,17 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
  * data from the response using an unofficial API provided by
  * https://github.com/elibus/j-google-trends-api
  */
+ 
+import java.util.Map;
+import java.util.List;
+import collectors.enums.Key;
 
 public class GoogleTrendsElibusCollector extends GoogleTrendsCollector {
 
 
-    public String fetchTimeseries(String keyphrase) {
+    protected Map<Key, List<String>> extract(String raw) {
     
-        return "UNIMPLEMENTED";
+        return null;
     
     }
 

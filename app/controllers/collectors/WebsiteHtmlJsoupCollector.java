@@ -13,15 +13,47 @@ import org.jsoup.select.*;
 import java.io.IOException;
 import java.lang.IllegalArgumentException;
 import java.lang.String.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import collectors.enums.Key;
+import collectors.enums.WebsiteHtmlKey;
 
 import play.Logger; 
 
 public class WebsiteHtmlJsoupCollector extends AbstractCollector<Document> {
 
-    public WebsiteHtmlJsoupCollector(String url) {
-        this.url = URL;
+    
+    @Override
+    protected Map<? extends Key, List<String>> extract(Document raw) {
+        
+        //Instantiate result collection with WebsiteHTMLKeys
+        Map<WebsiteHtmlKey, List<String>> results = 
+                new HashMap<WebsiteHtmlKey, List<String>>();
+        
+        //Get Website Title
+        List<String> title = new ArrayList<String>();
+        title.add(raw.title());
+        results.put(WebsiteHtmlKey.TITLE, title);
+        
+        //Extract Body
+        final Element BODY = raw.body();
+        
+        //Extract Links from Body
+        final Elements LINKS = BODY.getElementsByTag("a");
+        
+        //Get Text from all Links and save in linkstexts-List
+        List<String> linkstexts = new ArrayList<String>();
+        for (Element e : LINKS) {
+            String text = e.text();
+            Logger.debug("Link found with text :: " + text);
+            linkstexts.add(text);
+        }
+        results.put(WebsiteHtmlKey.LINKTEXTS, linkstexts);
+        
+        return results;
+        
     }
-    
-    
 
 }

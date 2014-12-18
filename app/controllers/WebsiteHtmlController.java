@@ -11,7 +11,6 @@ import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
  
-import collectors.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,31 +19,32 @@ import java.util.HashMap;
 import play.mvc.*;
 import play.Logger; 
 
+import collectors.WebsiteHtmlCollectorFactory;
+import collectors.enums.Key;
+import collectors.enums.WebsiteHtmlKey;
+
 public class WebsiteHtmlController extends Controller {
 
-    /*TODO: EVALUATION of HTML by Analytic Criteria after Parsing !!!*/
-    public Map<String, List<String>> evalHtml(final String URL) {    
-        final Document HTML = (Document) new WebsiteHtmlCollectorFactory().create().fetchHtml(URL);
+    private final WebsiteHtmlCollectorFactory COLLECTORFACTORY = 
+                                WebsiteHtmlCollectorFactory.getInstance();
+
+    /**
+      * Receives a Map with all relevent data from the Controller
+      * passes it to the Evaluator and returns
+      * a Map that is ready to be rendered by the template
+      */
+    public Map<String, List<String>> evaluate(final String URL) {
+    
+        // Create Collector and obtain extracted data
+        Logger.debug("Invoke Collector for URL :: " + URL);
+        collectors.Collector collector = this.COLLECTORFACTORY.create();
+        Map<? extends Key, List<String>> data = collector.url(URL).get();
         
-        Map<String, List<String>> results = new HashMap<String, List<String>>();
+        Logger.debug("Collected data is :: " + data.toString());
         
-        List<String> title = new ArrayList<String>();
-        title.add(HTML.title());
-        results.put("title", title);
+        //TODO: pass data to evaluator
+        return new HashMap<String, List<String>>();
         
-        final Element BODY = HTML.body();
-        final Elements LINKS = BODY.getElementsByTag("a");
-        List<String> linkstexts = new ArrayList<String>();
-                
-        for (Element e : LINKS) {
-            String text = e.text();
-            Logger.debug("LINK FOUND WITH TEXT :: " + text);
-            linkstexts.add(text);
-        }
-        
-        results.put("linktexts", linkstexts);
-        
-        return results;        
     }
 
 }

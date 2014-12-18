@@ -1,4 +1,4 @@
-package request;
+package collectors.request;
 
 public interface HTTPConnector<T> {
 
