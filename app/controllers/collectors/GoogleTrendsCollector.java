@@ -6,7 +6,8 @@ public abstract class GoogleTrendsCollector implements Collector {
      //Base URL and paths For Google Trends to fetch components (add "q=" for keyphrase)
     //private static final String URL = "http://www.google.com/trends/fetchComponent";
     //private static final String URL = "http://weather.yahooapis.com/forecastrss?p=80020&u=f";
-    protected static final String URL = "http://www.google.com/trends/fetchComponent?q=asdf,qwerty&cid=TIMESERIES_GRAPH_0&export=3";
+    protected static final String URL = 
+        "http://www.google.com/trends/fetchComponent?q=asdf,qwerty&cid=TIMESERIES_GRAPH_0&export=3";
     
     //The CID to fetch the timeseries of a keyword (add with "cid=")
     protected static final String TIMESERIES_CID = "TIMESERIES_GRAPH_0";
