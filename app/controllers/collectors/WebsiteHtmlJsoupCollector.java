@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import collectors.enums.Key;
+import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlKey;
 
 import play.Logger; 
@@ -26,7 +26,7 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Document> {
 
     
     @Override
-    protected Map<? extends Key, List<String>> extract(Document raw) {
+    protected Map<? extends CollectorKey, List<String>> extract(Document raw) {
         
         //Instantiate result collection with WebsiteHTMLKeys
         Map<WebsiteHtmlKey, List<String>> results = 

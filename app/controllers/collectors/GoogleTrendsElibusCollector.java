@@ -21,12 +21,12 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
  
 import java.util.Map;
 import java.util.List;
-import collectors.enums.Key;
+import collectors.enums.CollectorKey;
 
 public class GoogleTrendsElibusCollector extends GoogleTrendsCollector {
 
 
-    protected Map<Key, List<String>> extract(String raw) {
+    protected Map<CollectorKey, List<String>> extract(String raw) {
     
         return null;
     

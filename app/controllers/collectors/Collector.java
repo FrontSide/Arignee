@@ -9,33 +9,33 @@ package collectors;
 import java.lang.RuntimeException;
 import java.util.Map;
 import java.util.List;
-import collectors.enums.Key;
+import collectors.enums.CollectorKey;
 
 public interface Collector {   
     
     /**
      * Defines the method that is accessed publicly.
      * Takes the url stored in the Collector object (handed through constructor)
-     * @returns: a Map with a String Keys and List<String> Values
+     * @returns: a Map with Enum-Keys and List<String> Values
      *      that contains all necessary data which is later processed by
      *      an Evaluator
      */
-    public Map<? extends Key, List<String>> get() throws RuntimeException;
+    Map<? extends CollectorKey, List<String>> get() throws RuntimeException;
         
     /**
       * Sets the url
       */
-    public Collector url(String url);
+    Collector url(String url);
     
     /**
      * @returns: the Collectors accessed url
      */
-    public String url();
+    String url();
         
     /**
       * @returns: the raw data returned by the HTTPConnector as a String
       */
-    public String raw();
+    String raw();
     
     /**
       * This method needs to be implemented by Collectors that have

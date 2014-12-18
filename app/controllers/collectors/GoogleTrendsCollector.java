@@ -10,7 +10,7 @@ package collectors;
 
 import java.util.Map;
 import java.util.List;
-import collectors.enums.Key;
+import collectors.enums.CollectorKey;
 
 public abstract class GoogleTrendsCollector extends AbstractCollector<String> {
 
@@ -28,7 +28,7 @@ public abstract class GoogleTrendsCollector extends AbstractCollector<String> {
     
     /* GoogleTrendsCollectors OVERLOAD the get Method from the AbstractCollector
      * with a String parameter for the Keyphrase that should be searched for */
-    public Map<? extends Key, List<String>> get(String kephrase) throws RuntimeException {
+    public Map<? extends CollectorKey, List<String>> get(String kephrase) throws RuntimeException {
         this.keyphrase = keyphrase;
         this.buildUrl();
         return this.get();

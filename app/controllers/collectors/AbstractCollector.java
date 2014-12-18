@@ -8,13 +8,13 @@ package collectors;
   
 import java.util.Map;
 import java.util.List;
-import collectors.enums.Key;
+import collectors.enums.CollectorKey;
 import collectors.request.*;
 import play.Logger;
 
 public abstract class AbstractCollector<T> implements Collector {
 
-    private Map<Key, List<String>> collected;
+    private Map<CollectorKey, List<String>> collected;
         
     private final HTTPConnector CONNECTOR 
                         = HTTPConnectorFactory.getInstance().create(this);
@@ -23,13 +23,8 @@ public abstract class AbstractCollector<T> implements Collector {
     
     private String url;
     
-    public Map<? extends Key, List<String>> get() throws RuntimeException {
-        if (this.url == null)   {
-            Logger.error("No URL!"); 
-            Logger.warn("Try to invoke with a parameter");
-            Logger.error("Killing collector...");
-            return null;
-        }
+    public Map<? extends CollectorKey, List<String>> get() throws RuntimeException {
+        if (this.url == null) throw new RuntimeException("No URL found!");
         this.fetch(this.url);
         return this.extract(this.raw);
     }
@@ -63,7 +58,7 @@ public abstract class AbstractCollector<T> implements Collector {
      * Extracts the useful data that is later used by an Evaluator
      * from the fetched (raw) data returned from the HTTPConnector
      */
-    protected abstract Map<? extends Key, List<String>> extract(T raw);
+    protected abstract Map<? extends CollectorKey, List<String>> extract(T raw);
    
     public Collector url(String url) {
         this.url = url;

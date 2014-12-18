@@ -5,7 +5,7 @@ package collectors.enums;
   * for the Resulting map which is then used by an evaluator
   */
 
-public enum WebsiteHtmlKey implements collectors.enums.Key {
+public enum WebsiteHtmlCollectorKey implements CollectorKey {
 
     TITLE,
     LINKTEXTS

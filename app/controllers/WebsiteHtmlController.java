@@ -27,6 +27,9 @@ public class WebsiteHtmlController extends Controller {
 
     private final WebsiteHtmlCollectorFactory COLLECTORFACTORY = 
                                 WebsiteHtmlCollectorFactory.getInstance();
+                                
+    private final EvaluatorFactory EVALUATORFACTORY =
+                                EvaluatorFactory.getInstance();
 
     /**
       * Receives a Map with all relevent data from the Controller
@@ -36,14 +39,20 @@ public class WebsiteHtmlController extends Controller {
     public Map<String, List<String>> evaluate(final String URL) {
     
         // Create Collector and obtain extracted data
-        Logger.debug("Invoke Collector for URL :: " + URL);
+        Logger.debug("Invoke Collector for URL :: \"" + URL + "\"...");
         collectors.Collector collector = this.COLLECTORFACTORY.create();
-        Map<? extends Key, List<String>> data = collector.url(URL).get();
-        
+        Map<? extends Key, List<String>> data = collector.url(URL).get();        
         Logger.debug("Collected data is :: " + data.toString());
         
+        //Create Evaluator, pass data from Collector and obtain eval. results
+        Logger.debug("Create Evaluator and Pass Collected data...");
+        Evaluator evaluator = this.EVALUATORFACTORY.create();
+        
+        
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        
         //TODO: pass data to evaluator
-        return new HashMap<String, List<String>>();
+        return new ;
         
     }
 
