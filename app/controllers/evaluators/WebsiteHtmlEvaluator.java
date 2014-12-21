@@ -10,14 +10,27 @@ package evaluators;
   * Data by the controller
   */
 
-public class WebsiteHtmlEvaluator implements Evaluator {
+import java.util.Map;
+import java.util.List;
+import evaluators.enums.WebsiteHtmlEvaluatorKey;
 
-    public Map<WebsiteHtmlEvaluatorKey, Map<WebsiteHtmlEvaluatorKey, Rating>> get() {
+public class WebsiteHtmlEvaluator extends AbstractEvaluator {
+
+    public Map<WebsiteHtmlEvaluatorKey, Map<WebsiteHtmlEvaluatorKey, EvaluationFigure>> get() {
+        
+        
+        //Get Map passed in from collector
         Map<WebsiteHtmlCollectorKey, List<String>> collected =
                 this.collected();
         
-        Map<WebsiteHtmlEvaluatorKey, Rating> linkEvaluations = 
-                    rateLinks(collected.get(WebsiteHtmlCollectorKey.LINKS));
+        /* Add Map for link-evluation figures with result from the
+         * evaluateLinks() method. Pass "Links" from collected-list
+         * to full evaluation-result-Map.
+         */
+        this.result.put(WebsiteHtmlEvaluatorKey.LINK_EVAL_RESULTS , 
+                      rateLinks(collected.get(WebsiteHtmlCollectorKey.LINKS)));
+        
+        return this.result;
     }
     
     /**
@@ -25,19 +38,23 @@ public class WebsiteHtmlEvaluator implements Evaluator {
      * @returns a map with all the evaluation results for the Links
      *      which is later integrated in the full evaluation list
      */
-    private Map<WebsiteHtmlEvaluatorKey, Rating> evaluateLinks(List<String> links){
+    private Map<WebsiteHtmlEvaluatorKey, String> evaluateLinks(List<String> links){
         
-        Map<WebsiteHtmlEvaluatorKey, Rating> results = new HashMap<WebsiteHtmlEvaluatorKey, Rating>();
+        Map<WebsiteHtmlEvaluatorKey, String> results = 
+                                new HashMap<WebsiteHtmlEvaluatorKey, Rating>();
         
-        /* Rate the amount of links 
-         * Assume that an amount between 15 and 20 would be perfect
+        /* Rate the amount of links by percentual divergence
+         * Assume that an amount around 17 would be perfect
          */
+        final int LINKS_AMOUNT_IDEAL = 17;
         int linkAmount = links.size();
+        float linkAmountdiv = Math.abs(percentualDivergence(LINKS_AMOUNT_IDEAL, linkAmount));
+        reults.put(WebsiteHtmlEvaluatorKey.LINK_AMOUNT, linkAmount);
         Rating linkAmountRating;
-        if (linkAmount > 50 || linkAmount < 5) linkAmountRating = Rating.POOR;
-        else if (linkAmount > 40 || linkAmount < 10) linkAmountRating = Rating.TENUOUS;
-        else if (linkAmount > 30 || linkAmount < 15) linkAmountRating = Rating.OK;
-        else if (linkAmount > 20) linkAmountRating = Rating.GOOD;
+        if (linkAmountdiv > 200) linkAmountRating = Rating.POOR;
+        else if (linkAmountdiv > 150) linkAmountRating = Rating.TENUOUS;
+        else if (linkAmountdiv > 100) linkAmountRating = Rating.OK;
+        else if (linkAmountdiv > 50) linkAmountRating = Rating.GOOD;
         else linkAmountRating = Rating.EXCELLENT;        
         results.put(WebsiteHtmlEvaluatorKey.LINK_AMOUNT_RATING, linkAmountRating);
         

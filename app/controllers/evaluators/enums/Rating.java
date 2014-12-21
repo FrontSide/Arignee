@@ -1,5 +1,5 @@
-package evaluatots.enums;
+package evaluators.enums;
 
-public enum {
+public enum Rating {
     EXCELLENT, GOOD, OK, TENUOUS ,POOR, NONE
 }

@@ -20,8 +20,9 @@ import play.mvc.*;
 import play.Logger; 
 
 import collectors.WebsiteHtmlCollectorFactory;
-import collectors.enums.Key;
-import collectors.enums.WebsiteHtmlKey;
+import collectors.enums.CollectorKey;
+import collectors.enums.WebsiteHtmlCollectorKey;
+import evaluators.EvaluatorFactory;
 
 public class WebsiteHtmlController extends Controller {
 
@@ -36,23 +37,21 @@ public class WebsiteHtmlController extends Controller {
       * passes it to the Evaluator and returns
       * a Map that is ready to be rendered by the template
       */
-    public Map<String, List<String>> evaluate(final String URL) {
+    public Map/*??*/ evaluate(final String URL) {
     
         // Create Collector and obtain extracted data
         Logger.debug("Invoke Collector for URL :: \"" + URL + "\"...");
         collectors.Collector collector = this.COLLECTORFACTORY.create();
-        Map<? extends Key, List<String>> data = collector.url(URL).get();        
-        Logger.debug("Collected data is :: " + data.toString());
+        Map<? extends CollectorKey, List<String>> collectedData = collector.url(URL).get();        
+        Logger.debug("Collected data is :: " + collectedData.toString());
         
         //Create Evaluator, pass data from Collector and obtain eval. results
         Logger.debug("Create Evaluator and Pass Collected data...");
-        Evaluator evaluator = this.EVALUATORFACTORY.create();
+        evaluators.Evaluator evaluator = this.EVALUATORFACTORY.create();
+        evaluator.pass(collectedData);
         
-        
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-        
-        //TODO: pass data to evaluator
-        return new ;
+                
+        return evaluator.get();
         
     }
 

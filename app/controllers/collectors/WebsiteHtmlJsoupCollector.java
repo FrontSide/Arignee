@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import collectors.enums.CollectorKey;
-import collectors.enums.WebsiteHtmlKey;
+import collectors.enums.WebsiteHtmlCollectorKey;
 
 import play.Logger; 
 
@@ -50,7 +50,7 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Document> {
             Logger.debug("Link found with text :: " + text);
             linkstexts.add(text);
         }
-        results.put(WebsiteHtmlKey.LINKTEXTS, linkstexts);
+        results.put(WebsiteHtmlCollectorKey.LINKTEXTS, linkstexts);
         
         return results;
         
