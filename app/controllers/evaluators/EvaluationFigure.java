@@ -13,7 +13,7 @@ package evaluators;
   
 import evaluators.enums.Rating;
 
-public class EvaluationFigure {
+public class EvaluationFigure implements EvaluationResult {
 
     public EvaluationFigure(Object o) {
         setValue(o);
@@ -41,6 +41,11 @@ public class EvaluationFigure {
         if (this.valueFloat != null) return this.valueFloat;
         if (this.valueRating != null) return this.valueRating;
         throw new RuntimeException("No Value Found");
+    }
+    
+    @Override
+    public String toString() {
+        return get().toString();
     }
 
 }

@@ -14,7 +14,7 @@ public interface Evaluator {
      * @returns: a Map with Enum-Keys and List<String> Values
      *      that contains all evaluation results
      */
-    Map<? extends EvaluatorKey, Map<? extends EvaluatorKey, EvaluationFigure>> get();
+    EvaluationResult get();
     
     /**
       * Passes the data collected by the Collector to the Evaluator

@@ -6,7 +6,6 @@ import play.mvc.*;
 import views.html.*;
 
 import java.util.Map;
-import org.json.JSONObject;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.mvc.BodyParser;
 import play.mvc.BodyParser.*;
@@ -39,7 +38,7 @@ public class Application extends Controller {
      *******/
     @BodyParser.Of(Json.class)
     public static Result htmlfetch(String url) {
-        return ok(new JSONObject(new WebsiteHtmlController().evaluate(url)).toString());
+        return ok(new WebsiteHtmlController().evaluate(url).toString());
     }
     
 }

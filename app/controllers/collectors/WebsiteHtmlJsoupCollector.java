@@ -29,13 +29,13 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Document> {
     protected Map<? extends CollectorKey, List<String>> extract(Document raw) {
         
         //Instantiate result collection with WebsiteHTMLKeys
-        Map<WebsiteHtmlKey, List<String>> results = 
-                new HashMap<WebsiteHtmlKey, List<String>>();
+        Map<WebsiteHtmlCollectorKey, List<String>> results = 
+                new HashMap<WebsiteHtmlCollectorKey, List<String>>();
         
         //Get Website Title
         List<String> title = new ArrayList<String>();
         title.add(raw.title());
-        results.put(WebsiteHtmlKey.TITLE, title);
+        results.put(WebsiteHtmlCollectorKey.TITLE, title);
         
         //Extract Body
         final Element BODY = raw.body();

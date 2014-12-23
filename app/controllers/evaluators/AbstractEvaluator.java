@@ -1,6 +1,7 @@
 package evaluators;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 
 import collectors.enums.CollectorKey;
@@ -12,13 +13,13 @@ public abstract class AbstractEvaluator implements Evaluator {
     //Map from collector
     private Map<? extends CollectorKey, List<String>> collected;
     
-    //Result Map
-    protected Map<WebsiteHtmlEvaluatorKey, Map<WebsiteHtmlEvaluatorKey, EvaluationFigure>> result;
-    
-    public abstract Map<? extends EvaluatorKey, Map<? extends EvaluatorKey, EvaluationFigure>> get();
+    protected EvaluationResult result;
+                
+    public abstract EvaluationResult get();
 
-    Evaluator pass(Map<? extends CollectorKey, List<String>> collected) {
+    public Evaluator pass(Map<? extends CollectorKey, List<String>> collected) {
         this.collected = collected;
+        return this;
     }
     
     Map<? extends CollectorKey, List<String>> collected() {
