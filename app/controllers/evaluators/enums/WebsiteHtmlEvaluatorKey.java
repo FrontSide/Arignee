@@ -8,7 +8,10 @@ package evaluators.enums;
 public enum WebsiteHtmlEvaluatorKey implements EvaluatorKey {
 
     //General Results and Figures
-    LINK_AMOUNT,
+    //Link amount
+    LINK_AMOUNT,    
+    LINK_AMOUNT_IDEAL,
+    LINK_AMOUNT_DIV,
     
     //Keys for indicating sub-Maps
     LINKS_EVAL_RESULTS,

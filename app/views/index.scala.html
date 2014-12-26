@@ -30,7 +30,34 @@
         
     <div id="html_eval_res">
     
-        <span class="label label-default"> TITLE </span> <span id="her_title"></span><br />
+        <!-- colour of panels added by JS depd. on eval. result -->
+        <div id="pan_title" class="panel">
+            <div class="panel-heading">Page Title</div>
+            <div class="panel-body">
+                <!-- colour of labels added by JS depd. on eval. result -->
+                <span id="lab_title_text" class="label"> TEXT </span> 
+                <span id="her_title_text"></span><br />
+                
+                <span class="eval_infotext" id="her_title_info"> 
+                    Your title is cool but it could be better...
+                </span>
+            </div>
+        </div>
+        
+        <div id="pan_links" class="panel">
+            <div class="panel-heading">Page Title</div>
+            <div class="panel-body">
+                <!-- colour of labels added by JS depd. on eval. result -->
+                <span><b>Amount of Links</b></span>
+                <span id="lab_links_amount" class="label"> PENDING </span> 
+                <br />
+                
+                <span class="eval_infotext" id="her_title_info"> 
+                    You have <span id="res_links_amount"></span> links. 
+                </span>
+            </div>
+        </div>
+    
         <span class="label label-default"> LINKS </span> <span id="her_links"></span>
     
     </div>

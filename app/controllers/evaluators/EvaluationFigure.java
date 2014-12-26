@@ -10,8 +10,11 @@ package evaluators;
   * passed in through the constructor and can be obtained with the get() method.
   * No primitive data-types are allowed
   */
-  
+
+import evaluators.enums.EvaluatorKey;
 import evaluators.enums.Rating;
+import org.json.JSONObject;
+import java.lang.UnsupportedOperationException;
 
 public class EvaluationFigure implements EvaluationResult {
 
@@ -35,7 +38,7 @@ public class EvaluationFigure implements EvaluationResult {
         
     }
     
-    public Object get() {
+    public Object getValue() {
         if (this.valueString != null) return this.valueString;
         if (this.valueInt != null) return this.valueInt;
         if (this.valueFloat != null) return this.valueFloat;
@@ -43,9 +46,18 @@ public class EvaluationFigure implements EvaluationResult {
         throw new RuntimeException("No Value Found");
     }
     
+    public void add(EvaluatorKey k, EvaluationResult v){
+        throw new UnsupportedOperationException("The add() method is not " + 
+                                            " available for EvaluationFigures");
+    }
+    
+    public JSONObject toJson() {
+        return null;
+    }
+    
     @Override
     public String toString() {
-        return get().toString();
+        return this.getValue().toString();
     }
 
 }

@@ -28,6 +28,8 @@ import evaluators.enums.EvaluatorKey;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.EvaluationFigure;
 import evaluators.EvaluationResult;
+import evaluators.EvaluationResultContainer;
+import evaluators.EvaluationResultContainer.*;
 import evaluators.EvaluatorFactory;
 
 public class WebsiteHtmlController extends Controller {
@@ -56,13 +58,14 @@ public class WebsiteHtmlController extends Controller {
         evaluators.Evaluator evaluator = this.EVALUATORFACTORY.create();
         EvaluationResult evalresult = evaluator.pass(collectedData).get();
         
-        
-        Logger.debug("Evaluator returned " + evalresult);
+        Logger.debug("Evaluator returned :: " + evalresult);
         
         //TODO: Temporarily I directly return the result from the evaluator
         //instead of a combines list/map/jsonobject with data from the
         //collector directly (for showing the user additional info e.g. linktext)
-        return new JSONObject(evalresult);
+        Logger.debug("json object is :: " + evalresult.toJson());
+        
+        return evalresult.toJson();
         
     }
 

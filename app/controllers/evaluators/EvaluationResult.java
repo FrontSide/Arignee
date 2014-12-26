@@ -7,7 +7,11 @@ package evaluators;
   * of Evaluation-Results. Those can then be easily transported to 
   * the View/Templates
   */
-  
-public interface EvaluationResult {
 
+import org.json.JSONObject;
+import evaluators.enums.EvaluatorKey;
+
+public interface EvaluationResult {
+    JSONObject toJson();
+    void add(EvaluatorKey k, EvaluationResult v);
 }
