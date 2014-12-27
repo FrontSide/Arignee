@@ -12,6 +12,7 @@ import java.lang.NoSuchMethodException;
 import play.Logger;
 import evaluators.Evaluator;
 import evaluators.EvaluationResult;
+import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 
 public abstract class AbstractSubEvaluator implements Evaluator {
@@ -24,7 +25,7 @@ public abstract class AbstractSubEvaluator implements Evaluator {
      * SubEvaluator it is not intended to be used
      * for the data coming from the collector but merely for sub-collections
      */
-    public Evaluator pass(Map<? extends CollectorKey, List<String>> collected) {
+    public Evaluator pass(Map<? extends CollectorKey, CollectorValue> collected) {
         Logger.error("The pass(Map<? extends CollectorKey, List<String>>)" + 
                         " method is not available for SubEvaluators");
         return this;

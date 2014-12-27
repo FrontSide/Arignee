@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
+import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 import evaluators.enums.EvaluatorKey;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
@@ -11,18 +12,18 @@ import evaluators.enums.WebsiteHtmlEvaluatorKey;
 public abstract class AbstractEvaluator implements Evaluator {
 
     //Map from collector
-    private Map<? extends CollectorKey, List<String>> collected;
+    private Map<? extends CollectorKey, CollectorValue> collected;
     
     protected EvaluationResult result;
                 
     public abstract EvaluationResult get();
 
-    public Evaluator pass(Map<? extends CollectorKey, List<String>> collected) {
+    public Evaluator pass(Map<? extends CollectorKey, CollectorValue> collected) {
         this.collected = collected;
         return this;
     }
     
-    Map<? extends CollectorKey, List<String>> collected() {
+    Map<? extends CollectorKey, CollectorValue> collected() {
         if (collected == null) 
             throw new RuntimeException("No Collected Data found!");
         return this.collected;

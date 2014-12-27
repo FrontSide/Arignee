@@ -28,7 +28,7 @@ public abstract class GoogleTrendsCollector extends AbstractCollector<String> {
     
     /* GoogleTrendsCollectors OVERLOAD the get Method from the AbstractCollector
      * with a String parameter for the Keyphrase that should be searched for */
-    public Map<? extends CollectorKey, List<String>> get(String kephrase) throws RuntimeException {
+    public Map<? extends CollectorKey, CollectorValue> get(String kephrase) throws RuntimeException {
         this.keyphrase = keyphrase;
         this.buildUrl();
         return this.get();

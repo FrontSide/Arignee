@@ -7,62 +7,22 @@
 
 @main("Home"){
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-btn">
-                    <button id="trends_kw_send_btn" class="btn btn-success" type="button" /> GO </button>
-                </span>
-                <input class="form-control" type="text" id="keyphrase" name="keyphrase" placeholder="Keyword(s)" />
-            </div><!-- /input-group -->
-        </div><!-- /.col-lg-6 -->
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-btn">
-                    <button id="url_send_btn" class="btn btn-success" type="button" /> GO </button>
-                </span>
-                <input class="form-control" type="text" id="url" name="url" placeholder="URL" />
-            </div><!-- /input-group -->
-        </div><!-- /.col-lg-6 -->
+    
+    
+    <div class="progress" id="progress_bar_container">
+        <div    class="progress-bar progress-bar-striped active"
+                id="progress_bar"
+                role="progressbar" aria-valuenow="0" aria-valuemin="0" 
+                aria-valuemax="100">
+            <span class="sr-only" id="progress_bar_label">XXX</span>
+        </div>
     </div>
     
-    <hr />
-        
-    <div id="html_eval_res">
-    
-        <!-- colour of panels added by JS depd. on eval. result -->
-        <div id="pan_title" class="panel">
-            <div class="panel-heading">Page Title</div>
-            <div class="panel-body">
-                <!-- colour of labels added by JS depd. on eval. result -->
-                <span id="lab_title_text" class="label"> TEXT </span> 
-                <span id="her_title_text"></span><br />
-                
-                <span class="eval_infotext" id="her_title_info"> 
-                    Your title is cool but it could be better...
-                </span>
-            </div>
-        </div>
-        
-        <div id="pan_links" class="panel">
-            <div class="panel-heading">Page Title</div>
-            <div class="panel-body">
-                <!-- colour of labels added by JS depd. on eval. result -->
-                <span><b>Amount of Links</b></span>
-                <span id="lab_links_amount" class="label"> PENDING </span> 
-                <br />
-                
-                <span class="eval_infotext" id="her_title_info"> 
-                    You have <span id="res_links_amount"></span> links. 
-                </span>
-            </div>
-        </div>
-    
-        <span class="label label-default"> LINKS </span> <span id="her_links"></span>
-    
-    </div>
+    <div id="eval_res_wrapper"> <!-- FILLED BY html_eval_render.js --> </div>
                 
 }{
+    <script src="@routes.Assets.at("javascripts/progressbar_handler.js")" type="text/javascript">
+    </script> 
     <script src="@routes.Assets.at("javascripts/html_eval_render.js")" type="text/javascript"></script> 
     <script src="@routes.Assets.at("javascripts/http_req.js")" type="text/javascript"></script>    
     <script src="@routes.Assets.at("javascripts/http_eh.js")" type="text/javascript"></script>

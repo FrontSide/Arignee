@@ -8,7 +8,6 @@ package collectors;
 
 import java.lang.RuntimeException;
 import java.util.Map;
-import java.util.List;
 import collectors.enums.CollectorKey;
 
 public interface Collector {   
@@ -20,7 +19,7 @@ public interface Collector {
      *      that contains all necessary data which is later processed by
      *      an Evaluator
      */
-    Map<? extends CollectorKey, List<String>> get() throws RuntimeException;
+    Map<? extends CollectorKey, CollectorValue> get() throws RuntimeException;
         
     /**
       * Sets the url

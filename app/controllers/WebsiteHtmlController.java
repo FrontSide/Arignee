@@ -22,6 +22,7 @@ import play.Logger;
 import org.json.JSONObject;
 
 import collectors.WebsiteHtmlCollectorFactory;
+import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.EvaluatorKey;
@@ -50,15 +51,13 @@ public class WebsiteHtmlController extends Controller {
         // Create Collector and obtain extracted data
         Logger.debug("Invoke Collector for URL :: \"" + URL + "\"...");
         collectors.Collector collector = this.COLLECTORFACTORY.create();
-        Map<? extends CollectorKey, List<String>> collectedData = collector.url(URL).get();        
+        Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();        
         Logger.debug("Collected data is :: " + collectedData.toString());
         
         //Create Evaluator, pass data from Collector and obtain eval. results
         Logger.debug("Create Evaluator and Pass Collected data...");
         evaluators.Evaluator evaluator = this.EVALUATORFACTORY.create();
         EvaluationResult evalresult = evaluator.pass(collectedData).get();
-        
-        Logger.debug("Evaluator returned :: " + evalresult);
         
         //TODO: Temporarily I directly return the result from the evaluator
         //instead of a combines list/map/jsonobject with data from the

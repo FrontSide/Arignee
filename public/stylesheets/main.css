@@ -1,5 +1,20 @@
 /* Project Arignee ** autor: David Rieger ** 2014 */
 
+.nobackground, .jumbotron /*Bootstrap Override*/ {
+    background-color: #000;
+    background: none;
+}
+
+.jumbotron /*Bootstrap Override*/ {
+    border: solid 1px #DDD; 
+    border-top: none; 
+    box-shadow: 0px 5px 10px -3px #DDF; 
+}
+
 .eval_infotext {
     font-size: 11px;
+}
+
+#eval_res_wrapper, .progress  {
+    display: none;
 }

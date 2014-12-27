@@ -16,7 +16,8 @@ import play.api.libs.ws.ssl.SSLConfig;
 import play.api.libs.ws.ning.NingAsyncHttpClientConfigBuilder;
 
 import java.util.Map;
-import java.util.List;
+
+import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 
 public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector {
@@ -35,6 +36,6 @@ public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector {
     } */
     
     @Override
-    protected Map<CollectorKey, List<String>> extract(String url) { return null; }
+    protected Map<CollectorKey, CollectorValue> extract(String url) { return null; }
 
 }

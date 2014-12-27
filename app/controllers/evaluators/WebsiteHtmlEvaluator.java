@@ -13,6 +13,7 @@ package evaluators;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.Rating;
@@ -27,17 +28,19 @@ public class WebsiteHtmlEvaluator extends AbstractEvaluator {
         this.result = new EvaluationResultContainer();
                         
         //Get Map passed in from collector
-        Map<? extends CollectorKey, List<String>> collected = this.collected();
+        Map<? extends CollectorKey, CollectorValue> collected = this.collected();
         
         /* Add Map for link-evluation figures with result from the
          * evaluateLinks() method. Pass "Links" from collected-list
          * to full evaluation-result-Map.
          */
         ((EvaluationResultContainer) this.result)
-                    .add(WebsiteHtmlEvaluatorKey.LINKS_EVAL_RESULTS,
+                    .add(WebsiteHtmlEvaluatorKey.LINKS,
                             new HtmlLinkEvaluator(
                                 collected.get(
-                                    WebsiteHtmlCollectorKey.LINKTEXTS)).get());
+                                    WebsiteHtmlCollectorKey.LINKTEXTS), 
+                                collected.get(
+                                    WebsiteHtmlCollectorKey.URL)).get());
         
         return this.result;
     }

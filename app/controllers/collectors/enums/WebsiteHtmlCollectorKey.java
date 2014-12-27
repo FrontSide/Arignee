@@ -7,6 +7,7 @@ package collectors.enums;
 
 public enum WebsiteHtmlCollectorKey implements CollectorKey {
 
+    URL,
     TITLE,
     LINKTEXTS
     

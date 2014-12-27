@@ -37,9 +37,15 @@ function trends_kw_request(keyphrase){
 }
 
 /* ------------------------- */
+var progress_bar_container = $("#progress_bar_container")
 
 function send(URL) {
+    progress_bar_container.css("display", "block")
+    updateProgressbar(0)    
+    setProgressbarLabel("Request HTML from " + URL)
+    runPseudoProgress(5000, 50)
     $.ajax({ url: URL, type: "GET" }).done(function( data ) {
+        abortPseudoProgress()
         html_eval_render(data)
     })
 }
