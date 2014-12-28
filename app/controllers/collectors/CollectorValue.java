@@ -47,8 +47,28 @@ public class CollectorValue {
         return this;
     }
     
+    public CollectorValue add(List<String> list) {
+        for (String s : list) {
+            this.add(s);
+        }
+        return this;
+    }
+    
+    public CollectorValue add(CollectorValue value) {
+        if (value.getValue() instanceof List) add((List<String>) value.getValue());
+        else if (value.getValue() instanceof String) add((String) value.getValue());
+        return this;
+    }
+    
     public Object getValue() {
         return (this.list == null) ? this.value : this.list;
+    }
+    
+    public List<String> getList() {
+        if (this.list != null) return this.list;
+        List<String> list = new ArrayList<String>();
+        list.add((String) this.getValue());
+        return list;
     }
         
     @Override

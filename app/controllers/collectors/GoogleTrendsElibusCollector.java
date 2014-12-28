@@ -27,7 +27,7 @@ import collectors.CollectorValue;
 public class GoogleTrendsElibusCollector extends GoogleTrendsCollector {
 
 
-    protected Map<CollectorKey, CollectorValue> extract(String raw) {
+    protected Map<CollectorKey, CollectorValue> extract() {
     
         return null;
     

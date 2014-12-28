@@ -22,6 +22,16 @@ function setProgressbarLabel(TEXT) {
     progress_bar_label.html(TEXT)
 }
 
+function setProgressbarSuccess() {
+    progress_bar.removeClass("progress-bar-warning")
+    progress_bar.addClass("progress-bar-success")
+}
+
+function setProgressbarRequesting() {
+    progress_bar.removeClass("progress-bar-success")
+    progress_bar.addClass("progress-bar-warning")
+}
+
 function currentProgress() {
     return parseInt($('.progress-bar').attr('aria-valuenow'))
 }

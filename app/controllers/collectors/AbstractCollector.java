@@ -24,42 +24,50 @@ public abstract class AbstractCollector<T> implements Collector {
     /**
       * @returns : collected List 
       */
-    public Map<? extends CollectorKey, CollectorValue> get() throws RuntimeException {
-        if (this.url == null) throw new RuntimeException("No URL found!");
-        this.fetch(this.url);
-        return this.extract(this.raw);
+    public Map<? extends CollectorKey, CollectorValue> get() {
+        
+        if (this.raw == null) {
+            try { 
+                this.fetch(); 
+            } catch (RuntimeException e) {
+                Logger.error("Fetching failed"); 
+            }
+        }
+        return this.extract();
     }
 
     /**
      * Uses an before instanziated HTTPConnector and triggers its HTTP-Request
      * Result is saved in 
      */
-    private void fetch(String url) {
+    public Collector fetch() throws RuntimeException {
     
+        if (this.url == null) throw new RuntimeException("No URL found!");    
         T response = null;
     
         try {            
             Logger.debug("Trigger HTTP Connector Request");
-            response = (T) this.CONNECTOR.request(url);
+            response = (T) this.CONNECTOR.request(this.url);
         } catch (ClassCastException e) {
             Logger.error("Type Missmatch between Object delivered " + 
                             "from HTTPConnector and Collector");
-            return;
+            return this;
         }
         
         if (response == null) 
             throw new RuntimeException("Requesting HTTP Response for URL " + 
-                                                url + " failed");
+                                                this.url + " failed");
                                         
         Logger.debug("Response from HTTP Connector received!");
         this.raw = response;
+        return this;
     }
     
     /**
      * Extracts the useful data that is later used by an Evaluator
      * from the fetched (raw) data returned from the HTTPConnector
      */
-    protected abstract Map<? extends CollectorKey, CollectorValue> extract(T raw);
+    protected abstract Map<? extends CollectorKey, CollectorValue> extract();
    
     public Collector url(String url) {
         this.url = url;
@@ -74,8 +82,9 @@ public abstract class AbstractCollector<T> implements Collector {
         throw new UnsupportedOperationException("buildUrl() not implemented");
     }
     
-    public String raw() {
-        return this.raw.toString();
+    public T raw() {        
+        if (this.raw == null) Logger.error("No raw data found!");
+        return this.raw;
     }
 
 }

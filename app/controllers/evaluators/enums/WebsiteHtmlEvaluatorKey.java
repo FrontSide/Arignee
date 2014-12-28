@@ -20,6 +20,7 @@ public enum WebsiteHtmlEvaluatorKey implements EvaluatorKey {
     /* LEVEL 2 */
     /* Keys for sub-sub-Maps i.e. Sub-Categories */
     AMOUNT,
+    BACKLINK_RATIO,
 
     /* LEVEL 3 */
     /* Keys for values that show actual and ideal figures and the divergence

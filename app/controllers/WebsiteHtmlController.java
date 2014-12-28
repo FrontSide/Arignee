@@ -22,6 +22,7 @@ import play.Logger;
 import org.json.JSONObject;
 
 import collectors.WebsiteHtmlCollectorFactory;
+import collectors.WebsiteHtmlCollector;
 import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
@@ -42,9 +43,14 @@ public class WebsiteHtmlController extends Controller {
                                 EvaluatorFactory.getInstance();
 
     /**
-      * Receives a Map with all relevent data from the Controller
-      * passes it to the Evaluator and returns
-      * a Map that is ready to be rendered by the template
+      * Triggers a FULL WEBSITE EVALUATION
+      *
+      * Instantiates Collecor and obtains Map with all relevant data from it
+      *
+      * Passes it to the Evaluator and again obtains a Map, this time with the
+      * Evaluation Results
+      *
+      * @returns a Json Object with all infos that are being shown to the client
       */
     public JSONObject evaluate(final String URL) {
     
@@ -67,5 +73,5 @@ public class WebsiteHtmlController extends Controller {
         return evalresult.toJson();
         
     }
-
+    
 }

@@ -36,6 +36,6 @@ public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector {
     } */
     
     @Override
-    protected Map<CollectorKey, CollectorValue> extract(String url) { return null; }
+    protected Map<CollectorKey, CollectorValue> extract() { return null; }
 
 }

@@ -13,13 +13,23 @@ import play.Logger;
 
 import java.io.IOException;
 
-public class JsoupHTTPConnector implements HTTPConnector<Document> {
+public class JsoupHTTPConnector implements HTTPConnector<Element> {
 
-    public Document request(final String URL) {
+    private final int MAX_CONNECTION_ATTEMPTS = 5;
+
+    public Element request(final String URL) {
+        return request(URL, 1);
+    }
+
+    private Element request(final String URL, int attempts) {
     
-        Logger.debug("Request url :: " + URL);
-        
-        Document doc = null;
+        if (attempts++ > MAX_CONNECTION_ATTEMPTS) {
+            Logger.error("MAXIMUM OF ATTEMPTS EXCEEDED!");
+            return null;
+        }
+    
+        Logger.debug("Request url :: " + URL);        
+        Element doc = null;
                 
         try {    
             doc = Jsoup.connect(URL).get();
@@ -31,12 +41,14 @@ public class JsoupHTTPConnector implements HTTPConnector<Document> {
             Logger.warn("Malformed URL :: " + URL);
             Logger.debug("Checking if url starts with \"http://\" or " + 
                                     " \"https://\" and trying variations...");
-            if (!URL.startsWith("http://") && !URL.startsWith("https://")) 
-                return request("http://" + URL);
+            if (!URL.startsWith("http://") && !URL.startsWith("https://") && !URL.startsWith("/")) 
+                return request("http://" + URL, attempts);
             if (URL.startsWith("http://")) 
-                return request("https://" + URL.substring(7));
+                return request("https://" + URL.substring(7), attempts);
             if (URL.startsWith("https://")) 
-                return request("https://" + URL.substring(8));
+                return request("https://" + URL.substring(8), attempts);            
+            if (URL.startsWith("/"))
+                Logger.error("Internal URL detected -- currently ignored"); 
             Logger.error("Invalid URL :: " + URL);
             return null;
         }

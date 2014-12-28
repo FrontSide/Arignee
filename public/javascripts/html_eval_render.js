@@ -12,22 +12,34 @@ var container_wrapper = $("#eval_res_wrapper")
 /* Takes results from HTTP response and initiates the rendering */
 function html_eval_render(RESULTS) {
 
-    var json = JSON.parse(RESULTS)    
+    var json = $.parseJSON(RESULTS)
     build_html_containers(json)
 }
 
 function build_html_containers(json) {
-
-    setProgressbarLabel("Render results...")
-
+    
     container_wrapper.css("display", "block")
     
     //HTML-Builder
     var content = "";
     
+    //Calculate how much to increment the Progressbar per Category
+    var NUM_CATEGORIES = Object.keys(json).length
+    console.log("outerSteps :: " + NUM_CATEGORIES)
+    var PROG_CAT_INCREMENT = (100-currentProgress())/NUM_CATEGORIES
+    console.log("outerIncrementSize :: " + PROG_CAT_INCREMENT)
+    
     for (var top in json) { // LEVEL 1 - categories
     
         console.log(" - " + top)
+    
+        /* Further Calculate how much to increment the Progressbar
+         * per Sub-Category
+         */
+        var NUM_SUB_CATEGORIES = Object.keys(json[top]).length
+        console.log("innerSteps :: " + NUM_SUB_CATEGORIES)
+        var PROG_SUBCAT_INCREMENT = PROG_CAT_INCREMENT/NUM_SUB_CATEGORIES
+        console.log("innerIncrementSize :: " + PROG_SUBCAT_INCREMENT)
         
         //Check if the overall rating value is missing
         if (json[top].RATING == null) categoryrating = "NONE"
@@ -48,6 +60,9 @@ function build_html_containers(json) {
                             
         for (var med in json[top] ) { //LEVEL 2 - sub-categories
             console.log(" -- " + med)
+            
+            //Increment Progressbar
+            incrementProgressbar(PROG_SUBCAT_INCREMENT)
             
             //Panel Body with Sub-Category-/Name
             content +=  "<div class='panel-body'>" + "<span>" + med + "</span>"
@@ -84,7 +99,6 @@ function build_html_containers(json) {
     container_wrapper.html(content);
     
     hideProgressbar()
-    
 
 }
 

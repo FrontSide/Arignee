@@ -31,14 +31,15 @@ public class WebsiteHtmlEvaluator extends AbstractEvaluator {
         Map<? extends CollectorKey, CollectorValue> collected = this.collected();
         
         /* Add Map for link-evluation figures with result from the
-         * evaluateLinks() method. Pass "Links" from collected-list
-         * to full evaluation-result-Map.
+         * HtmlLinkEvaluator
          */
         ((EvaluationResultContainer) this.result)
                     .add(WebsiteHtmlEvaluatorKey.LINKS,
                             new HtmlLinkEvaluator(
                                 collected.get(
-                                    WebsiteHtmlCollectorKey.LINKTEXTS), 
+                                    WebsiteHtmlCollectorKey.LINKTEXTS),
+                                collected.get(
+                                    WebsiteHtmlCollectorKey.LINKHREFS),
                                 collected.get(
                                     WebsiteHtmlCollectorKey.URL)).get());
         

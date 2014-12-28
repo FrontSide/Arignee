@@ -2,7 +2,7 @@
 package collectors;
 
     /**
-     * This is class for Abstracting the GoogleTrends Controller
+     * This is class for Abstracting the GoogleTrends Collector
      * it overloads the get method so that a keyphrase can be accepted from 
      * the controllers and implements the urlBuilder which creates the url
      * out of the keyphrase and given url parameters

@@ -19,7 +19,7 @@ public interface Collector {
      *      that contains all necessary data which is later processed by
      *      an Evaluator
      */
-    Map<? extends CollectorKey, CollectorValue> get() throws RuntimeException;
+    Map<? extends CollectorKey, CollectorValue> get();
         
     /**
       * Sets the url
@@ -30,12 +30,13 @@ public interface Collector {
      * @returns: the Collectors accessed url
      */
     String url();
-        
-    /**
-      * @returns: the raw data returned by the HTTPConnector as a String
-      */
-    String raw();
     
+    /**
+      * Triggers the HTTPRequestor,fetches the HTTPResponse and 
+      * stores it in the "raw" variable
+      */
+    Collector fetch() throws RuntimeException;
+        
     /**
       * This method needs to be implemented by Collectors that have
       * to assemble the URL to be requested themselves.
