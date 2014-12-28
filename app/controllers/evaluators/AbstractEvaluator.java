@@ -45,14 +45,4 @@ public abstract class AbstractEvaluator implements Evaluator {
         return percentualDivergence((float) DESIRED, (float) ACTUAL);
     }
     
-    /**
-      * Checks if two URLs are the same i.e. directing to the same Page
-      * @params final URLA, final URLB
-      * @returns : true if URLs are the same otherwise false
-      */
-    public static boolean isSameUrl(final String URLA, final String URLB) {
-        Logger.debug("check URLs :: \"" + URLA + "\" and " + "\"" + URLB + "\"");
-        return URLA.equals(URLB);
-    }
-
 }

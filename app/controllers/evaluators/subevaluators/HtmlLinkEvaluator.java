@@ -11,6 +11,7 @@ import evaluators.EvaluationResultContainer.*;
 import evaluators.EvaluationFigure;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.enums.Rating;
+import collectors.AbstractCollector;
 import collectors.CollectorValue;
 import collectors.WebsiteHtmlCollector;
 import collectors.WebsiteHtmlCollectorFactory;
@@ -133,29 +134,50 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
                                 
         //Go through all HREFS on the website to evaluate
         for (String h : this.linkhrefs) {
-        
+            
+            //First check if this link just refers to its own page
+            //skip this iteration if so!
+            if (AbstractCollector.isSameUrl(this.url, h)) continue;
+            
             collectors.Collector collector = COLLECTORFACTORY.create();
         
+            boolean isInternalLink = false;
+            if (AbstractCollector.isPath(h)) {
+                Logger.debug("\"" + h + "\" is a Path");
+                h = AbstractCollector.trimToBaseUrl(this.url) + h;
+                Logger.debug("URL to request has been assembled to \"" + h + "\"");
+                isInternalLink = true;
+            }
+        
+            else isInternalLink = AbstractCollector.isInternalUrl(this.url, h);
+
+            if (isInternalLink) Logger.debug("\"" + h + "\" is an internal Link");
+
             CollectorValue targetWebsiteLinkHrefs = new CollectorValue();
             try {
-                collector = collector.url(h).fetch();                
+                collector = collector.url(h).fetch();
                 //Get all the hrefs of the Links from the linked-to page
-                targetWebsiteLinkHrefs.add(((WebsiteHtmlCollector) collector).getLinkHrefs());
+                targetWebsiteLinkHrefs.add((
+                            (WebsiteHtmlCollector) collector).getLinkHrefs());
             } catch (RuntimeException e) {
                 Logger.error("Failed to fetch hrefs for \"" + h + "\"");
+                continue; //We skip the rest of this iteration
             }
             
+            int numOfBacklinksBefore = numOfBacklinks;
             //Go through all the HREFS on the Link's target Website                
             for (String th :(List<String>) targetWebsiteLinkHrefs.getList()) {
-                if (AbstractEvaluator.isSameUrl(this.url, th)) numOfBacklinks++;
+                if (AbstractCollector.isSameUrl(this.url, th)) numOfBacklinks++;
             }
+            
+            Logger.info("The URL \"" + h + "\" has " + (numOfBacklinks-numOfBacklinksBefore) + " backlinks");
             
         }
         
         /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
         /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
                 
-        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, numOfBacklinks)*100;
+        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, numOfBacklinks);
         
         EvaluationResultContainer backlinkRatioResults = new EvaluationResultContainer();
                                             

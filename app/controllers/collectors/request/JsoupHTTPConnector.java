@@ -41,14 +41,12 @@ public class JsoupHTTPConnector implements HTTPConnector<Element> {
             Logger.warn("Malformed URL :: " + URL);
             Logger.debug("Checking if url starts with \"http://\" or " + 
                                     " \"https://\" and trying variations...");
-            if (!URL.startsWith("http://") && !URL.startsWith("https://") && !URL.startsWith("/")) 
+            if (!URL.startsWith("http://") && !URL.startsWith("https://")) 
                 return request("http://" + URL, attempts);
             if (URL.startsWith("http://")) 
                 return request("https://" + URL.substring(7), attempts);
             if (URL.startsWith("https://")) 
-                return request("https://" + URL.substring(8), attempts);            
-            if (URL.startsWith("/"))
-                Logger.error("Internal URL detected -- currently ignored"); 
+                return request("https://" + URL.substring(8), attempts);
             Logger.error("Invalid URL :: " + URL);
             return null;
         }

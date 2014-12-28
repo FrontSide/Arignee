@@ -11,6 +11,7 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
 import java.io.IOException;
+import java.lang.NullPointerException;
 import java.lang.IllegalArgumentException;
 import java.lang.String.*;
 import java.util.Map;
@@ -53,8 +54,14 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Element>
     
     private Element getBody() {
                 
-        if (this.body == null)
-            this.body = ((Document)raw()).body();
+        if (this.body == null) {
+            try {
+                this.body = ((Document)raw()).body();
+            } catch (NullPointerException e) {
+                Logger.error("extracting Hyperlink Elements from raw failed!");
+            }
+        }
+            
         return this.body;
     
     }
@@ -63,8 +70,13 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Element>
         
         Logger.debug("Get all links from " + this.url());
         
-        if (this.links == null)
-            this.links = ((Document)raw()).getElementsByTag("a");
+        if (this.links == null) {
+            try {
+                this.links = ((Document)raw()).getElementsByTag("a");
+            } catch (NullPointerException e) {
+                Logger.error("extracting Hyperlink Elements from raw failed!");
+            }
+        }
         return this.links;
         
     }

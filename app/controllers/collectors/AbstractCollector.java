@@ -86,5 +86,74 @@ public abstract class AbstractCollector<T> implements Collector {
         if (this.raw == null) Logger.error("No raw data found!");
         return this.raw;
     }
+    
+    /**
+      * Checks if a URL is within a domain i.e. has the same Base-URL
+      * @param domain_url : the base-url of the referenced domain
+      * @param final URL : the url or path that is checked
+      * @returns : true if the passed url is considered an internal url or
+      *           merely a path
+      */
+    public static boolean isInternalUrl(String domainUrl, final String URL) {
+        if (domainUrl.equals(URL)) return true;
+        if (AbstractCollector.isPath(URL)) return true;
+        domainUrl = AbstractCollector.trimToBaseUrl(domainUrl);
+        return URL.contains(domainUrl);
+    }
+    
+    /**
+     * Checks if a String is merely a Path rather than a full URL
+     * @param s : URL/Path to check
+     * @returns : true if String is a path
+     */
+    public static boolean isPath(String s) {
+        return s.startsWith("/");
+    }
+    
+    /**
+     * Removes paths, protocols and subdomains from a URL to leave just the base
+     * and Top-Level Domain (e.g http://dary.info/blog/bac1 --> dary.info)
+     * @param url : url to trim
+     * @returns : baseUrl (incl. top-level Domain)
+     */
+    public static String trimToBaseUrl(String url) {        
+        url = removeProtocols(url);
+        url = url.replace("www.", "");
+        
+        int shlashIndex = url.indexOf('/');
+        if (shlashIndex == -1) return url;
+        return url.substring(0, shlashIndex);
+    }
+    
+    /**
+      * Checks if two URLs are the same i.e. directing to the same Page
+      * @params urla, urlb
+      * @returns : true if URLs are the same otherwise false
+      */
+    public static boolean isSameUrl(String urla, String urlb) {
+        if (urla.equals(urlb)) return true;
+        urla = AbstractCollector.removeProtocols(urla);
+        urlb = AbstractCollector.removeProtocols(urlb);
+        
+        int hashtagIndex =  urla.indexOf('#');
+        if (hashtagIndex != -1) urla = urla.substring(0, hashtagIndex);
+        
+        hashtagIndex = urlb.indexOf('#');
+        if (hashtagIndex != -1) urlb = urlb.substring(0, hashtagIndex);
+                
+        return (urla.equals(urlb) || urla.equals("/") || urlb.equals("/"));
+        
+    }
+    
+    /**
+      * Removes the Protocols from a 
+      * @param url; and
+      * @returns it
+      */
+    private static String removeProtocols(String url) {
+        String[] urlarray = url.split("://");
+        if (urlarray.length > 1) url = urlarray[1];
+        return url;
+    }
 
 }
