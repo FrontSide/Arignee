@@ -142,8 +142,8 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
             collectors.Collector collector = COLLECTORFACTORY.create();
         
             boolean isInternalLink = false;
-            if (AbstractCollector.isPath(h)) {
-                Logger.debug("\"" + h + "\" is a Path");
+            if (AbstractCollector.isUrlAppendix(h)) {
+                Logger.debug("\"" + h + "\" is a Path, Parameter or Fragment Identifier (#)");
                 h = AbstractCollector.trimToBaseUrl(this.url) + h;
                 Logger.debug("URL to request has been assembled to \"" + h + "\"");
                 isInternalLink = true;

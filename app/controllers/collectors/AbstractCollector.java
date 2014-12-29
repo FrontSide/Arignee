@@ -96,18 +96,19 @@ public abstract class AbstractCollector<T> implements Collector {
       */
     public static boolean isInternalUrl(String domainUrl, final String URL) {
         if (domainUrl.equals(URL)) return true;
-        if (AbstractCollector.isPath(URL)) return true;
+        if (AbstractCollector.isUrlAppendix(URL)) return true;        
         domainUrl = AbstractCollector.trimToBaseUrl(domainUrl);
         return URL.contains(domainUrl);
     }
     
     /**
-     * Checks if a String is merely a Path rather than a full URL
-     * @param s : URL/Path to check
-     * @returns : true if String is a path
+     * Checks if a String is merely a Path, Parameter or
+     * Resource Identifier (i.e. #) rather than a full URL
+     * @param s : String to check
+     * @returns : true if String is a url- path, parameter or resource identifier
      */
-    public static boolean isPath(String s) {
-        return s.startsWith("/");
+    public static boolean isUrlAppendix(String s) {
+        return "#?/".contains("" + s.charAt(0));
     }
     
     /**
