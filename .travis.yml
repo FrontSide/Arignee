@@ -1,0 +1,17 @@
+language: scala
+
+scala:
+- 2.11.1
+
+jdk:
+- openjdk7
+ 
+env:
+- PLAY_VERSION=2.3.0
+
+before_script:
+- cp conf/travis.conf conf/application.conf
+
+script: 
+  sbt test
+
