@@ -21,15 +21,15 @@ public abstract class AbstractSubEvaluator implements Evaluator {
 
     public abstract EvaluationResult get();
 
-   /** This method has to be overriden OR BETTER overloaded by the concrete 
+   /** This method has to be overriden OR BETTER overloaded by the concrete
      * SubEvaluator it is not intended to be used
      * for the data coming from the collector but merely for sub-collections
      */
     public Evaluator pass(Map<? extends CollectorKey, CollectorValue> collected) {
-        Logger.error("The pass(Map<? extends CollectorKey, List<String>>)" + 
+        Logger.error("The pass(Map<? extends CollectorKey, List<String>>)" +
                         " method is not available for SubEvaluators");
         return this;
     }
-    
+
 
 }

@@ -1,81 +1,64 @@
 package collectors;
 
-/** Single-Class Composite Pattern for CollectorValues
-  * that are stored in the Result-Map of a Collector next to the CollectorKey
-  *
-  * A CollectorValue can now either be a String or a List of Strings
-  */
-  
+/**
+ * Super-Class for Collector Value
+ * that are stored in the Result-Map of a Collector next to the CollectorKey
+ *
+ * Generic T takes type of object that should be stored as value
+ * depends on Subclass
+ *
+ * A CollectorValue can now either be an Object of type T or a List
+ * with objects of type T
+ */
+
 import java.util.List;
 import java.util.ArrayList;
-  
-public class CollectorValue {
-  
-    private String value;
-    private List<String> list;
-    
-    public CollectorValue() {}
-    public CollectorValue(List<String> list) {
-        this.list = list;
-    }
-    public CollectorValue(String value) {
-        this.value = value;
-    }
-    
+import play.Logger;
+
+public abstract class CollectorValue<T> {
+
+    protected List<T> list = new ArrayList<>();
+
     /**
-      * Adds a String to the Collector-Values
-      * If no value is stored 
-      */
-    public CollectorValue add(String value) {
-        
-        //If there is no value so far, just add the String 
-        //to the object's "value" attribute
-        if (this.getValue() == null) {
-            this.value = value;
-            return this;
-        }
-        
-        //If there is a single String "value" existing
-        //create a list and add the existing String to it
-        if (this.getValue() instanceof String) {
-            this.list = new ArrayList<>();
-            this.list.add(this.value);
-            this.value = null;
-        } 
-        
+    * Adds a value either to a list of it's type
+    * or a single value to its type if none is existing yet
+    * @param  value value to add
+    * @return       this
+    */
+    public CollectorValue add(T value) {
         this.list.add(value);
         return this;
     }
-    
-    public CollectorValue add(List<String> list) {
-        for (String s : list) {
-            this.add(s);
-        }
+
+    public CollectorValue add(List<T> list) {
+        this.list.addAll(list);
         return this;
     }
-    
-    public CollectorValue add(CollectorValue value) {
-        if (value.getValue() instanceof List) add((List<String>) value.getValue());
-        else if (value.getValue() instanceof String) add((String) value.getValue());
-        return this;
+
+    /**
+     * Get the single object stored in attribute "value" if available
+     * @return single value of type T
+     */
+    public T getValue() {
+
+        if (this.list.size() == 1) return this.list.get(0);
+        if (this.list.size() > 1) Logger.error("Only list availabe :: getList()");
+        Logger.error("No value avaiable!");
+        return null;
+
     }
-    
-    public Object getValue() {
-        return (this.list == null) ? this.value : this.list;
+
+    /**
+     * Get full list
+     * @return List of all stored "values"
+     */
+    public List<T> getList() {
+        return this.list;
     }
-    
-    public List<String> getList() {
-        if (this.list != null) return this.list;
-        List<String> list = new ArrayList<String>();
-        list.add((String) this.getValue());
-        return list;
-    }
-        
+
     @Override
     public String toString() {
-        return this.getValue().toString();
+        return this.getList().toString();
     }
-    
-    
-  
+
 }

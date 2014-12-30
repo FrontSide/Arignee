@@ -6,21 +6,15 @@ package collectors;
      * for WebsiteHtmlCollectors
      */
 
-import java.util.Map;
 import java.util.List;
-import collectors.enums.CollectorKey;
+import models.Hyperlink;
 
 public interface WebsiteHtmlCollector {
-    
+
     /**
-     * @ returns a List with all Linktexts
+     * @ returns a List with all HyperlinkObjects (models.Hyperlinks)
+     * of a WebPage
      */
-    CollectorValue getLinktexts();
-    
-    /**
-     * @ returns a List with all Link-Hrefs
-     */
-    CollectorValue getLinkHrefs();
-    
+    List<Hyperlink> getHyperlinks();
 
 }

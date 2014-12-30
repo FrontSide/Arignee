@@ -15,9 +15,9 @@ public class Application extends Controller {
     public static Result index() {
         return ok(index.render(null));
     }
-    
+
     /******
-     ** This method only is here for test purposes 
+     ** This method only is here for test purposes
      ** yes I know this doesn't belong here
      ** Later, instead of directly rendering the keyword pupularity
      ** the results are just written in a DB
@@ -27,9 +27,9 @@ public class Application extends Controller {
         new GoogleTrendsController().getKeywordTimePopularity(kp);
         return index();
     }
-    
+
     /******
-     ** This method only is here for test purposes 
+     ** This method only is here for test purposes
      ** yes I know this doesn't belong here
      ** Later, instead of directly rendering the html content
      ** the results are just written in a DB
@@ -41,5 +41,5 @@ public class Application extends Controller {
         index();
         return ok(new WebsiteHtmlController().evaluate(url).toString());
     }
-    
+
 }
