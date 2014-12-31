@@ -1,4 +1,4 @@
-package collectors;
+package models.collection;
 
 import java.util.List;
 

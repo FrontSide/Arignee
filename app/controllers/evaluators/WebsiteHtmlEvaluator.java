@@ -13,20 +13,23 @@ package evaluators;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import collectors.CollectorValue;
+import models.collection.CollectorValue;
+import models.evaluation.EvaluationValue;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.Rating;
 import evaluators.enums.EvaluatorKey;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.subevaluators.HtmlLinkEvaluator;
-import models.Hyperlink;
+import models.persistency.Hyperlink;
+import models.evaluation.EvaluationValueContainer;
+import models.collection.CollectorValue;
 
 public class WebsiteHtmlEvaluator extends AbstractEvaluator {
 
-    public EvaluationResult get() {
+    public EvaluationValue get() {
 
-        this.result = new EvaluationResultContainer();
+        this.result = new EvaluationValueContainer();
 
         //Get Map passed in from collector
         Map<? extends CollectorKey, CollectorValue> collected = this.collected();

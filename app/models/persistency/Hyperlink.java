@@ -1,4 +1,4 @@
-package models;
+package models.persistency;
 
 /**
  * Entity Object
@@ -7,10 +7,13 @@ package models;
  */
 
 import play.db.ebean.Model;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 public class Hyperlink extends Model {
+
+    @Id
+    public long id;
 
     /* The Webpage this Link is embedded in */
     public WebPage parentPage;

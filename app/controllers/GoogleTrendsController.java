@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import collectors.GoogleTrendsCollectorFactory;
 import collectors.GoogleTrendsCollector;
-import collectors.CollectorValue;
+import models.collection.CollectorValue;
 import collectors.enums.CollectorKey;
 import java.util.List;
 import play.mvc.*;

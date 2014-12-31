@@ -11,6 +11,7 @@ package collectors;
 import java.util.Map;
 import java.util.List;
 import collectors.enums.CollectorKey;
+import models.collection.CollectorValue;
 
 public abstract class GoogleTrendsCollector extends AbstractCollector<String> {
 

@@ -22,7 +22,10 @@ import java.util.Iterator;
 
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
-import models.Hyperlink;
+import models.persistency.Hyperlink;
+import models.collection.CollectorValue;
+import models.collection.CollectorStringValue;
+import models.collection.CollectorModelValue;
 
 import play.Logger;
 

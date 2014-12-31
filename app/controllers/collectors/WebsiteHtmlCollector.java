@@ -7,7 +7,7 @@ package collectors;
      */
 
 import java.util.List;
-import models.Hyperlink;
+import models.persistency.Hyperlink;
 
 public interface WebsiteHtmlCollector {
 

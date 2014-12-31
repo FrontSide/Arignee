@@ -4,18 +4,18 @@ package evaluators.subevaluators;
   * Used by WebsiteHtmlEvaluator
   */
 
+import models.evaluation.EvaluationValue;
+import models.evaluation.EvaluationValueFigure;
+import models.evaluation.EvaluationValueContainer;
+import models.evaluation.EvaluationValueContainer.*;
 import evaluators.AbstractEvaluator;
-import evaluators.EvaluationResult;
-import evaluators.EvaluationResultContainer;
-import evaluators.EvaluationResultContainer.*;
-import evaluators.EvaluationFigure;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.enums.Rating;
 import collectors.AbstractCollector;
-import collectors.CollectorValue;
 import collectors.WebsiteHtmlCollector;
 import collectors.WebsiteHtmlCollectorFactory;
-import models.Hyperlink;
+import models.persistency.Hyperlink;
+import models.collection.CollectorValue;
 
 import java.util.List;
 import play.Logger;
@@ -58,12 +58,12 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
      *      which is later integrated in the full evaluation list
      */
     @Override
-    public EvaluationResult get() {
+    public EvaluationValue get() {
 
         if (this.hyperlinks == null || this.url == null)
             throw new IllegalStateException("Some variables are missing, try pass(...)");
 
-        this.result = new EvaluationResultContainer();
+        this.result = new EvaluationValueContainer();
         this.linkAmount = this.hyperlinks.size();
 
         //Call concrete Link-Evaluation Methods
@@ -79,22 +79,22 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
       * @param linkAmount : amount of Links on the website
       * @returns : An EvaluationResult for the LinkAmount
       */
-    private EvaluationResult rateLinkAmount() {
+    private EvaluationValue rateLinkAmount() {
 
         Logger.info("Start linkAmount-Rating...");
 
-        EvaluationResultContainer linkAmountResults = new EvaluationResultContainer();
+        EvaluationValueContainer linkAmountResults = new EvaluationValueContainer();
 
         float linkAmountDiv = AbstractEvaluator.percentualDivergence(
                                     LINKS_AMOUNT_IDEAL,
                                     Math.abs(LINKS_AMOUNT_IDEAL-linkAmount));
 
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.ACTUAL,
-                                    new EvaluationFigure(linkAmount));
+                                    new EvaluationValueFigure(linkAmount));
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.IDEAL,
-                                    new EvaluationFigure(LINKS_AMOUNT_IDEAL));
+                                    new EvaluationValueFigure(LINKS_AMOUNT_IDEAL));
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.DIV,
-                                    new EvaluationFigure(linkAmountDiv));
+                                    new EvaluationValueFigure(linkAmountDiv));
         Rating linkAmountRating;
 
         if (linkAmountDiv > 200 || linkAmount < 4) linkAmountRating = Rating.POOR;
@@ -104,7 +104,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         else linkAmountRating = Rating.EXCELLENT;
 
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.RATING,
-                                    new EvaluationFigure(linkAmountRating));
+                                    new EvaluationValueFigure(linkAmountRating));
 
         return linkAmountResults;
 
@@ -117,7 +117,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
       */
     /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
     /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
-    private EvaluationResult rateBackLinkRatio() {
+    private EvaluationValue rateBackLinkRatio() {
 
         Logger.info("Start backLinkRatio-Rating...");
 
@@ -177,14 +177,14 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
         float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, numOfBacklinks);
 
-        EvaluationResultContainer backlinkRatioResults = new EvaluationResultContainer();
+        EvaluationValueContainer backlinkRatioResults = new EvaluationValueContainer();
 
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.ACTUAL,
-                                    new EvaluationFigure(backlinkRatio));
+                                    new EvaluationValueFigure(backlinkRatio));
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.IDEAL,
-                                    new EvaluationFigure(BACKLINK_RATIO_IDEAL));
+                                    new EvaluationValueFigure(BACKLINK_RATIO_IDEAL));
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.DIV,
-                                    new EvaluationFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
+                                    new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
 
         Rating backlinkRatioRating;
 
@@ -195,7 +195,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         else backlinkRatioRating = Rating.EXCELLENT;
 
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.RATING,
-                                     new EvaluationFigure(backlinkRatioRating));
+                                     new EvaluationValueFigure(backlinkRatioRating));
 
         return backlinkRatioResults;
 

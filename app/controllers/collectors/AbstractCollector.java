@@ -11,6 +11,7 @@ import java.util.List;
 import collectors.enums.CollectorKey;
 import collectors.request.*;
 import play.Logger;
+import models.collection.CollectorValue;
 
 public abstract class AbstractCollector<T> implements Collector {
 

@@ -11,15 +11,15 @@ import java.util.List;
 import java.lang.NoSuchMethodException;
 import play.Logger;
 import evaluators.Evaluator;
-import evaluators.EvaluationResult;
-import collectors.CollectorValue;
 import collectors.enums.CollectorKey;
+import models.evaluation.EvaluationValue;
+import models.collection.CollectorValue;
 
 public abstract class AbstractSubEvaluator implements Evaluator {
 
-    protected EvaluationResult result;
+    protected EvaluationValue result;
 
-    public abstract EvaluationResult get();
+    public abstract EvaluationValue get();
 
    /** This method has to be overriden OR BETTER overloaded by the concrete
      * SubEvaluator it is not intended to be used

@@ -1,4 +1,4 @@
-package collectors;
+package models.collection;
 
 /**
  * Super-Class for Collector Value

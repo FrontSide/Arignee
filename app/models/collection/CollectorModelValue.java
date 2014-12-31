@@ -1,4 +1,4 @@
-package collectors;
+package models.collection;
 
 import play.db.ebean.Model;
 import java.util.List;
