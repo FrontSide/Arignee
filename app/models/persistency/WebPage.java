@@ -12,6 +12,11 @@ import javax.persistence.*;
 @Entity
 public class WebPage extends Model {
 
+    public WebPage(String url, EvaluationResult evaluation) {
+        this.url = url;
+        this.evaluation = evaluation;
+    }
+
     @Id
     public long id;
 

@@ -1,13 +1,31 @@
 package collectors.request;
 
-public interface HTTPConnector<T> {
+/**
+ * HTTPConnector Strategy Context
+ */
+
+import play.Logger;
+import play.Logger.ALogger;
+
+public class HTTPConnector<T> {
+
+    private static final ALogger logger = Logger.of(HTTPConnector.class);
+
+    HTTPConnectorStrategy strategy;
+
+    public HTTPConnector() {}
+    public HTTPConnector(HTTPConnectorStrategy strategy) {
+        this.strategy = strategy;
+    }
 
     /**
-      * Sends an HTTP Request to
-      * @param URL : url to request data from
-      * @returns relevant segments of HTTP Resonse from Requested url
-      *         in form of an Object from Class T
-      */
-    public T request(final String URL);
+     * Trigger Request function in concrete HTTP-Requestor Strategy
+     * @param  String URL to send request to
+     * @return        [description]
+     */
+    public T executeRequest(final String URL) {
+        HTTPConnector.logger.debug("triggering http request strategy...");
+        return (T) this.strategy.request(URL);
+    }
 
 }

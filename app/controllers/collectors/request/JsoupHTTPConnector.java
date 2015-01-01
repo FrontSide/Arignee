@@ -13,11 +13,13 @@ import play.Logger;
 
 import java.io.IOException;
 
-public class JsoupHTTPConnector implements HTTPConnector<Element> {
+public class JsoupHTTPConnector extends HTTPConnector<Element>
+                                implements HTTPConnectorStrategy<Element>{
 
     private final int MAX_CONNECTION_ATTEMPTS = 5;
 
     public Element request(final String URL) {
+        Logger.debug("sending http request to " + URL + "...");
         return request(URL, 1);
     }
 

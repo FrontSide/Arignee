@@ -11,20 +11,22 @@ import java.util.Map;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
 
-public interface Collector {
+public interface Collector<T> {
 
     /**
      * Defines the method that is accessed publicly.
      * Takes the url stored in the Collector object (handed through constructor)
-     * @returns: a Map with Enum-Keys and List<String> Values
-     *      that contains all necessary data which is later processed by
-     *      an Evaluator
+     * @return     a Map with Enum-Keys and List<String> Values
+     *             that contains all necessary data which is later processed by
+     *             an Evaluator
      */
     Map<? extends CollectorKey, CollectorValue> get();
 
     /**
-      * Sets the url
-      */
+     * Setter for the URL
+     * @param  url  url to set
+     * @return      this
+     */
     Collector url(String url);
 
     /**
@@ -33,17 +35,40 @@ public interface Collector {
     String url();
 
     /**
+     * Setter for raw Data
+     * @param  raw raw data to set
+     * @return     this
+     */
+    Collector raw(T raw);
+
+    /**
       * Triggers the HTTPRequestor,fetches the HTTPResponse and
       * stores it in the "raw" variable
+      * @return     this
       */
     Collector fetch() throws RuntimeException;
 
     /**
       * This method needs to be implemented by Collectors that have
-      * to assemble the URL to be requested themselves.
+      * to assemble the URL - to be requested - themselves.
       * This is necessary when the Class that invokes the get method
-      * of the Controller does not already deliver a URL.
+      * of the Controller does not already deliver a full URL.
       */
     void buildUrl();
+
+    /**
+      * Extracts the useful data that is later used by an Evaluator
+      * from the fetched (raw) data returned from the HTTPConnector
+      * Implemented in the Concrete Collector - invoked by "get()"-method
+      * @return     collected and extracted data as Map
+      */
+    /**
+     * Initiates the extraction of the collector data from the raw data
+     * from the fetched (raw) data returned from the HTTPConnector
+     * @return     Extracted Collector-Data as Map
+     */
+    Map<? extends CollectorKey, CollectorValue> initExtract() throws RuntimeException;
+
+
 
 }

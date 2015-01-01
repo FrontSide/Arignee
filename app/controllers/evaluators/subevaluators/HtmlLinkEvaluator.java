@@ -60,8 +60,11 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
     @Override
     public EvaluationValue get() {
 
-        if (this.hyperlinks == null || this.url == null)
-            throw new IllegalStateException("Some variables are missing, try pass(...)");
+        if (this.hyperlinks == null)
+            throw new IllegalStateException("Hyperlinks are missing, try pass(...)");
+
+        if (this.url == null)
+            throw new IllegalStateException("URL is missing, try pass(...)");
 
         this.result = new EvaluationValueContainer();
         this.linkAmount = this.hyperlinks.size();

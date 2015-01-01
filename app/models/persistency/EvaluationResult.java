@@ -6,6 +6,7 @@ package models.persistency;
 */
 
 import java.util.List;
+import org.json.JSONObject;
 import play.db.ebean.Model;
 import javax.persistence.*;
 import models.evaluation.EvaluationValue;
@@ -24,7 +25,7 @@ public class EvaluationResult extends Model {
     @Lob
     public String result;
 
-    public void setResult (EvaluationValue result) {
+    public void setResult (JSONObject result) {
         this.result = result.toString();
     }
 

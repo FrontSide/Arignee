@@ -20,22 +20,21 @@ import java.util.Map;
 import models.collection.CollectorValue;
 import collectors.enums.CollectorKey;
 
-public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector {
+public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector<String>
+                                implements  GoogleTrendsCollectorStrategy {
 
     /**
       * Fetches the JSON String with the Timeseries for the given keyphrase
-
+      */
     public String fetchTimeseries(String keyphrase) {
 
-        String url = WS.url(URL).setQueryParameter("q", keyphrase)
-                .setQueryParameter("cid", TIMESERIES_CID)
-                .setQueryParameter("export", JSON_EXPORT_NUMBER).getUrl();
+        throw new UnsupportedOperationException("Not implemented!");
 
-        String response = new HTTPConnectorFactory(this).create().request(url);
-
-    } */
+    }
 
     @Override
-    protected Map<CollectorKey, CollectorValue> extract() { return null; }
+    public Map<CollectorKey, CollectorValue> extract() {
+        return null;
+    }
 
 }

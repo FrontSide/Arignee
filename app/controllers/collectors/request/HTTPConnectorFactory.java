@@ -26,13 +26,9 @@ public class HTTPConnectorFactory {
     /*
      * Create the needed HTTPConnector and returns it
      */
-    public HTTPConnector create(Collector c) {
+    public HTTPConnector create() {
 
-        if (c instanceof WebsiteHtmlJsoupCollector) {
-            return new JsoupHTTPConnector();
-        }
-
-        return null;
+        return new HTTPConnector(new JsoupHTTPConnector());
 
     }
 

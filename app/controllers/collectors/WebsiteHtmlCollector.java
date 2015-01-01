@@ -7,14 +7,35 @@ package collectors;
      */
 
 import java.util.List;
+import java.util.Map;
+import collectors.enums.CollectorKey;
+import models.collection.CollectorValue;
 import models.persistency.Hyperlink;
+import play.Logger;
 
-public interface WebsiteHtmlCollector {
+public class WebsiteHtmlCollector<T> extends AbstractCollector<T> {
 
-    /**
-     * @ returns a List with all HyperlinkObjects (models.Hyperlinks)
-     * of a WebPage
-     */
-    List<Hyperlink> getHyperlinks();
+    WebsiteHtmlCollectorStrategy strategy;
+
+    public WebsiteHtmlCollector(){}
+    public WebsiteHtmlCollector(WebsiteHtmlCollectorStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    private void passData() {
+        ((Collector)this.strategy).raw(this.raw());
+        ((Collector)this.strategy).url(this.url());
+    }
+
+    public Map<? extends CollectorKey, CollectorValue> executeExtract() {
+        if (this.strategy == null) throw new NullPointerException("No WebsiteHtmlCollectorStrategy found");
+        this.passData();
+        return this.strategy.extractFromHtml();
+    }
+
+    public List<Hyperlink> getHyperlinks() {
+        this.passData();
+        return this.strategy.getHyperlinks();
+    }
 
 }

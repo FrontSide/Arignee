@@ -13,10 +13,10 @@ import collectors.request.*;
 import play.Logger;
 import models.collection.CollectorValue;
 
-public abstract class AbstractCollector<T> implements Collector {
+public abstract class AbstractCollector<T> implements Collector<T> {
 
     private final HTTPConnector CONNECTOR
-                        = HTTPConnectorFactory.getInstance().create(this);
+                        = HTTPConnectorFactory.getInstance().create();
 
     private T raw;
 
@@ -29,15 +29,20 @@ public abstract class AbstractCollector<T> implements Collector {
      */
     public Map<? extends CollectorKey, CollectorValue> get() {
 
-        if (this.raw == null) {
+        if (raw() == null) {
             try {
                 this.fetch();
             } catch (RuntimeException e) {
                 Logger.error("Fetching failed");
             }
         }
-        return this.extract();
+        return this.initExtract();
     }
+
+    public Map<? extends CollectorKey, CollectorValue> initExtract() {
+        return this.executeExtract();
+    }
+    public abstract Map<? extends CollectorKey, CollectorValue> executeExtract();
 
     /**
      * Uses an in the object instanziated HTTPConnector
@@ -52,7 +57,7 @@ public abstract class AbstractCollector<T> implements Collector {
 
         try {
             Logger.debug("Trigger HTTP Connector Request");
-            response = (T) this.CONNECTOR.request(this.url);
+            response = (T) this.CONNECTOR.executeRequest(this.url);
         } catch (ClassCastException e) {
             Logger.error("Type Missmatch between Object delivered " +
                             "from HTTPConnector and Collector");
@@ -64,17 +69,9 @@ public abstract class AbstractCollector<T> implements Collector {
                                                 this.url + " failed");
 
         Logger.debug("Response from HTTP Connector received!");
-        this.raw = response;
+        this.raw(response);
         return this;
     }
-
-    /**
-     * Extracts the useful data that is later used by an Evaluator
-     * from the fetched (raw) data returned from the HTTPConnector
-     * Implemented in the Concrete Collector - invoked by "get()"-method
-     * @return collected and extracted data as Map
-     */
-    protected abstract Map<? extends CollectorKey, CollectorValue> extract();
 
     public Collector url(String url) {
         this.url = url;
@@ -94,6 +91,17 @@ public abstract class AbstractCollector<T> implements Collector {
         return this.raw;
     }
 
+    public Collector raw(T raw) {
+        if (this.raw() != null)
+            throw new IllegalArgumentException("raw data is already available"
+                            + "for this collector and cannot be overwritten!");
+        this.raw = raw;
+        return this;
+    }
+
+    /************************************************************************/
+
+
     /**
      * Checks if a URL is within a domain i.e. has the same Base-URL
      * @param  domainUrl    the base-url of the referenced domain
@@ -112,7 +120,8 @@ public abstract class AbstractCollector<T> implements Collector {
      * Checks if a String is merely a Path, Parameter or
      * Resource Identifier (i.e. #) rather than a full URL
      * @param   s  String to check
-     * @returns    true if String is a url- path, parameter or resource identifier
+     * @returns    true if String is a url- path,
+     *             parameter or resource identifier
      */
     public static boolean isUrlAppendix(String s) {
         return "#?/".contains("" + s.charAt(0));

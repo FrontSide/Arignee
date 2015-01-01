@@ -18,12 +18,12 @@ import play.mvc.*;
 
 public class GoogleTrendsController extends Controller {
 
-    private final GoogleTrendsCollectorFactory COLLECTORFACTORY =
+    private static final GoogleTrendsCollectorFactory COLLECTORFACTORY =
                                 GoogleTrendsCollectorFactory.getInstance();
 
-    public Map<String, List<String>> getKeywordTimePopularity(String keyword) {
+    public static Map<String, List<String>> getKeywordTimePopularity(String keyword) {
 
-        GoogleTrendsCollector collector = this.COLLECTORFACTORY.create();
+        GoogleTrendsCollector collector = GoogleTrendsController.COLLECTORFACTORY.create();
         Map<? extends CollectorKey, CollectorValue> data = collector.get(keyword);
 
          //TODO: pass data to evaluator

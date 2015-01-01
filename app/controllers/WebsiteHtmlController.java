@@ -32,14 +32,17 @@ import models.evaluation.EvaluationValueFigure;
 import models.evaluation.EvaluationValue;
 import models.evaluation.EvaluationValueContainer;
 import models.evaluation.EvaluationValueContainer.*;
+import models.persistency.EvaluationResult;
+import models.persistency.WebPage;
+import daos.WebPageDAO;
 import evaluators.EvaluatorFactory;
 
 public class WebsiteHtmlController extends Controller {
 
-    private final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
+    private static final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
                                 WebsiteHtmlCollectorFactory.getInstance();
 
-    private final EvaluatorFactory EVALUATORFACTORY =
+    private static final EvaluatorFactory EVALUATORFACTORY =
                                 EvaluatorFactory.getInstance();
 
     /**
@@ -64,13 +67,15 @@ public class WebsiteHtmlController extends Controller {
 
         // Create Collector and obtain extracted data
         Logger.debug("Invoke Collector for URL :: \"" + URL + "\"...");
-        collectors.Collector collector = this.COLLECTORFACTORY.create();
+        collectors.Collector collector =
+                    (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
         Logger.debug("Collected data is :: " + collectedData.toString());
 
         //Create Evaluator, pass data from Collector and obtain eval. results
         Logger.debug("Create Evaluator and Pass Collected data...");
-        evaluators.Evaluator evaluator = this.EVALUATORFACTORY.create();
+        evaluators.Evaluator evaluator =
+                        WebsiteHtmlController.EVALUATORFACTORY.create();
         EvaluationValue evalresult = evaluator.pass(collectedData).get();
 
         //TODO: Temporarily I directly return the result from the evaluator
@@ -81,7 +86,7 @@ public class WebsiteHtmlController extends Controller {
         JSONObject evalresultJson = evalresult.toJson();
         WebsiteHtmlController.persistEvaluation(evalresultJson, URL);
 
-        return evalresultJson
+        return evalresultJson;
 
     }
 
@@ -94,7 +99,7 @@ public class WebsiteHtmlController extends Controller {
 
         WebPageDAO webpageDAO = new WebPageDAO();
         EvaluationResult evaluationResult = new EvaluationResult();
-        evaluationResult.result = EVALVAL;
+        evaluationResult.setResult(EVALVAL);
 
         webpageDAO.save(new WebPage(URL, evaluationResult));
 

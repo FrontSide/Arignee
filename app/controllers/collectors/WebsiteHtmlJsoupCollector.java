@@ -29,15 +29,20 @@ import models.collection.CollectorModelValue;
 
 import play.Logger;
 
-public class WebsiteHtmlJsoupCollector extends AbstractCollector<Element>
-                                        implements WebsiteHtmlCollector {
+public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
+                                    implements WebsiteHtmlCollectorStrategy {
 
 
     Element collectedBody;
     Elements collectedLinks;
 
     @Override
-    protected Map<? extends CollectorKey, CollectorValue> extract() {
+    public Map<? extends CollectorKey, CollectorValue> extractFromHtml() {
+
+        if (this.raw() == null) throw new NullPointerException("No raw data found. Try raw(Element raw).");
+        if (this.url() == null) throw new NullPointerException("No url found. Try url(String url).");
+
+        Logger.debug("Start extracting ...");
 
         Map<WebsiteHtmlCollectorKey, CollectorValue> results = new HashMap<>();
 
@@ -47,7 +52,7 @@ public class WebsiteHtmlJsoupCollector extends AbstractCollector<Element>
 
         /* Add extracted Title */
         results.put(WebsiteHtmlCollectorKey.TITLE,
-                    new CollectorStringValue(((Document)raw()).title()));
+                    new CollectorStringValue(((Document)this.raw()).title()));
 
         /* Add extracted Hyperlinks */
         results.put(WebsiteHtmlCollectorKey.LINKS,

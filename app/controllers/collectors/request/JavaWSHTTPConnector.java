@@ -10,7 +10,8 @@ import play.libs.ws.*;
 import play.libs.F.Function;
 import play.libs.F.Promise;
 
- public class JavaWSHTTPConnector implements HTTPConnector<String> {
+ public class JavaWSHTTPConnector extends HTTPConnector<String>
+                                implements HTTPConnectorStrategy<String>{
 
     public String request(final String URL) {
 
