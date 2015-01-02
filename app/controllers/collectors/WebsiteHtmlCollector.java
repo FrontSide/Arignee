@@ -13,7 +13,8 @@ import models.collection.CollectorValue;
 import models.persistency.Hyperlink;
 import play.Logger;
 
-public class WebsiteHtmlCollector<T> extends AbstractCollector<T> {
+public class WebsiteHtmlCollector<T>    extends AbstractCollector<T>
+                                        implements CollectorStrategyContext {
 
     WebsiteHtmlCollectorStrategy strategy;
 

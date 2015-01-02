@@ -33,7 +33,7 @@ public class GoogleTrendsJavaWSCollector extends GoogleTrendsCollector<String>
     }
 
     @Override
-    public Map<CollectorKey, CollectorValue> extract() {
+    public Map<CollectorKey, CollectorValue> extractFromRaw() {
         return null;
     }
 

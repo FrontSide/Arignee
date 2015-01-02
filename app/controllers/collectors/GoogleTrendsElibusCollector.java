@@ -29,7 +29,7 @@ public class GoogleTrendsElibusCollector extends GoogleTrendsCollector<String>
 
 
     @Override
-    public Map<CollectorKey, CollectorValue> extract() {
+    public Map<CollectorKey, CollectorValue> extractFromRaw() {
         throw new UnsupportedOperationException("Not implemented");
     }
 

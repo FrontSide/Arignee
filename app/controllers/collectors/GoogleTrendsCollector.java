@@ -13,23 +13,33 @@ import java.util.List;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
 
-public class GoogleTrendsCollector<T> extends AbstractCollector<T> {
-
-
-    public GoogleTrendsCollector() {}
-        
-    public GoogleTrendsCollector(GoogleTrendsCollectorStrategy strategy) {
-        this.strategy = (GoogleTrendsCollector) strategy;
-    }
+public class GoogleTrendsCollector<T>   extends AbstractCollector<T> 
+                                        implements CollectorStrategyContext {
 
     /**
-     * Stores the concrete Strategy class/object
-     */
-    private GoogleTrendsCollector strategy;
+    * Stores the concrete Strategy class/object
+    */
+    private GoogleTrendsCollectorStrategy strategy;
 
-    //Base URL and paths For Google Trends to fetch components (add "q=" for keyphrase)
-    //private static final String BASEURL = "http://weather.yahooapis.com/forecastrss?p=80020&u=f";
-    protected static final String BASEURL = "http://www.google.com/trends/fetchComponent";
+    public GoogleTrendsCollector() {}
+
+    public GoogleTrendsCollector(GoogleTrendsCollectorStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    private void passData() {
+        ((Collector)this.strategy).raw(this.raw());
+        ((Collector)this.strategy).url(this.url());
+    }
+
+
+    /* Base URL and paths For Google Trends to fetch components
+     * (add "q=" for keyphrase)
+     */
+    //private static final String BASEURL =
+    //"http://weather.yahooapis.com/forecastrss?p=80020&u=f";
+    protected static final String BASEURL =
+                                "http://www.google.com/trends/fetchComponent";
 
     //The CID to fetch the timeseries of a keyword (add with "cid=")
     protected static final String TIMESERIES_CID = "TIMESERIES_GRAPH_0";
@@ -42,21 +52,21 @@ public class GoogleTrendsCollector<T> extends AbstractCollector<T> {
      */
     private String keyphrase;
 
-
     /**
      * Overloads the get Method from the AbstractCollector
      * with a String parameter for the Search/Key-phrase for GoogleTrends
      * @param  kephrase GoogleTrends Key/Search Phrase
      * @return          A Map with all Collected and extracted data
      */
-    public Map<? extends CollectorKey, CollectorValue> get(String kephrase) throws RuntimeException {
+    public Map<? extends CollectorKey, CollectorValue> get(String kephrase)
+                                                    throws RuntimeException {
         this.keyphrase(kephrase);
         this.buildUrl();
         return this.get();
     }
 
-    public Map<? extends CollectorKey, CollectorValue> extract() {
-        return this.strategy.extract();
+    public Map<? extends CollectorKey, CollectorValue> executeExtract() {
+        return this.strategy.extractFromRaw();
     }
 
     /**
