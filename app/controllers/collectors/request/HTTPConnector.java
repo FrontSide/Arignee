@@ -24,7 +24,7 @@ public class HTTPConnector<T> {
      * @return        [description]
      */
     public T executeRequest(final String URL) {
-        HTTPConnector.logger.debug("triggering http request strategy...");
+        HTTPConnector.logger.debug("triggering concrete HTTPConnector strategy...");
         return (T) this.strategy.request(URL);
     }
 

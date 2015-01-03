@@ -10,10 +10,14 @@ import java.util.Map;
 import java.util.List;
 import collectors.enums.CollectorKey;
 import collectors.request.*;
-import play.Logger;
 import models.collection.CollectorValue;
 
+import play.Logger;
+import play.Logger.ALogger;
+
 public abstract class AbstractCollector<T> implements Collector<T> {
+
+    private static final ALogger logger = Logger.of(AbstractCollector.class);
 
     private final HTTPConnector CONNECTOR
                         = HTTPConnectorFactory.getInstance().create();
@@ -29,11 +33,11 @@ public abstract class AbstractCollector<T> implements Collector<T> {
      */
     public Map<? extends CollectorKey, CollectorValue> get() {
 
-        if (raw() == null) {
+        if (this.raw == null) {
             try {
                 this.fetch();
             } catch (RuntimeException e) {
-                Logger.error("Fetching failed");
+                logger.error("Fetching raw data via HTTPConnector failed!");
             }
         }
         return this.initExtract();
@@ -56,11 +60,11 @@ public abstract class AbstractCollector<T> implements Collector<T> {
         T response = null;
 
         try {
-            Logger.debug("Trigger HTTP Connector Request");
+            logger.debug("triggering HTTPConnector request...");
             response = (T) this.CONNECTOR.executeRequest(this.url);
         } catch (ClassCastException e) {
-            Logger.error("Type Missmatch between Object delivered " +
-                            "from HTTPConnector and Collector");
+            logger.error("Type-Missmatch between Object delivered " +
+                            "from HTTPConnector and Collector!");
             return this;
         }
 
@@ -68,7 +72,7 @@ public abstract class AbstractCollector<T> implements Collector<T> {
             throw new RuntimeException("Requesting HTTP Response for URL " +
                                                 this.url + " failed");
 
-        Logger.debug("Response from HTTP Connector received!");
+        logger.debug("response from HTTPConnector received.");
         this.raw(response);
         return this;
     }
@@ -87,12 +91,12 @@ public abstract class AbstractCollector<T> implements Collector<T> {
     }
 
     public T raw() {
-        if (this.raw == null) Logger.error("No raw data found!");
+        if (this.raw == null) logger.error("No raw data in collector found!");
         return this.raw;
     }
 
     public Collector raw(T raw) {
-        if (this.raw() != null)
+        if (this.raw != null)
             throw new IllegalArgumentException("raw data is already available"
                             + "for this collector and cannot be overwritten!");
         this.raw = raw;

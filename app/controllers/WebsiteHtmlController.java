@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import play.mvc.*;
 import play.Logger;
+import play.Logger.ALogger;
 
 import org.json.JSONObject;
 
@@ -39,22 +40,13 @@ import evaluators.EvaluatorFactory;
 
 public class WebsiteHtmlController extends Controller {
 
+    private static final ALogger logger = Logger.of(WebsiteHtmlController.class);
+
     private static final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
                                 WebsiteHtmlCollectorFactory.getInstance();
 
     private static final EvaluatorFactory EVALUATORFACTORY =
                                 EvaluatorFactory.getInstance();
-
-    /**
-      * Triggers a FULL WEBSITE EVALUATION
-      *
-      * Instantiates Collecor and obtains Map with all relevant data from it
-      *
-      * Passes it to the Evaluator and again obtains a Map, this time with the
-      * Evaluation Results
-      *
-      * @returns a Json Object with all infos that are being shown to the client
-      */
 
     /**
      * Full Website Evaluation regarding its HTML content
@@ -66,14 +58,14 @@ public class WebsiteHtmlController extends Controller {
     public static JSONObject evaluate(final String URL) {
 
         // Create Collector and obtain extracted data
-        Logger.debug("Invoke Collector for URL :: \"" + URL + "\"...");
+        logger.debug("invoking collector for URL :: " + URL + " ...");
         collectors.Collector collector =
                     (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
-        Logger.debug("Collected data is :: " + collectedData.toString());
+        logger.debug("collected data :: " + collectedData);
 
         //Create Evaluator, pass data from Collector and obtain eval. results
-        Logger.debug("Create Evaluator and Pass Collected data...");
+        logger.debug("creating evaluator and passing collected data...");
         evaluators.Evaluator evaluator =
                         WebsiteHtmlController.EVALUATORFACTORY.create();
         EvaluationValue evalresult = evaluator.pass(collectedData).get();
@@ -81,7 +73,7 @@ public class WebsiteHtmlController extends Controller {
         //TODO: Temporarily I directly return the result from the evaluator
         //instead of a combines list/map/jsonobject with data from the
         //collector directly (for showing the user additional info e.g. linktext)
-        Logger.debug("json object is :: " + evalresult.toJson());
+        logger.info("json object returned is :: " + evalresult.toJson());
 
         JSONObject evalresultJson = evalresult.toJson();
         WebsiteHtmlController.persistEvaluation(evalresultJson, URL);

@@ -4,6 +4,9 @@ package evaluators.subevaluators;
   * Used by WebsiteHtmlEvaluator
   */
 
+import java.util.List;
+import java.util.ArrayList;
+
 import models.evaluation.EvaluationValue;
 import models.evaluation.EvaluationValueFigure;
 import models.evaluation.EvaluationValueContainer;
@@ -15,14 +18,17 @@ import collectors.AbstractCollector;
 import collectors.WebsiteHtmlCollector;
 import collectors.WebsiteHtmlCollectorFactory;
 import models.persistency.Hyperlink;
+import models.persistency.WebPage;
 import models.collection.CollectorValue;
 
-import java.util.List;
 import play.Logger;
+import play.Logger.ALogger;
 
 public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
-    private final int LINKS_AMOUNT_IDEAL = 17; //assumption
+    private static final ALogger logger = Logger.of(HtmlLinkEvaluator.class);
+
+    private final int LINKS_AMOUNT_IDEAL = 50; //assumption
 
     //WRONG!! Distiction of WHICH page links back is needed !!!!
     private final float BACKLINK_RATIO_IDEAL = 100; //assumption
@@ -71,10 +77,42 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
         //Call concrete Link-Evaluation Methods
         this.result.add(WebsiteHtmlEvaluatorKey.AMOUNT, rateLinkAmount());
-        this.result.add(WebsiteHtmlEvaluatorKey.BACKLINK_RATIO, rateBackLinkRatio());
+        this.result.add(WebsiteHtmlEvaluatorKey.INTERNAL_BACKLINK_RATIO,
+                                    rateBackLinkRatio(getAllInternalLinks()));
+        this.result.add(WebsiteHtmlEvaluatorKey.EXTERNAL_BACKLINK_RATIO,
+                                    rateBackLinkRatio(getAllExternalLinks()));
 
         return this.result;
 
+    }
+
+    private List<Hyperlink> internalLinks;
+    private List<Hyperlink> externalLinks;
+
+    /**
+     * Filters all the Hyperlinks from the full Hyperlink-List
+     * of the source page that can be identified as Domain-Internal-Links and
+     * puts those in the global "internalLinks"-List and the rest in the
+     * "externalLinks"-List
+     */
+    private void seperateInternalFromExternalLinks() {
+        this.internalLinks = new ArrayList<>();
+        this.externalLinks = new ArrayList<>();
+        for (Hyperlink h : this.hyperlinks) {
+            if (AbstractCollector.isInternalUrl(this.url, h.target))
+                    this.internalLinks.add(h);
+            else    this.externalLinks.add(h);
+        }
+    }
+
+    private List<Hyperlink> getAllInternalLinks() {
+        if (this.internalLinks == null) seperateInternalFromExternalLinks();
+        return this.internalLinks;
+    }
+
+    private List<Hyperlink> getAllExternalLinks() {
+        if (this.externalLinks == null) seperateInternalFromExternalLinks();
+        return this.externalLinks;
     }
 
     /**
@@ -84,7 +122,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
       */
     private EvaluationValue rateLinkAmount() {
 
-        Logger.info("Start linkAmount-Rating...");
+        logger.info("starting linkAmount-Rating...");
 
         EvaluationValueContainer linkAmountResults = new EvaluationValueContainer();
 
@@ -113,40 +151,58 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
     }
 
-    /**
-      * Rates the Ratio of the Backlinks from the Pages that are linked to
-      * from the evaluated website (this.url)
-      * @returns : EvaluationResult for the External-Link-Ratio
-      */
-    /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
-    /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
-    private EvaluationValue rateBackLinkRatio() {
 
-        Logger.info("Start backLinkRatio-Rating...");
+    /**
+     * Measures how many of the links in a given list point to a page
+     * which points back to the source-page/url and rates this value
+     *
+     * Also crates (and adds to the Map) a List with all the WebPages
+     * that the source page links to and that have a Link pointing back
+     * (i.e. have a backlink)
+     *
+     * @param  links List of links on the source page that are to be evaluated
+     * @return       Evaluation result as EvaluationValue
+     */
+     /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
+     /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
+    private EvaluationValue rateBackLinkRatio(List<Hyperlink> links) {
+
+        logger.info("starting backLinkRatio-Rating...");
 
         int numOfBacklinks = 0;
+
+        //List with all WebPages that are linked to from the source-Page
+        List<WebPage> pagesLinkedTo = new ArrayList<>();
+
+        //List with all Pages that have a backlink to the source-page
+        List<WebPage> pagesWithBacklinks = new ArrayList<>();
 
         final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
                                 WebsiteHtmlCollectorFactory.getInstance();
 
         //Go through all HREFS on the website to evaluate
-        for (Hyperlink h : this.hyperlinks) {
+        for (Hyperlink h : links) {
 
             String href = h.target;
 
+            logger.info("browsing URL for backlinks :: " + href);
+
             //First check if this link just refers to its own page
-            //skip this iteration if so!
-            if (AbstractCollector.pointsToSameWebpage(this.url, href)) continue;
+            if (AbstractCollector.pointsToSameWebpage(this.url, href)) {
+                logger.info("recursive URL encountered :: " + href);
+                logger.warn("skipping iteration...");
+                continue;
+            }
 
             collectors.Collector collector = COLLECTORFACTORY.create();
 
-            boolean isInternalLink = false;
             /* Check if href is an url-appendix (parameter, path, #)
              * If so, build a complete url with the url of the eval-WebPage */
-            if (AbstractCollector.isUrlAppendix(href)) {
+            if (AbstractCollector.isUrlAppendix(href))
                 href = AbstractCollector.trimToBaseUrl(this.url) + href;
-                isInternalLink = true;
-            } else isInternalLink = AbstractCollector.isInternalUrl(this.url, href);
+
+            WebPage targetWebsite = new WebPage(href);
+            pagesLinkedTo.add(targetWebsite);
 
             List<Hyperlink> targetWebsiteLinks = null;
 
@@ -158,20 +214,32 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
                 if (targetWebsiteLinks == null) continue; //Skip if no links
             } catch (RuntimeException e) {
-                Logger.error("Failed to fetch hrefs for \"" + href + "\"");
-                Logger.warn("skipping iteration...");
-                continue; //We skip the rest of this iteration
+                logger.error("Failed to fetch hrefs for \"" + href + "\"");
+                logger.warn("skipping iteration...");
+                continue;
             }
 
+            targetWebsite.hyperlinks = targetWebsiteLinks;
             int numOfBacklinksBefore = numOfBacklinks;
 
             //Go through all the hrefs on the Link's target Website
             for (Hyperlink twh : targetWebsiteLinks) {
-                if (AbstractCollector.pointsToSameWebpage(this.url, twh.target))
+                if (AbstractCollector.pointsToSameWebpage(this.url, twh.target)) {
+                    logger.info("URL was identified as backlink :: " + twh.target);
                     numOfBacklinks++;
+                }
             }
 
-            Logger.info("The URL \"" + h + "\" has " + (numOfBacklinks-numOfBacklinksBefore) + " backlinks");
+            int currentPageBacklinks = numOfBacklinks - numOfBacklinksBefore;
+
+            //Add webPage to list of webpage with backlinks if has backlinks
+            if (currentPageBacklinks > 0) {
+                pagesWithBacklinks.add(targetWebsite);
+            }
+
+
+            logger.info("The URL \"" + h + "\" has :: "
+                                + currentPageBacklinks + " backlinks");
 
         }
 
@@ -188,6 +256,8 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
                                     new EvaluationValueFigure(BACKLINK_RATIO_IDEAL));
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.DIV,
                                     new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
+        backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL,
+                                    new EvaluationValueFigure(WebPage.getUrls(pagesWithBacklinks)));
 
         Rating backlinkRatioRating;
 

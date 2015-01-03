@@ -20,7 +20,8 @@ public enum WebsiteHtmlEvaluatorKey implements EvaluatorKey {
     /* LEVEL 2 */
     /* Keys for sub-sub-Maps i.e. Sub-Categories */
     AMOUNT,
-    BACKLINK_RATIO,
+    INTERNAL_BACKLINK_RATIO,
+    EXTERNAL_BACKLINK_RATIO,
 
     /* LEVEL 3 */
     /* Keys for values that show actual and ideal figures and the divergence
@@ -30,6 +31,9 @@ public enum WebsiteHtmlEvaluatorKey implements EvaluatorKey {
     DIV,
 
     /* Key for the actual rating-outcome value */
-    RATING
+    RATING,
+
+    /* Key for additional information */
+    ADDITIONAL
 
 }

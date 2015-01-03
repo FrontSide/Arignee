@@ -6,11 +6,18 @@ package models.persistency;
  */
 
 import java.util.List;
+import java.util.ArrayList;
 import play.db.ebean.Model;
 import javax.persistence.*;
+import play.Logger;
+import play.Logger.ALogger;
 
 @Entity
 public class WebPage extends Model {
+
+    public WebPage(String url) {
+        this.url = url;
+    }
 
     public WebPage(String url, EvaluationResult evaluation) {
         this.url = url;
@@ -33,14 +40,26 @@ public class WebPage extends Model {
 
     @Override
     public String toString(){
-        /*TODO*/
-        return "";
+        return this.url;
     }
 
     @Override
     public boolean equals(Object o){
         /*TODO*/
         return false;
+    }
+
+    /**
+     * Returns a List with all the urls from a list of webPages
+     * @param  webPages List of webpage Objects
+     * @return          List of urls from the passed webPage objects
+     */
+    public static List<String> getUrls(List<WebPage> webPages) {
+        List<String> urls = new ArrayList<>();
+        for (WebPage wp : webPages) {
+            urls.add(wp.url);
+        }
+        return urls;
     }
 
 }

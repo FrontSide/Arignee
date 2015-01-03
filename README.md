@@ -18,7 +18,7 @@ Technologies
 License
 =======
 
-[GPU General Public License Version 2](http://www.gnu.org/licenses/gpl-2.0.html) (see LICENSE file)
+[GNU General Public License Version 2](http://www.gnu.org/licenses/gpl-2.0.html) (see LICENSE file)
 
 Here is a quick&easy [Summary](https://tldrlegal.com/license/gnu-general-public-license-v2) of the License
 

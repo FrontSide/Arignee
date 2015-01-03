@@ -15,6 +15,7 @@ import evaluators.enums.EvaluatorKey;
 import evaluators.enums.Rating;
 import org.json.JSONObject;
 import java.lang.UnsupportedOperationException;
+import java.util.List;
 
 public class EvaluationValueFigure implements EvaluationValue {
 
@@ -23,6 +24,7 @@ public class EvaluationValueFigure implements EvaluationValue {
     }
 
     private String valueString;
+    private List<String> valueStringList;
     private Integer valueInt;
     private Float valueFloat;
     private Rating valueRating;
@@ -31,6 +33,7 @@ public class EvaluationValueFigure implements EvaluationValue {
 
         if (o == null) throw new NullPointerException();
         if (o instanceof String) this.valueString = (String) o;
+        else if (o instanceof List) this.valueStringList = (List<String>) o;
         else if (o instanceof Integer) this.valueInt = (Integer) o;
         else if (o instanceof Float) this.valueFloat = (Float) o;
         else if (o instanceof Rating) this.valueRating = (Rating) o;
@@ -40,6 +43,7 @@ public class EvaluationValueFigure implements EvaluationValue {
 
     public Object getValue() {
         if (this.valueString != null) return this.valueString;
+        if (this.valueStringList != null) return this.valueStringList;
         if (this.valueInt != null) return this.valueInt;
         if (this.valueFloat != null) return this.valueFloat;
         if (this.valueRating != null) return this.valueRating;
@@ -47,8 +51,8 @@ public class EvaluationValueFigure implements EvaluationValue {
     }
 
     public void add(EvaluatorKey k, EvaluationValue v){
-        throw new UnsupportedOperationException("The add() method is not " +
-                                            " available for EvaluationFigures");
+        throw new UnsupportedOperationException("The add() method is not "
+                                    + " available for EvaluationValueFigures");
     }
 
     @Override
@@ -58,7 +62,15 @@ public class EvaluationValueFigure implements EvaluationValue {
 
     @Override
     public String toString() {
-        return this.getValue().toString();
+        Object value = this.getValue();
+        if (value instanceof List) {
+            StringBuilder sb = new StringBuilder();
+            for (Object o : (List) value) {
+                sb.append(o.toString());
+            }
+            return sb.toString();
+        }
+        return getValue().toString();
     }
 
 }

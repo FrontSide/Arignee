@@ -85,8 +85,11 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
      */
     private Elements collectHyperlinks() {
 
+        this.collectedLinks = new Elements();
+
         try {
-            this.collectedLinks = ((Document)raw()).getElementsByTag("a");
+            this.collectedLinks.addAll(((Document)raw()).getElementsByTag("a"));
+            this.collectedLinks.addAll(((Document)raw()).getElementsByTag("link"));
         } catch (NullPointerException e) {
             Logger.error("Extracting Hyperlink Elements from \"raw\" failed!");
             Logger.warn("Is the element \"raw\" null?");

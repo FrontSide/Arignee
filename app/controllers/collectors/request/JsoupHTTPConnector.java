@@ -10,50 +10,51 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
 import play.Logger;
+import play.Logger.ALogger;
 
 import java.io.IOException;
 
 public class JsoupHTTPConnector extends HTTPConnector<Element>
                                 implements HTTPConnectorStrategy<Element>{
 
+    private static final ALogger logger = Logger.of(JsoupHTTPConnector.class);
+
     private final int MAX_CONNECTION_ATTEMPTS = 5;
 
     public Element request(final String URL) {
-        Logger.debug("sending http request to " + URL + "...");
+        logger.debug("sending http request to :: " + URL + "...");
         return request(URL, 1);
     }
 
     private Element request(final String URL, int attempts) {
 
         if (attempts++ > MAX_CONNECTION_ATTEMPTS) {
-            Logger.error("MAXIMUM OF ATTEMPTS EXCEEDED!");
+            logger.error("Maximum number of HTTP requests exceeded!");
             return null;
         }
 
-        Logger.debug("Request url :: " + URL);
         Element doc = null;
 
         try {
             doc = Jsoup.connect(URL).get();
         } catch (IOException e) {
-            Logger.error("Error when trying to connect to URL :: " + URL);
+            logger.error("Error encountered when trying to connect to URL :: " + URL);
         } catch (IllegalArgumentException e) {
             /* TODO: Checking if the URL is malformed should happen somewhere
              * else or at least additionally on client side --> real-time feedback */
-            Logger.warn("Malformed URL :: " + URL);
-            Logger.debug("Checking if url starts with \"http://\" or " +
-                                    " \"https://\" and trying variations...");
+            logger.warn("malformed URL encountered :: " + URL);
+            logger.debug("trying variations...");
             if (!URL.startsWith("http://") && !URL.startsWith("https://"))
                 return request("http://" + URL, attempts);
             if (URL.startsWith("http://"))
                 return request("https://" + URL.substring(7), attempts);
             if (URL.startsWith("https://"))
                 return request("https://" + URL.substring(8), attempts);
-            Logger.error("Invalid URL :: " + URL);
+            logger.error("invalid URL encountered :: " + URL);
             return null;
         }
 
-        Logger.debug("Request successfully finished.");
+        logger.debug("HTTP-request successfully finished.");
         return doc;
 
     }
