@@ -30,7 +30,7 @@ function build_html_containers(json) {
     var PROG_CAT_INCREMENT = (100-currentProgress())/NUM_CATEGORIES
     console.log("outerIncrementSize :: " + PROG_CAT_INCREMENT)
 
-    for (var top in json) { // LEVEL 1 - categories
+    for (var top in json) { //loop LEVEL 1 - categories
 
         console.log(" - " + top)
 
@@ -50,7 +50,7 @@ function build_html_containers(json) {
 
         //Panel Heading
         content +=  "<div id='pan_title' class='panel " + panel_type
-                    + "'>" + "<div class='panel-heading'>" + top;
+                    + "'>" + "<div class='panel-heading'>" + Messages(top);
 
         //Panel Heading Overall-Category-Rating Label
         content +=  " <span id='lab_links_amount' class='badge'>" +
@@ -59,18 +59,19 @@ function build_html_containers(json) {
         //Close Panel Heading
         content +=  " </div> "
 
-        for (var med in json[top] ) { //LEVEL 2 - sub-categories
+        for (var med in json[top] ) { //loop LEVEL 2 - sub-categories
             console.log(" -- " + med)
 
             //Increment Progressbar
             incrementProgressbar(PROG_SUBCAT_INCREMENT)
 
             //Panel Body with Sub-Category-/Name
-            content +=  "<div class='panel-body'>" + "<span>" + med + "</span>"
+            content +=  "<div class='panel-body'>"
+                        + "<span class='sub-title'>" + Messages(med) + "</span>"
 
             //Check if the rating value is missing
             if (json[top][med].RATING == null) rating = "NONE"
-            else rating = json[top][med].RATING
+            else rating = json[top][med].RATING //LEVEL 3
 
             label_type = "label-" + getColourType(rating)
 
@@ -79,7 +80,7 @@ function build_html_containers(json) {
                         label_type + "'>" + rating + "</span>" + "<br />"
 
 
-            //Evaluation Infotext
+            //Evaluation Infotext on LEVEL 3
             content +=  "<br /><div class='eval_infotext'>" +
                         "Ideal would be " + json[top][med].IDEAL +
                         ". Your website has " + json[top][med].ACTUAL +
@@ -89,12 +90,15 @@ function build_html_containers(json) {
 
             //Check if additional Information is available and render it in
             //well if so
-            var additional = new Array(json[top][med].ADDITIONAL)
-            console.log("TOP|MED.ADDIDIONAL :: " + additional)
-            if (additional != null) {
-                content += "<br /><div class='well'>"
-                for (var j=0; j<additional.length; j++) {
-                    content += additional[j] + "<br />"
+            var additionals = json[top][med].ADDITIONAL
+            if (additionals != null) {
+                content += "<br /><div class='well additional'>"
+                for (var add in additionals) { //loop LEVEL 3 - additionals
+                    content += "<br /><b>" + add + "</b><br />"
+                    //the value found here could be a json-array
+                    for (var i=0; i< json[top][med].ADDITIONAL[add].length; i++) {
+                        content += json[top][med].ADDITIONAL[add][i] + "<br />"
+                    }
                 }
                 content += "</div>"
             }

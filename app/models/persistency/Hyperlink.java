@@ -8,6 +8,8 @@ package models.persistency;
 
 import play.db.ebean.Model;
 import javax.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Hyperlink extends Model {
@@ -33,6 +35,19 @@ public class Hyperlink extends Model {
     public boolean equals(Object o){
         /*TODO*/
         return false;
+    }
+
+    /**
+    * Returns a List with all the urls/hrefs from a list of hyperlinks
+    * @param  hyperlinks    List of hyperlink Objects
+    * @return               List of urls/hrefs from the passed hyperlink objects
+    */
+    public static List<String> getUrls(List<Hyperlink> hyperlinks) {
+        List<String> urls = new ArrayList<>();
+        for (Hyperlink h : hyperlinks) {
+            urls.add(h.target);
+        }
+        return urls;
     }
 
 }

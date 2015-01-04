@@ -1,0 +1,7 @@
+# i18n - ENGLISH #
+
+# Evaluation result categories (called from html_eval_render.js)
+# Keys taken from controllers.evaluators.enums.WebsiteHtmlEvaluatorKey.java
+AMOUNT=Amount of Links on the Page
+INTERNAL_BACKLINK_RATIO=Domain-Intern Backlink Ratio
+EXTERNAL_BACKLINK_RATIO=Comain-Extern Backlink Ratio

@@ -20,7 +20,8 @@ public class EvaluationValueContainer implements EvaluationValue {
         for (Map.Entry<EvaluatorKey, EvaluationValue> e : this.results.entrySet()) {
             if (e.getValue() instanceof EvaluationValueContainer)
                 json.put(e.getKey().toString(), e.getValue().toJson());
-            else json.put(e.getKey().toString(), e.getValue().toString());
+            else
+                json.put(e.getKey().toString(), ((EvaluationValueFigure) e.getValue()).getValue());
         }
         return json;
     }

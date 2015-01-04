@@ -5,10 +5,12 @@
     background: none;
 }
 
-.jumbotron /*Bootstrap Override*/ {
-    border: solid 1px #DDD; 
-    border-top: none; 
-    box-shadow: 0px 5px 10px -3px #DDF; 
+body > .container > .jumbotron /*Main jumbotron*//*Bootstrap Override*/ {
+    border: solid 1px #DDD;
+    border-top: none;
+    box-shadow: 0px 5px 10px -3px #DDF;
+    padding-top:10px;
+    padding-bottom:20px;
 }
 
 .eval_infotext {
@@ -17,4 +19,14 @@
 
 #eval_res_wrapper, .progress  {
     display: none;
+}
+
+/* Result Rendering */
+div.panel-body > span.sub-title {
+    font-weight: bold;
+}
+
+div.well.additional {
+    font-size: 9px;
+    color: #555;
 }

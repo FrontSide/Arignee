@@ -4,8 +4,14 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+
+# Paths for Ajax/Non-GUI Requests
 GET     /keyphrase/time/:kp         controllers.Application.kwpot(kp: String)
-GET     /eval/                      controllers.Application.htmlfetch(url: String)
+GET     /eval/                      controllers.Application.requestHtmlEvaluation(url: String)
+GET     /ticket/:number             controllers.Application.ticketStatus(number: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+## JS i18n
+GET     /messages.js                controllers.JsMessageGetter.jsMessages()

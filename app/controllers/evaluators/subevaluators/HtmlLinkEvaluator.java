@@ -136,6 +136,12 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
                                     new EvaluationValueFigure(LINKS_AMOUNT_IDEAL));
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.DIV,
                                     new EvaluationValueFigure(linkAmountDiv));
+
+        EvaluationValueContainer additionals = new EvaluationValueContainer();
+        additionals.add(WebsiteHtmlEvaluatorKey.FOUND_URLS,
+                                    new EvaluationValueFigure(Hyperlink.getUrls(this.hyperlinks)));
+        linkAmountResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL, additionals);
+
         Rating linkAmountRating;
 
         if (linkAmountDiv > 200 || linkAmount < 4) linkAmountRating = Rating.POOR;
@@ -256,8 +262,14 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
                                     new EvaluationValueFigure(BACKLINK_RATIO_IDEAL));
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.DIV,
                                     new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
-        backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL,
+
+        /* Add additional info */
+        EvaluationValueContainer additionals = new EvaluationValueContainer();
+
+        additionals.add(WebsiteHtmlEvaluatorKey.FOUND_URLS,
                                     new EvaluationValueFigure(WebPage.getUrls(pagesWithBacklinks)));
+
+        backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL, additionals);
 
         Rating backlinkRatioRating;
 

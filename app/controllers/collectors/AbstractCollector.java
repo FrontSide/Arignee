@@ -128,7 +128,12 @@ public abstract class AbstractCollector<T> implements Collector<T> {
      *             parameter or resource identifier
      */
     public static boolean isUrlAppendix(String s) {
-        return "#?/".contains("" + s.charAt(0));
+        try {
+            return "#?/".contains("" + s.charAt(0));
+        } catch (IndexOutOfBoundsException e) {
+            logger.error("Empty-String encountered in isUrlAppendix()");
+            return true;
+        }
     }
 
     /**

@@ -54,7 +54,7 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
             return null;
         }
 
-        logger.debug("HTTP-request successfully finished.");
+        logger.info("HTTP-request successfully finished :: " + URL);
         return doc;
 
     }

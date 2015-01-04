@@ -14,8 +14,10 @@ package models.evaluation;
 import evaluators.enums.EvaluatorKey;
 import evaluators.enums.Rating;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import java.lang.UnsupportedOperationException;
 import java.util.List;
+import java.util.ArrayList;
 
 public class EvaluationValueFigure implements EvaluationValue {
 
@@ -51,26 +53,21 @@ public class EvaluationValueFigure implements EvaluationValue {
     }
 
     public void add(EvaluatorKey k, EvaluationValue v){
-        throw new UnsupportedOperationException("The add() method is not "
+        throw new UnsupportedOperationException("add() is not"
                                     + " available for EvaluationValueFigures");
     }
 
     @Override
     public JSONObject toJson() {
-        return null;
+        throw new UnsupportedOperationException("toJson() is not"
+                                    + " available for EvaluationValueFigures");
     }
 
     @Override
     public String toString() {
-        Object value = this.getValue();
-        if (value instanceof List) {
-            StringBuilder sb = new StringBuilder();
-            for (Object o : (List) value) {
-                sb.append(o.toString());
-            }
-            return sb.toString();
-        }
         return getValue().toString();
     }
+
+
 
 }

@@ -2,44 +2,76 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-
-import views.html.*;
-
-import java.util.Map;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import play.Logger;
+import play.Logger.ALogger;
 import play.mvc.BodyParser;
 import play.mvc.BodyParser.*;
+import play.libs.F.*;
+import static play.libs.F.Promise.promise;
+
+import java.util.concurrent.Callable;
+import java.util.Map;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.json.JSONObject;
+
+import views.html.*;
+import models.ticketing.Ticket;
 
 public class Application extends Controller {
+
+    private static final ALogger logger = Logger.of(Application.class);
+
+    private static final TicketHandler TICKETHANDLER = TicketHandler.getInstance();
 
     public static Result index() {
         return ok(index.render(null));
     }
 
-    /******
-     ** This method only is here for test purposes
-     ** yes I know this doesn't belong here
-     ** Later, instead of directly rendering the keyword pupularity
-     ** the results are just written in a DB
-     *******/
     public static Result kwpot(String kp) {
         //return ok(index.render(GoogleTrendsController.getKeywordTimePopularity(kp)));
         new GoogleTrendsController().getKeywordTimePopularity(kp);
         return index();
     }
 
-    /******
-     ** This method only is here for test purposes
-     ** yes I know this doesn't belong here
-     ** Later, instead of directly rendering the html content
-     ** the results are just written in a DB
-     **
-     ** Returns a JSON with the results that is rendered by JS
-     *******/
+
     @BodyParser.Of(Json.class)
-    public static Result htmlfetch(String url) {
-        index();
-        return ok(new WebsiteHtmlController().evaluate(url).toString());
+    public static Result requestHtmlEvaluation(String url) {
+        final String URL = url;
+        logger.info("html website evaluation for url requested :: " + URL);
+        logger.info("generating ticket...");
+        final Ticket TICKET = TICKETHANDLER.getNewTicket();
+        logger.info("triggering evaluation for ticket :: " + TICKET.getNumber() + ":: asynchronously");
+
+        //Trigger the evaluation process asynchronously and store the
+        //Promise in the ticket
+        Promise<JSONObject> promiseOfEvaluationResult = Promise.promise(
+            new Function0<JSONObject>() {
+                public JSONObject apply() {
+                    return WebsiteHtmlController.evaluate(URL);
+                }
+            }
+        );
+
+        Promise<Result> promiseOfResult = promiseOfEvaluationResult.map(
+            new Function<JSONObject,Result>() {
+                public Result apply(JSONObject evaluationResult) {
+                    return ok(evaluationResult.toString());
+                }
+            }
+        );
+
+        TICKET.setResponse(promiseOfResult);
+
+        logger.info("returning ticketstatus...");
+        return ticketStatus(TICKET.getNumber());
+    }
+
+
+    @BodyParser.Of(Json.class)
+    public static Result ticketStatus(long ticketNumber) {
+        JSONObject job = new JSONObject();
+        job.put("STATUS", TICKETHANDLER.getStatus(ticketNumber));
+        return ok(job.toString());
     }
 
 }

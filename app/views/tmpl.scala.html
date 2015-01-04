@@ -9,55 +9,56 @@
     <head>
         <title> Project Arignée v0.1-DEV | @title</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        
+
         <!-- CSS -->
-        <link   rel="stylesheet" media="screen" 
-                href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">        
+        <link   rel="stylesheet" media="screen"
+                href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        
+
         <!-- JavaScript -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
-                
+
     </head>
     <body>
-        <div class="container">        
+        <div class="container">
             <div class="jumbotron">
                 <div class="page-header">
-                    <h1>Arignée <small> v0.1-DEV </small> </h1>
+                    <h3>Arignée <small> v0.1-DEV </small> </h3>
                 </div>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="input-group">
                             <span class="input-group-btn">
-                                <button     id="trends_kw_send_btn" 
-                                            class="btn btn-success" 
-                                            type="button" disabled/> GO 
+                                <button     id="trends_kw_send_btn"
+                                            class="btn btn-success"
+                                            type="button" disabled/> GO
                                 </button>
                             </span>
-                            <input  class="form-control" type="text" 
-                                    id="keyphrase" name="keyphrase" 
+                            <input  class="form-control" type="text"
+                                    id="keyphrase" name="keyphrase"
                                     placeholder="Keyword(s)" disabled/>
                         </div><!-- /input-group -->
                     </div><!-- /.col-lg-6 -->
                     <div class="col-lg-6">
                         <div class="input-group">
                             <span class="input-group-btn">
-                                <button     id="url_send_btn" 
-                                            class="btn btn-success" 
-                                            type="button" /> GO 
+                                <button     id="url_send_btn"
+                                            class="btn btn-success"
+                                            type="button" /> GO
                                 </button>
                             </span>
-                            <input  class="form-control" type="text" 
+                            <input  class="form-control" type="text"
                                     id="url" name="url" placeholder="URL" />
                         </div><!-- /input-group -->
                     </div><!-- /.col-lg-6 -->
-                </div>    
-                <hr />                
+                </div>
             </div> <!-- /Jumbotron -->
             @content
         </div> <!-- /Container -->
-    </body>    
+    </body>
+    <!-- JS Messages - i18n for JS -->
+    <script type="text/javascript" src="@routes.JsMessageGetter.jsMessages()"></script>
     <!-- Additional Scripts and StyleSheets -->
     @additional
 </html>

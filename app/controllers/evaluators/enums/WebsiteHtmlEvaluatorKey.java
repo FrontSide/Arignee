@@ -34,6 +34,10 @@ public enum WebsiteHtmlEvaluatorKey implements EvaluatorKey {
     RATING,
 
     /* Key for additional information */
-    ADDITIONAL
+    ADDITIONAL,
+
+    /* LEVEL 4 */
+    /* Keys for additional information to an evaluation value */
+    FOUND_URLS
 
 }
