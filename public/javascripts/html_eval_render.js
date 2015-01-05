@@ -12,9 +12,9 @@ var container_wrapper = $("#eval_res_wrapper")
 /* Takes results from HTTP response and initiates the rendering */
 function html_eval_render(RESULTS) {
 
-    var json = $.parseJSON(RESULTS)
-    console.log("full json received by html_eval_render :: " + json)
-    build_html_containers(json)
+    //var json = $.parseJSON(RESULTS)
+    console.log("full json received by html_eval_render :: " + RESULTS)
+    build_html_containers(RESULTS)
 }
 
 function build_html_containers(json) {

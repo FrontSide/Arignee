@@ -37,6 +37,9 @@ import models.persistency.EvaluationResult;
 import models.persistency.WebPage;
 import daos.WebPageDAO;
 import evaluators.EvaluatorFactory;
+import ticketing.TicketHandler;
+import ticketing.TicketStatus;
+import ticketing.TicketProcessor;
 
 public class WebsiteHtmlController extends Controller {
 
@@ -48,6 +51,9 @@ public class WebsiteHtmlController extends Controller {
     private static final EvaluatorFactory EVALUATORFACTORY =
                                 EvaluatorFactory.getInstance();
 
+    private static final TicketHandler TICKETHANDLER =
+                                TicketHandler.getInstance();
+
     /**
      * Full Website Evaluation regarding its HTML content
      * Triggers Collector and passes collected Data to Evaluator
@@ -55,12 +61,17 @@ public class WebsiteHtmlController extends Controller {
      * @param  String URL of Webpage to be Evaluated
      * @return        JSONObject with the full evaluation Result
      */
-    public static JSONObject evaluate(final String URL) {
+    public static JSONObject evaluate(final String URL, long ticketNumber) {
+
+        WebsiteHtmlController.TICKETHANDLER.updateStatus(ticketNumber, TicketStatus.STARTING);
 
         // Create Collector and obtain extracted data
         logger.debug("invoking collector for URL :: " + URL + " ...");
         collectors.Collector collector =
                     (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
+
+        ((TicketProcessor) collector).setTicketNumber(ticketNumber);
+
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
         logger.debug("collected data :: " + collectedData);
 
@@ -68,6 +79,9 @@ public class WebsiteHtmlController extends Controller {
         logger.debug("creating evaluator and passing collected data...");
         evaluators.Evaluator evaluator =
                         WebsiteHtmlController.EVALUATORFACTORY.create();
+
+        ((TicketProcessor) evaluator).setTicketNumber(ticketNumber);
+
         EvaluationValue evalresult = evaluator.pass(collectedData).get();
 
         //TODO: Temporarily I directly return the result from the evaluator
@@ -77,6 +91,8 @@ public class WebsiteHtmlController extends Controller {
 
         JSONObject evalresultJson = evalresult.toJson();
         WebsiteHtmlController.persistEvaluation(evalresultJson, URL);
+
+        WebsiteHtmlController.TICKETHANDLER.updateStatus(ticketNumber, TicketStatus.EVALUATION_FINISHED);
 
         return evalresultJson;
 

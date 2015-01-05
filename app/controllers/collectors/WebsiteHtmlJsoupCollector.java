@@ -26,6 +26,7 @@ import models.persistency.Hyperlink;
 import models.collection.CollectorValue;
 import models.collection.CollectorStringValue;
 import models.collection.CollectorModelValue;
+import ticketing.TicketStatus;
 
 import play.Logger;
 
@@ -38,6 +39,8 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
 
     @Override
     public Map<? extends CollectorKey, CollectorValue> extractFromHtml() {
+
+        this.updateTicketStatus(TicketStatus.EXTRACTING);
 
         if (this.raw() == null) throw new NullPointerException("No raw data found. Try raw(Element raw).");
         if (this.url() == null) throw new NullPointerException("No url found. Try url(String url).");

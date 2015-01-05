@@ -38,6 +38,7 @@ public class WebsiteHtmlEvaluator extends AbstractEvaluator {
         List<Hyperlink> links = (List<Hyperlink>) collected.get(WebsiteHtmlCollectorKey.LINKS).getList();
         String url = (String) collected.get(WebsiteHtmlCollectorKey.URL).getValue();
         HtmlLinkEvaluator linkEvaluator = new HtmlLinkEvaluator(links, url);
+        linkEvaluator.setTicketNumber(this.ticketNumber);
         this.result.add(WebsiteHtmlEvaluatorKey.LINKS, linkEvaluator.get());
 
         return this.result;

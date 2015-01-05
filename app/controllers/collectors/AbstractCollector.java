@@ -11,11 +11,14 @@ import java.util.List;
 import collectors.enums.CollectorKey;
 import collectors.request.*;
 import models.collection.CollectorValue;
+import ticketing.TicketProcessor;
+import ticketing.TicketHandler;
+import ticketing.TicketStatus;
 
 import play.Logger;
 import play.Logger.ALogger;
 
-public abstract class AbstractCollector<T> implements Collector<T> {
+public abstract class AbstractCollector<T> implements Collector<T>, TicketProcessor {
 
     private static final ALogger logger = Logger.of(AbstractCollector.class);
 
@@ -25,6 +28,25 @@ public abstract class AbstractCollector<T> implements Collector<T> {
     private T raw;
 
     private String url;
+
+    /* ------------ Impl of TicketProcessor ------------ */
+    private final TicketHandler TICKETHANDLER = TicketHandler.getInstance();
+    protected long ticketNumber;
+
+    @Override
+    public void setTicketNumber(long number) {
+        this.ticketNumber = number;
+    }
+
+    @Override
+    public void updateTicketStatus(TicketStatus status) {
+        if (this.ticketNumber  < TICKETHANDLER.MIN) {
+            logger.error("No Ticket-Number found!");
+            return;
+        }
+        this.TICKETHANDLER.updateStatus(this.ticketNumber, status);
+    }
+    /* ------------ ----------------------- ------------ */
 
     /**
      * Invokes the fetch method if "raw" data is not already available
@@ -55,6 +77,8 @@ public abstract class AbstractCollector<T> implements Collector<T> {
      * @return this
      */
     public Collector fetch() throws RuntimeException {
+
+        this.updateTicketStatus(TicketStatus.REQUESTING);
 
         if (this.url == null) throw new RuntimeException("No URL found!");
         T response = null;

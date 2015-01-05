@@ -7,16 +7,17 @@ package evaluators.subevaluators;
 import java.util.List;
 import java.util.ArrayList;
 
-import models.evaluation.EvaluationValue;
-import models.evaluation.EvaluationValueFigure;
-import models.evaluation.EvaluationValueContainer;
-import models.evaluation.EvaluationValueContainer.*;
+import ticketing.TicketStatus;
 import evaluators.AbstractEvaluator;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.enums.Rating;
 import collectors.AbstractCollector;
 import collectors.WebsiteHtmlCollector;
 import collectors.WebsiteHtmlCollectorFactory;
+import models.evaluation.EvaluationValue;
+import models.evaluation.EvaluationValueFigure;
+import models.evaluation.EvaluationValueContainer;
+import models.evaluation.EvaluationValueContainer.*;
 import models.persistency.Hyperlink;
 import models.persistency.WebPage;
 import models.collection.CollectorValue;
@@ -76,9 +77,14 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         this.linkAmount = this.hyperlinks.size();
 
         //Call concrete Link-Evaluation Methods
+        this.updateTicketStatus(TicketStatus.LINK_AMOUNT_EVAL);
         this.result.add(WebsiteHtmlEvaluatorKey.AMOUNT, rateLinkAmount());
+
+        this.updateTicketStatus(TicketStatus.INTERN_BACKLINK_RATIO_EVAL);
         this.result.add(WebsiteHtmlEvaluatorKey.INTERNAL_BACKLINK_RATIO,
                                     rateBackLinkRatio(getAllInternalLinks()));
+
+        this.updateTicketStatus(TicketStatus.EXTERN_BACKLINK_RATIO_EVAL);
         this.result.add(WebsiteHtmlEvaluatorKey.EXTERNAL_BACKLINK_RATIO,
                                     rateBackLinkRatio(getAllExternalLinks()));
 

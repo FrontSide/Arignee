@@ -4,19 +4,44 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import play.Logger;
+import play.Logger.ALogger;
 
 import models.collection.CollectorValue;
 import models.evaluation.EvaluationValue;
 import collectors.enums.CollectorKey;
 import evaluators.enums.EvaluatorKey;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
+import ticketing.TicketProcessor;
+import ticketing.TicketHandler;
+import ticketing.TicketStatus;
 
-public abstract class AbstractEvaluator implements Evaluator {
+public abstract class AbstractEvaluator implements Evaluator, TicketProcessor {
+
+    private static final ALogger logger = Logger.of(AbstractEvaluator.class);
 
     //Map from collector
     private Map<? extends CollectorKey, CollectorValue> collected;
 
     protected EvaluationValue result;
+
+    /* ------------ Impl of TicketProcessor ------------ */
+    private final TicketHandler TICKETHANDLER = TicketHandler.getInstance();
+    protected long ticketNumber;
+
+    @Override
+    public void setTicketNumber(long number) {
+        this.ticketNumber = number;
+    }
+
+    @Override
+    public void updateTicketStatus(TicketStatus status) {
+        if (this.ticketNumber < TICKETHANDLER.MIN) {
+            logger.error("No Ticket-Number found!");
+            return;
+        }
+        this.TICKETHANDLER.updateStatus(this.ticketNumber, status);
+    }
+    /* ------------ ----------------------- ------------ */
 
     public abstract EvaluationValue get();
 
