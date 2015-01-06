@@ -4,6 +4,8 @@ package collectors.request;
  *
  */
 
+import java.net.MalformedURLException;
+
 public interface HTTPConnectorStrategy<T> {
 
     /**
@@ -12,6 +14,6 @@ public interface HTTPConnectorStrategy<T> {
     * @returns relevant segments of HTTP Resonse from Requested url
     *         in form of an Object from Class T
     */
-    public T request(final String URL);
+    public T request(final String URL) throws MalformedURLException;
 
 }

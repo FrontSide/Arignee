@@ -8,6 +8,7 @@ package collectors;
 
 import java.util.Map;
 import java.util.List;
+import java.net.MalformedURLException;
 import collectors.enums.CollectorKey;
 import collectors.request.*;
 import models.collection.CollectorValue;
@@ -41,7 +42,6 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
     @Override
     public void updateTicketStatus(TicketStatus status) {
         if (this.ticketNumber  < TICKETHANDLER.MIN) {
-            logger.error("No Ticket-Number found!");
             return;
         }
         this.TICKETHANDLER.updateStatus(this.ticketNumber, status);
@@ -89,6 +89,9 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
         } catch (ClassCastException e) {
             logger.error("Type-Missmatch between Object delivered " +
                             "from HTTPConnector and Collector!");
+            return this;
+        } catch (MalformedURLException e) {
+            this.updateTicketStatus(TicketStatus.INVALID_URL);
             return this;
         }
 

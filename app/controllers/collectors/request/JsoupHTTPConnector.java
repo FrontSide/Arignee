@@ -13,6 +13,7 @@ import play.Logger;
 import play.Logger.ALogger;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 public class JsoupHTTPConnector extends HTTPConnector<Element>
                                 implements HTTPConnectorStrategy<Element>{
@@ -21,12 +22,12 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
 
     private final int MAX_CONNECTION_ATTEMPTS = 5;
 
-    public Element request(final String URL) {
+    public Element request(final String URL) throws MalformedURLException {
         logger.debug("sending http request to :: " + URL + "...");
         return request(URL, 1);
     }
 
-    private Element request(final String URL, int attempts) {
+    private Element request(final String URL, int attempts) throws MalformedURLException {
 
         if (attempts++ > MAX_CONNECTION_ATTEMPTS) {
             logger.error("Maximum number of HTTP requests exceeded!");
@@ -38,7 +39,7 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
         try {
             doc = Jsoup.connect(URL).get();
         } catch (IOException e) {
-            logger.error("Error encountered when trying to connect to URL :: " + URL);
+            throw new MalformedURLException("Invlid URL :: " + URL);
         } catch (IllegalArgumentException e) {
             /* TODO: Checking if the URL is malformed should happen somewhere
              * else or at least additionally on client side --> real-time feedback */
@@ -50,8 +51,7 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
                 return request("https://" + URL.substring(7), attempts);
             if (URL.startsWith("https://"))
                 return request("https://" + URL.substring(8), attempts);
-            logger.error("invalid URL encountered :: " + URL);
-            return null;
+            throw new MalformedURLException("Invlid URL :: " + URL);
         }
 
         logger.info("HTTP-request successfully finished :: " + URL);

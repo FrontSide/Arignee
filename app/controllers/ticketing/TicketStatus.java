@@ -24,6 +24,10 @@ public enum TicketStatus {
     RESPONSE_AVAILABLE, /* The ServerSide has finished and the data can now be sent to the client */
 
     /* Error Statuses */
+    INVALID_URL, /* The entered URL is invalid */
+    ERROR, /* An error occured and the request cannot be further processes */
+
+    /* No Ticket statses */
     TICKET_DELETED, /* When a ticket no longer exists (but once has) */
     TICKET_NOT_FOUND /* When a ticket does not and has never existed */
 

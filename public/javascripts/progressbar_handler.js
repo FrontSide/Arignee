@@ -8,19 +8,20 @@
 
 var progress_bar_container = $("#progress_bar_container")
 var progress_bar = $("#progress_bar_container > #progress_bar")
-//var progress_bar_label = $("#progress_bar_container > #progress_bar > #progress_bar_label")
 var progress_bar_label = $("#progress_bar_label")
 
 function showProgressbar() {
+    progress_bar_label.css("display", "block")
     progress_bar_container.css("display", "block")
 }
 
 function hideProgressbar() {
     progress_bar_container.css("display", "none")
+    progress_bar_label.css("display", "none")
 }
 
 function setProgressbarLabel(TEXT) {
-    progress_bar_label.html(TEXT)
+    progress_bar_label.html(Messages(TEXT))
 }
 
 function setProgressbarSuccess() {
@@ -61,4 +62,11 @@ function runPseudoProgress(TIME, MAX_VALUE) {
 }
 function abortPseudoProgress(){
     ABORT_PSUDO_PROGESS=true
+}
+
+function resetProgressBar() {
+    abortPseudoProgress()
+    updateProgressbar(0)
+    hideProgressbar()
+    ABORT_PSUDO_PROGESS=false;
 }

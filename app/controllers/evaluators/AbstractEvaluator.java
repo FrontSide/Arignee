@@ -36,7 +36,6 @@ public abstract class AbstractEvaluator implements Evaluator, TicketProcessor {
     @Override
     public void updateTicketStatus(TicketStatus status) {
         if (this.ticketNumber < TICKETHANDLER.MIN) {
-            logger.error("No Ticket-Number found!");
             return;
         }
         this.TICKETHANDLER.updateStatus(this.ticketNumber, status);

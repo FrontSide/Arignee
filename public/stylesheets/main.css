@@ -13,13 +13,19 @@ body > .container > .jumbotron /*Main jumbotron*//*Bootstrap Override*/ {
     padding-bottom:20px;
 }
 
-.eval_infotext {
+#eval_url_title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.eval_infotext, #progress_bar_label {
     font-size: 11px;
 }
 
-#eval_res_wrapper, .progress  {
+#eval_res_wrapper, .progress, #progress_bar_label, #error_container {
     display: none;
 }
+
 
 /* Result Rendering */
 div.panel-body > span.sub-title {

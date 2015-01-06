@@ -6,6 +6,7 @@ package collectors.request;
 
 import play.Logger;
 import play.Logger.ALogger;
+import java.net.MalformedURLException;
 
 public class HTTPConnector<T> {
 
@@ -23,7 +24,7 @@ public class HTTPConnector<T> {
      * @param  String URL to send request to
      * @return        [description]
      */
-    public T executeRequest(final String URL) {
+    public T executeRequest(final String URL) throws MalformedURLException {
         HTTPConnector.logger.debug("triggering concrete HTTPConnector strategy...");
         return (T) this.strategy.request(URL);
     }

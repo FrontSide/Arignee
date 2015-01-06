@@ -7,20 +7,29 @@
 
 @tmpl("Home"){
 
+    <div id="eval_url_title"> <!-- FILLED BY http_req.js --> </div>
+
     <div class="progress" id="progress_bar_container">
         <div    class="progress-bar progress-bar-striped active"
                 id="progress_bar"
                 role="progressbar" aria-valuenow="0" aria-valuemin="0"
                 aria-valuemax="100">
-            <span class="sr-only" id="progress_bar_label_X">XXX</span>
         </div>
     </div>
-    <span id="progress_bar_label">YY</span>
+
+    <span id="progress_bar_label"> <!-- FILLED BY progressbar_handler.js --> </span>
+
+    <div id="error_container" class="alert alert-danger">
+        <!-- FILLED BY errordisplay_handler.js -->
+        <span id="error_message"></span>
+    </div>
 
     <div id="eval_res_wrapper"> <!-- FILLED BY html_eval_render.js --> </div>
 
 }{
     <script src="@routes.Assets.at("javascripts/progressbar_handler.js")" type="text/javascript">
+    </script>
+    <script src="@routes.Assets.at("javascripts/errordisplay_handler.js")" type="text/javascript">
     </script>
     <script src="@routes.Assets.at("javascripts/html_eval_render.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/http_req.js")" type="text/javascript"></script>

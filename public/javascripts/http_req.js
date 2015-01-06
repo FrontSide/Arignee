@@ -12,14 +12,23 @@
 
 var HTML_REQ_BASE_URL = "/eval/?url="
 var TICKET_STATUS_BASE_URL = "/ticket/"
+var EVAL_URL_TITLE_CONTAINER = $("#eval_url_title")
 var ticketnumber
+var urlToEvaluate
 
  /* Sends HTTP Response to Application which triggers HTTP response to Google */
 function html_content_request(entered_url){
 
-    console.log("html_content_request TRIGGERED WITH URL :: " + entered_url)
+    resetEvalRender()
+    resetProgressBar()
+    hideAllErrors()
 
-    var URL = HTML_REQ_BASE_URL + entered_url
+    urlToEvaluate = entered_url
+    EVAL_URL_TITLE_CONTAINER.html("Requesting evaluation for <b>" + urlToEvaluate + "</b>")
+
+    console.log("html_content_request TRIGGERED WITH URL :: " + urlToEvaluate)
+
+    var URL = HTML_REQ_BASE_URL + urlToEvaluate
 
     //Reset ticketnumber
     ticketnumber = -1
@@ -27,7 +36,7 @@ function html_content_request(entered_url){
     //Render ProgressBar
     setProgressbarRequesting()
     updateProgressbar(0)
-    progress_bar_container.css("display", "block")
+    showProgressbar()
     setProgressbarLabel("Requesting evaluation of <b>" + URL + "</b>")
     runPseudoProgress(5000, 50)
 
@@ -51,6 +60,13 @@ function html_eval_processor(response) {
         }
 
         //Update progressbar according to ticket status
+        //Check is error status
+        if (json.STATUS == "INVALID_URL") {
+            abortPseudoProgress()
+            hideProgressbar()
+            displayError("<b>" + urlToEvaluate + "</b> is not a valid URL")
+            return
+        }
         setProgressbarLabel(json.STATUS)
         console.log("TICKET STATUS :: " + json.STATUS)
 
@@ -59,6 +75,7 @@ function html_eval_processor(response) {
     //Trigger html_eval_rendering if ticket has finished and is no more in response
     //i.e. evaluation results are available
     } else {
+        EVAL_URL_TITLE_CONTAINER.html("Evaluation Results for <b>" + urlToEvaluate + "</b>")
         abortPseudoProgress()
         setProgressbarSuccess()
         html_eval_render(json)

@@ -9,11 +9,12 @@ import play.Logger;
 import play.libs.ws.*;
 import play.libs.F.Function;
 import play.libs.F.Promise;
+import java.net.MalformedURLException;
 
  public class JavaWSHTTPConnector extends HTTPConnector<String>
                                 implements HTTPConnectorStrategy<String>{
 
-    public String request(final String URL) {
+    public String request(final String URL) throws MalformedURLException {
 
         Logger.debug("Request url :: " + URL);
 
