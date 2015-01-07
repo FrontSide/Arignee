@@ -7,23 +7,23 @@
  * The render function is triggered from http_req.js (corresponding section)
  */
 
-var container_wrapper = $("#eval_res_wrapper")
+var containerWrapper = $("#eval_res_wrapper")
 
 /* Delete all the content from the container */
 function resetEvalRender() {
-    container_wrapper.html("")
+    containerWrapper.html("")
 }
 
 /* Takes results from HTTP response and initiates the rendering */
-function html_eval_render(RESULTS) {
+function websiteHtmlEvaluationRender(RESULTS) {
     console.log("full json received by html_eval_render :: " + RESULTS)
-    build_html_containers(RESULTS)
+    websiteHtmlEvaluationContainerBuilder(RESULTS)
 }
 
-function build_html_containers(json) {
+function websiteHtmlEvaluationContainerBuilder(json) {
 
     resetEvalRender()
-    container_wrapper.css("display", "block")
+    containerWrapper.css("display", "block")
 
     //HTML-Builder
     var content = "";
@@ -118,7 +118,7 @@ function build_html_containers(json) {
     }
 
     //Display generated Containers in wrapper
-    container_wrapper.html(content);
+    containerWrapper.html(content);
 
     hideProgressbar()
 

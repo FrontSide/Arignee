@@ -5,6 +5,7 @@
 
 create table evaluation_result (
   id                        bigint not null,
+  ticket_number             bigint,
   result                    text,
   constraint pk_evaluation_result primary key (id))
 ;

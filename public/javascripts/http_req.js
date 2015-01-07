@@ -16,9 +16,13 @@ var EVAL_URL_TITLE_CONTAINER = $("#eval_url_title")
 var ticketnumber
 var urlToEvaluate
 
- /* Sends HTTP Response to Application which triggers HTTP response to Google */
-function html_content_request(entered_url){
+ /*
+  * Resets all involved GUI elements and initiates an HTTP request for
+  * HTML Content Evaluation
+  */
+function websiteHtmlEvaluationRequest(entered_url){
 
+    //Reset GUI elements
     resetEvalRender()
     resetProgressBar()
     hideAllErrors()
@@ -28,6 +32,7 @@ function html_content_request(entered_url){
 
     console.log("html_content_request TRIGGERED WITH URL :: " + urlToEvaluate)
 
+    //Assemble URL for HTTP request to Arignee Server
     var URL = HTML_REQ_BASE_URL + urlToEvaluate
 
     //Reset ticketnumber
@@ -45,8 +50,13 @@ function html_content_request(entered_url){
 
 }
 
-function html_eval_processor(response) {
-    /* Request status of ticket until evaluation response is here */
+/*
+ * Checks if the response from the server contains the ticket
+ * or the actual requested data
+ * Initiates to render Data if available
+ */
+function ticketInspector(response) {
+
     var json = $.parseJSON(response)
 
     //Check if valid ticket is in response
@@ -54,7 +64,7 @@ function html_eval_processor(response) {
 
         //If this is the first response with the ticket
         //set global ticketnumber for client
-        if (ticketnumber == -1) {
+        if (ticketnumber <= 0) {
             ticketnumber = json.TICKET
             console.log("TICKET RECEIVED :: " + ticketnumber)
         }
@@ -67,19 +77,24 @@ function html_eval_processor(response) {
             displayError("<b>" + urlToEvaluate + "</b> is not a valid URL")
             return
         }
+
+        //Update Progressbar Label and sends a ticket request to the
+        //Arignee server after 1 sec
         setProgressbarLabel(json.STATUS)
-        console.log("TICKET STATUS :: " + json.STATUS)
 
-        setTimeout(function(){send(TICKET_STATUS_BASE_URL + ticketnumber)}, 1000)
-
-    //Trigger html_eval_rendering if ticket has finished and is no more in response
-    //i.e. evaluation results are available
-    } else {
-        EVAL_URL_TITLE_CONTAINER.html("Evaluation Results for <b>" + urlToEvaluate + "</b>")
-        abortPseudoProgress()
-        setProgressbarSuccess()
-        html_eval_render(json)
+        setTimeout(function(){
+                send(TICKET_STATUS_BASE_URL + ticketnumber)
+        }, 1000)
+        return
     }
+
+    //Trigger html_eval_render if ticket has finished and is no more in response
+    //i.e. evaluation results are available
+    EVAL_URL_TITLE_CONTAINER.html("Evaluation Results for <b>" + urlToEvaluate + "</b>")
+    abortPseudoProgress()
+    setProgressbarSuccess()
+    websiteHtmlEvaluationRender(json)
+
 }
 
 /* ---------------------- */
@@ -89,7 +104,7 @@ function html_eval_processor(response) {
 var TRENDS_TIME_BASE_URL = "/keyphrase/time/"
 
  /* Sends HTTP Response to Application which triggers HTTP response to Google */
-function trends_kw_request(keyphrase){
+function trendsKeywordRequest(keyphrase){
 
     console.log("trends_kw_request TRIGGERED WITH KEYPHRASE :: " + keyphrase)
 
@@ -98,8 +113,6 @@ function trends_kw_request(keyphrase){
 }
 
 /* ------------------------- */
-var progress_bar_container = $("#progress_bar_container")
-
 
 function send(URL) {
     console.log("sending HTTP-Requesting :: " + URL)
@@ -107,7 +120,7 @@ function send(URL) {
     //Send request to server
     $.ajax({ url: URL, type: "GET" }).done(function(data) {
         console.log("setting response :: " + data)
-        html_eval_processor(data);
+        ticketInspector(data);
     })
 
 }
