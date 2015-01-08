@@ -61,7 +61,7 @@ public class WebsiteHtmlController extends Controller {
      * @param  String URL of Webpage to be Evaluated
      * @return        JSONObject with the full evaluation Result
      */
-    public static JSONObject evaluate(final String URL, long ticketNumber) {
+    public static JSONObject evaluate(final String URL, String ticketNumber) {
 
         WebsiteHtmlController.TICKETHANDLER.updateStatus(ticketNumber, TicketStatus.STARTING);
 

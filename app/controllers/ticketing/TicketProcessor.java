@@ -12,7 +12,7 @@ public interface TicketProcessor {
      * Sets the number of the Ticket this object is working on
      * @param number ticket-number
      */
-    void setTicketNumber(long number);
+    void setTicketNumber(String number);
 
     /**
      * Initiates to set the status of the ticket this object is working on

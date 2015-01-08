@@ -42,7 +42,7 @@ public class Application extends Controller {
         final String URL = url;
         logger.info("html website evaluation for url requested :: " + URL);
         logger.info("generating ticket...");
-        final long TICKETNUMBER = Application.TICKETHANDLER.getNewTicket();
+        final String TICKETNUMBER = Application.TICKETHANDLER.getNewTicket();
         logger.info("triggering evaluation for ticket :: " + TICKETNUMBER + " :: asynchronously");
 
         //Trigger the evaluation process asynchronously and store the
@@ -84,7 +84,7 @@ public class Application extends Controller {
      *                      or the actual response if available
      */
     @BodyParser.Of(Json.class)
-    public static Result ticketStatus(long ticketNumber) {
+    public static Result ticketStatus(String ticketNumber) {
         JSONObject job = new JSONObject();
         TicketStatus status = TICKETHANDLER.getStatus(ticketNumber);
 

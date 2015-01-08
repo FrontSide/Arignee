@@ -7,6 +7,7 @@ package models.persistency;
  */
 
 import play.db.ebean.Model;
+import play.data.validation.Constraints.*;
 import javax.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,9 +19,11 @@ public class Hyperlink extends Model {
     public long id;
 
     /* The Webpage this Link is embedded in */
+    @Required
     public WebPage parentPage;
 
     /* The value of this Link's href Attribut */
+    @Required
     public String target;
 
     /* The Link's Text as it is seen on the Webpage */
@@ -29,12 +32,6 @@ public class Hyperlink extends Model {
     @Override
     public String toString(){
         return "<a " + "href=\"" + target + "\"> " + text + " </a>";
-    }
-
-    @Override
-    public boolean equals(Object o){
-        /*TODO*/
-        return false;
     }
 
     /**

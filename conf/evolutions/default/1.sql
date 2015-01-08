@@ -5,8 +5,9 @@
 
 create table evaluation_result (
   id                        bigint not null,
-  ticket_number             bigint,
+  ticket_number             varchar(255),
   result                    text,
+  constraint uq_evaluation_result_ticket_numb unique (ticket_number),
   constraint pk_evaluation_result primary key (id))
 ;
 
@@ -20,6 +21,7 @@ create table hyperlink (
 create table web_page (
   id                        bigint not null,
   url                       varchar(255),
+  constraint uq_web_page_url unique (url),
   constraint pk_web_page primary key (id))
 ;
 

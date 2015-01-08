@@ -18,6 +18,7 @@ package ticketing;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import play.mvc.*;
 import play.libs.F.*;
@@ -40,19 +41,17 @@ public class TicketHandler {
 
     private List<Ticket> tickets = new ArrayList<>();
 
-    public final long MIN = 1000L;
-    private long lastTicketNumber = 999L; //Fist ticket has number 1000
-    public long getNextTicketNumber() {
-        return ++this.lastTicketNumber;
+    public String getNextTicketNumber() {
+        return UUID.randomUUID().toString();
     }
 
-    public long getNewTicket() {
+    public String getNewTicket() {
         Ticket t = new Ticket();
         this.tickets.add(t);
         return t.getNumber();
     }
 
-    public void updateStatus(long number, TicketStatus status) {
+    public void updateStatus(String number, TicketStatus status) {
         logger.info("updating status of ticket :: "
                     + number + " :: to :: " + status);
         this.getTicket(number).setStatus(status);
@@ -62,7 +61,7 @@ public class TicketHandler {
      * Mark a Ticket as finished and ready to have result obtained
      * @param number number of ticket to mark as finished
      */
-    public void markAsFinished(long number) {
+    public void markAsFinished(String number) {
         this.getTicket(number).setFinished();
     }
 
@@ -71,23 +70,19 @@ public class TicketHandler {
      * @param  number   number of the ticket to pass result to
      * @param  result   Promise of the result
      */
-    public void passResponse(long number, Promise<Result> result) {
+    public void passResponse(String number, Promise<Result> result) {
         this.getTicket(number).setResponse(result);
     }
 
-    public TicketStatus getStatus(long number) {
-
+    public TicketStatus getStatus(String number) {
         Ticket t = getTicket(number);
-
-        if (t == null) {
-            if (number <= this.lastTicketNumber) return TicketStatus.TICKET_DELETED;
-            return TicketStatus.TICKET_NOT_FOUND;
-        }
-
-        return t.getStatus();
+        /* TODO: Look for the Ticket Numer in the DB if it's not in the list
+         * It might already have been used
+         */
+        return (t == null) ? TicketStatus.TICKET_NOT_FOUND : t.getStatus();
     }
 
-    public Result getResponse(long number) {
+    public Result getResponse(String number) {
         Ticket t = this.getTicket(number);
         if (!t.isFinished()) throw new TicketNotFinishedException();
         logger.info("trying to obtain stored response from ticket :: " + number);
@@ -100,9 +95,9 @@ public class TicketHandler {
         return r;
     }
 
-    private Ticket getTicket(long number) {
+    private Ticket getTicket(String number) {
         for (Ticket t : this.tickets) {
-            if (t.getNumber() == number) return t;
+            if (number.equals(t.getNumber())) return t;
         }
         return null;
     }

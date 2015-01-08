@@ -26,18 +26,16 @@ public abstract class AbstractEvaluator implements Evaluator, TicketProcessor {
 
     /* ------------ Impl of TicketProcessor ------------ */
     private final TicketHandler TICKETHANDLER = TicketHandler.getInstance();
-    protected long ticketNumber;
+    protected String ticketNumber;
 
     @Override
-    public void setTicketNumber(long number) {
+    public void setTicketNumber(String number) {
         this.ticketNumber = number;
     }
 
     @Override
     public void updateTicketStatus(TicketStatus status) {
-        if (this.ticketNumber < TICKETHANDLER.MIN) {
-            return;
-        }
+        if (this.ticketNumber == null) return;
         this.TICKETHANDLER.updateStatus(this.ticketNumber, status);
     }
     /* ------------ ----------------------- ------------ */

@@ -24,7 +24,8 @@ public class EvaluationResult extends Model {
      * been requested
      */
     @Required
-    public long ticketNumber;
+    @Column(unique=true)
+    public String ticketNumber;
 
     /**
     * Stores the complete Evaluation-Result (K,V-Map)

@@ -7,8 +7,11 @@ package models.persistency;
 
 import java.util.List;
 import java.util.ArrayList;
-import play.db.ebean.Model;
 import javax.persistence.*;
+
+import play.db.ebean.Model;
+import play.data.validation.Constraints.*;
+
 import play.Logger;
 import play.Logger.ALogger;
 
@@ -21,22 +24,27 @@ public class WebPage extends Model {
 
     public WebPage(String url, EvaluationResult evaluation) {
         this.url = url;
-        this.evaluation = evaluation;
+        this.addEvaluationResult(evaluation);
     }
 
     @Id
     public long id;
 
     /* This WebPage's url as fetched */
+    @Column(unique=true)
+    @Required
     public String url;
 
     /* All links of this page*/
     public List<Hyperlink> hyperlinks;
 
-    /* Stores the full Map of Evaluation-Results (incl. Keys)
-    * in String form.
+    /* All evaluation results of this Page
     */
-    public EvaluationResult evaluation;
+    public List<EvaluationResult> evaluations = new ArrayList<>();
+
+    public void addEvaluationResult(EvaluationResult e) {
+        this.evaluations.add(e);
+    }
 
     @Override
     public String toString(){
@@ -45,8 +53,7 @@ public class WebPage extends Model {
 
     @Override
     public boolean equals(Object o){
-        /*TODO*/
-        return false;
+        return this.url.equals(((WebPage)o).url);
     }
 
     /**
