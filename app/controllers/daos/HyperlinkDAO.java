@@ -34,4 +34,9 @@ public class HyperlinkDAO implements DAO<Hyperlink> {
 
     }
 
+    @Override
+    public void update(Hyperlink model) {
+        Ebean.update(model);
+    }
+
 }

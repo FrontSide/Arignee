@@ -20,6 +20,7 @@ public class Hyperlink extends Model {
 
     /* The Webpage this Link is embedded in */
     @Required
+    @ManyToOne
     public WebPage parentPage;
 
     /* The value of this Link's href Attribut */

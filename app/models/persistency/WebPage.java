@@ -20,26 +20,31 @@ public class WebPage extends Model {
 
     public WebPage(String url) {
         this.url = url;
+        this.setId();
     }
 
     public WebPage(String url, EvaluationResult evaluation) {
         this.url = url;
         this.addEvaluationResult(evaluation);
+        this.setId();
     }
 
     @Id
-    public long id;
+    public int id;
+    public void setId() {
+        this.id = this.hashCode();
+    }
 
     /* This WebPage's url as fetched */
     @Column(unique=true)
     @Required
     public String url;
 
-    /* All links of this page*/
+    /* All links of this page */
+    @OneToMany(cascade=CascadeType.PERSIST)
     public List<Hyperlink> hyperlinks;
 
-    /* All evaluation results of this Page
-    */
+    /* All evaluation results of this Page */
     public List<EvaluationResult> evaluations = new ArrayList<>();
 
     public void addEvaluationResult(EvaluationResult e) {
@@ -54,6 +59,13 @@ public class WebPage extends Model {
     @Override
     public boolean equals(Object o){
         return this.url.equals(((WebPage)o).url);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = hash * 31 + this.url.hashCode();
+        return hash;
     }
 
     /**

@@ -36,6 +36,7 @@ import models.evaluation.EvaluationValueContainer.*;
 import models.persistency.EvaluationResult;
 import models.persistency.WebPage;
 import daos.WebPageDAO;
+import daos.EvaluationResultDAO;
 import evaluators.EvaluatorFactory;
 import ticketing.TicketHandler;
 import ticketing.TicketStatus;
@@ -61,16 +62,16 @@ public class WebsiteHtmlController extends Controller {
      * @param  String URL of Webpage to be Evaluated
      * @return        JSONObject with the full evaluation Result
      */
-    public static JSONObject evaluate(final String URL, String ticketNumber) {
+    public static JSONObject evaluate(final String URL, final String TICKETNUMBER) {
 
-        WebsiteHtmlController.TICKETHANDLER.updateStatus(ticketNumber, TicketStatus.STARTING);
+        WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.STARTING);
 
         // Create Collector and obtain extracted data
         logger.debug("invoking collector for URL :: " + URL + " ...");
         collectors.Collector collector =
                     (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
 
-        ((TicketProcessor) collector).setTicketNumber(ticketNumber);
+        ((TicketProcessor) collector).setTicketNumber(TICKETNUMBER);
 
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
         logger.debug("collected data :: " + collectedData);
@@ -80,7 +81,7 @@ public class WebsiteHtmlController extends Controller {
         evaluators.Evaluator evaluator =
                         WebsiteHtmlController.EVALUATORFACTORY.create();
 
-        ((TicketProcessor) evaluator).setTicketNumber(ticketNumber);
+        ((TicketProcessor) evaluator).setTicketNumber(TICKETNUMBER);
 
         EvaluationValue evalresult = evaluator.pass(collectedData).get();
 
@@ -90,31 +91,38 @@ public class WebsiteHtmlController extends Controller {
         logger.info("json object returned is :: " + evalresult.toJson());
 
         JSONObject evalresultJson = evalresult.toJson();
-        WebsiteHtmlController.persistEvaluation(evalresultJson, URL);
+        WebsiteHtmlController.persistEvaluation(evalresultJson, URL, TICKETNUMBER);
 
-        WebsiteHtmlController.TICKETHANDLER.updateStatus(ticketNumber, TicketStatus.EVALUATION_FINISHED);
+        WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.EVALUATION_FINISHED);
 
         return evalresultJson;
 
     }
 
     /**
-     * Records the Evaluation Result in the DB
+     * Records the Evaluation Result in the DB and connects it to the URL
+     * Also persists the URL as WebPage in the DB if not already existing
      * @param  EVALVAL  The result of the evaluation process as JsonObject
      * @param  URL      url of the page that has been evaluated
+     * @param  TICKETNUMBER The tiketnumber this Evaluation has been requested with
      */
-    private static void persistEvaluation(final JSONObject EVALVAL, final String URL) {
+    private static void persistEvaluation(final JSONObject EVALVAL, final String URL, final String TICKETNUMBER) {
 
-        WebPageDAO webpageDAO = new WebPageDAO();
-        EvaluationResult evaluationResult = new EvaluationResult();
+        EvaluationResultDAO evalDAO = new EvaluationResultDAO();
+
+        EvaluationResult evaluationResult = new EvaluationResult(TICKETNUMBER);
         evaluationResult.setResult(EVALVAL);
+        evalDAO.save(evaluationResult);
 
-        webpageDAO.save(new WebPage(URL, evaluationResult));
+        WebPageDAO webPageDAO = new WebPageDAO();
+        WebPage webpage = new WebPage(URL);
+
+        webPageDAO.addEvaluationResult(webpage, evaluationResult);
 
     }
 
-    private static void persistEvaluation(final EvaluationValue EVALVAL, final String URL) {
-        WebsiteHtmlController.persistEvaluation(EVALVAL.toJson(), URL);
+    private static void persistEvaluation(final EvaluationValue EVALVAL, final String URL, final String TICKETNUMBER) {
+        WebsiteHtmlController.persistEvaluation(EVALVAL.toJson(), URL, TICKETNUMBER);
     }
 
 }

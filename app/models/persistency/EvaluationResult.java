@@ -15,6 +15,9 @@ import models.evaluation.EvaluationValue;
 @Entity
 public class EvaluationResult extends Model {
 
+    public EvaluationResult(String ticketNumber) {
+        this.ticketNumber = ticketNumber;
+    }
 
     @Id
     public long id;
@@ -23,8 +26,8 @@ public class EvaluationResult extends Model {
      * Stores the number of the ticket with which this EvaluationResult has
      * been requested
      */
-    @Required
     @Column(unique=true)
+    @Required
     public String ticketNumber;
 
     /**
@@ -40,6 +43,11 @@ public class EvaluationResult extends Model {
 
     public EvaluationValue getResult() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + this.id + " : " + this.ticketNumber + "]";
     }
 
 }

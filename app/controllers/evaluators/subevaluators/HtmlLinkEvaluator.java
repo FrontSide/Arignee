@@ -75,6 +75,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
         this.result = new EvaluationValueContainer();
         this.linkAmount = this.hyperlinks.size();
+        logger.info(this.linkAmount + " :: links found on :: " + this.url);
 
         //Call concrete Link-Evaluation Methods
         this.updateTicketStatus(TicketStatus.LINK_AMOUNT_EVAL);
@@ -83,6 +84,8 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         this.updateTicketStatus(TicketStatus.INTERN_BACKLINK_RATIO_EVAL);
         this.result.add(WebsiteHtmlEvaluatorKey.INTERNAL_BACKLINK_RATIO,
                                     rateBackLinkRatio(getAllInternalLinks()));
+
+        logger.debug("ready for extern-backlink-ratio-evaluation");
 
         this.updateTicketStatus(TicketStatus.EXTERN_BACKLINK_RATIO_EVAL);
         this.result.add(WebsiteHtmlEvaluatorKey.EXTERNAL_BACKLINK_RATIO,
@@ -134,10 +137,10 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
         float linkAmountDiv = AbstractEvaluator.percentualDivergence(
                                     LINKS_AMOUNT_IDEAL,
-                                    Math.abs(LINKS_AMOUNT_IDEAL-linkAmount));
+                                    Math.abs(LINKS_AMOUNT_IDEAL-this.linkAmount));
 
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.ACTUAL,
-                                    new EvaluationValueFigure(linkAmount));
+                                    new EvaluationValueFigure(this.linkAmount));
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.IDEAL,
                                     new EvaluationValueFigure(LINKS_AMOUNT_IDEAL));
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.DIV,
@@ -213,7 +216,9 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
             if (AbstractCollector.isUrlAppendix(href))
                 href = AbstractCollector.trimToBaseUrl(this.url) + href;
 
+            logger.debug("create new WebPage Object with :: " + href);
             WebPage targetWebsite = new WebPage(href);
+            logger.debug("done creating.");
             pagesLinkedTo.add(targetWebsite);
 
             List<Hyperlink> targetWebsiteLinks = null;

@@ -27,4 +27,10 @@ public interface DAO<T> {
      */
     public void remove(T model);
 
+    /**
+     * Updates an existing object in the persistency level with a new object
+     * @param model     object to update
+     */
+    public void update(T model);
+
 }

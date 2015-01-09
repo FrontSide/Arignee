@@ -13,13 +13,14 @@ create table evaluation_result (
 
 create table hyperlink (
   id                        bigint not null,
+  parent_page_id            integer,
   target                    varchar(255),
   text                      varchar(255),
   constraint pk_hyperlink primary key (id))
 ;
 
 create table web_page (
-  id                        bigint not null,
+  id                        integer not null,
   url                       varchar(255),
   constraint uq_web_page_url unique (url),
   constraint pk_web_page primary key (id))
@@ -31,6 +32,8 @@ create sequence hyperlink_seq;
 
 create sequence web_page_seq;
 
+alter table hyperlink add constraint fk_hyperlink_parentPage_1 foreign key (parent_page_id) references web_page (id);
+create index ix_hyperlink_parentPage_1 on hyperlink (parent_page_id);
 
 
 

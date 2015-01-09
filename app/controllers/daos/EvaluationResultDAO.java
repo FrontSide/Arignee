@@ -35,4 +35,9 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
 
     }
 
+    @Override
+    public void update(EvaluationResult model) {
+        Ebean.update(model);
+    }
+
 }

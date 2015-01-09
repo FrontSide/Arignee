@@ -60,7 +60,7 @@ function ticketInspector(response) {
     var json = $.parseJSON(response)
 
     //Check if valid ticket is in response
-    if (json.TICKET > -1) {
+    if (json.TICKET != null) {
 
         //If this is the first response with the ticket
         //set global ticketnumber for client
