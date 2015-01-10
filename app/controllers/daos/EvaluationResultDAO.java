@@ -36,7 +36,7 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
          * and resembles valid UUID */
         if (!ticketNumber.matches("(\\w)*[-](\\w)*[-](\\w)*[-](\\w)*[-](\\w)*")) return false;
 
-        String sql = "select count(ticket_number) as count from evaluation_result where ticket_number LIKE '" + ticketNumber + "'";
+        String sql = "SELECT COUNT(ticket_number) AS count FROM evaluation_result WHERE ticket_number LIKE '" + ticketNumber + "'";
         SqlRow row = Ebean.createSqlQuery(sql).findUnique();
         return row.getInteger("count") == 1;
     }

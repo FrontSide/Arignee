@@ -26,7 +26,7 @@ public class EvaluationResult extends Model {
 
     @Required
     @Formats.DateTime(pattern="dd/MM/yyyy-HH:mm")
-    public Date dueDate = new Date();
+    public Date creDate = new Date();
 
     /**
      * Stores the number of the ticket with which this EvaluationResult has
