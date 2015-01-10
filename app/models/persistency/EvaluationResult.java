@@ -41,8 +41,8 @@ public class EvaluationResult extends Model {
         this.result = result.toString();
     }
 
-    public EvaluationValue getResult() {
-        return null;
+    public String getResult() {
+        return this.result;
     }
 
     @Override

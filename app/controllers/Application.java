@@ -88,12 +88,12 @@ public class Application extends Controller {
         JSONObject job = new JSONObject();
         TicketStatus status = TICKETHANDLER.getStatus(ticketNumber);
 
-        //Get Response if available
+        /* Try to get response stored in ticket */
         if (status.equals(TicketStatus.RESPONSE_AVAILABLE)) {
             try {
                 return TICKETHANDLER.getResponse(ticketNumber);
             } catch (TicketNotFinishedException e) {
-                logger.error("ticketsStatus() failed to get response from ticket :: " + ticketNumber);
+                logger.warn("ticket not finished :: " + ticketNumber);
             }
         }
 

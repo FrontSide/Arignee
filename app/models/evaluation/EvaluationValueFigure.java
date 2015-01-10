@@ -68,6 +68,14 @@ public class EvaluationValueFigure implements EvaluationValue {
         return getValue().toString();
     }
 
+    @Override
+    public EvaluationValue getLightweightValue(List<EvaluatorKey> blankOutKeys) {
+        return this;
+    }
 
+    @Override
+    public EvaluationValue getLightweightValue(EvaluatorKey blankOutKey) {
+        return this;
+    }
 
 }

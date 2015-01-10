@@ -7,6 +7,7 @@ package daos;
 import models.persistency.EvaluationResult;
 import models.persistency.Hyperlink;
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
 import play.db.ebean.*;
 import play.db.ebean.Model.Finder;
 import play.Logger;
@@ -25,6 +26,16 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
         Ebean.save(model);
     }
 
+    public EvaluationResult getByTicketNumber(String ticketNumber) {
+        return this.find.where().eq("ticketNumber", ticketNumber).findUnique();
+    }
+
+    public boolean isResultForTicketAvailable(String ticketNumber) {
+        String sql = "select count(ticket_nmber) as count from evaluation_result";
+        SqlRow row = Ebean.createSqlQuery(sql).findUnique();
+        return row.getInteger("count") == 1;
+    }
+
     @Override
     public EvaluationResult getById(long id) {
         return null;
@@ -37,7 +48,7 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
 
     @Override
     public void update(EvaluationResult model) {
-        Ebean.update(model);
+        throw new UnsupportedOperationException("Evaluation Results may not be changed once persisted!");
     }
 
 }

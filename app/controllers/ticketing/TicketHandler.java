@@ -20,12 +20,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import play.mvc.*;
+import play.mvc.Result;
+import play.mvc.Results;
 import play.libs.F.*;
 import play.Logger;
 import play.Logger.ALogger;
 
+import models.persistency.EvaluationResult;
 import models.ticketing.Ticket;
+import daos.EvaluationResultDAO;
 
 public class TicketHandler {
 
@@ -76,30 +79,42 @@ public class TicketHandler {
 
     public TicketStatus getStatus(String number) {
         Ticket t = getTicket(number);
-        /* TODO: Look for the Ticket Numer in the DB if it's not in the list
-         * It might already have been used
-         */
-        return (t == null) ? TicketStatus.TICKET_NOT_FOUND : t.getStatus();
+        if (t != null) return t.getStatus();
+        boolean inDB = new EvaluationResultDAO().isResultForTicketAvailable(number);
+        return inDB ? TicketStatus.RESPONSE_AVAILABLE : TicketStatus.TICKET_NOT_FOUND;
     }
 
     public Result getResponse(String number) {
         Ticket t = this.getTicket(number);
-        if (!t.isFinished()) throw new TicketNotFinishedException();
-        logger.info("trying to obtain stored response from ticket :: " + number);
-        Result r = t.getResponse().get(30000L);
+        Result r;
+
+        if (t == null) {
+            logger.info("ticket not in list. trying to get result from DB :: " + number);
+            r = Results.ok(this.getResultFromDB(number).getResult());
+        }
+        else if (!t.isFinished()) throw new TicketNotFinishedException();
+        else r = t.getResponse().get(30000L);
+
         if (r == null) {
             logger.error("could not obtain response from ticket!");
             return null;
         }
+
         this.tickets.remove(t);
         return r;
     }
 
     private Ticket getTicket(String number) {
+
         for (Ticket t : this.tickets) {
             if (number.equals(t.getNumber())) return t;
         }
+        
         return null;
+    }
+
+    private EvaluationResult getResultFromDB(String number) {
+        return new EvaluationResultDAO().getByTicketNumber(number);
     }
 
 }

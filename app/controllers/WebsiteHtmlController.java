@@ -64,65 +64,59 @@ public class WebsiteHtmlController extends Controller {
      */
     public static JSONObject evaluate(final String URL, final String TICKETNUMBER) {
 
+        logger.debug("invoking collector for URL :: " + URL + " ...");
         WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.STARTING);
 
-        // Create Collector and obtain extracted data
-        logger.debug("invoking collector for URL :: " + URL + " ...");
+        /* Create Collector and pass ticket-number */
         collectors.Collector collector =
                     (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
-
         ((TicketProcessor) collector).setTicketNumber(TICKETNUMBER);
 
+        /* Fetch extracted data */
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
-        logger.debug("collected data :: " + collectedData);
 
-        //Create Evaluator, pass data from Collector and obtain eval. results
+        /* Assembling WebPage object from Collected data */
+        WebPage webPage = new WebPage((String) collectedData.get(WebsiteHtmlCollectorKey.URL).getValue());
+
+        /* Create Evaluator, pass data from Collector and obtain eval. results */
         logger.debug("creating evaluator and passing collected data...");
         evaluators.Evaluator evaluator =
                         WebsiteHtmlController.EVALUATORFACTORY.create();
-
         ((TicketProcessor) evaluator).setTicketNumber(TICKETNUMBER);
 
-        EvaluationValue evalresult = evaluator.pass(collectedData).get();
+        /* FetchEvaluation Result  */
+        EvaluationValue evalResult = evaluator.pass(collectedData).get();
 
-        //TODO: Temporarily I directly return the result from the evaluator
-        //instead of a combines list/map/jsonobject with data from the
-        //collector directly (for showing the user additional info e.g. linktext)
-        logger.info("json object returned is :: " + evalresult.toJson());
+        /* Persist Evaluation Result associated to WebPage */
+        WebsiteHtmlController.persistEvaluation(evalResult.getLightweightValue(WebsiteHtmlEvaluatorKey.ADDITIONAL), webPage, TICKETNUMBER);
 
-        JSONObject evalresultJson = evalresult.toJson();
-        WebsiteHtmlController.persistEvaluation(evalresultJson, URL, TICKETNUMBER);
+        JSONObject evalResultJson = evalResult.toJson();
+
 
         WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.EVALUATION_FINISHED);
 
-        return evalresultJson;
+        return evalResultJson;
 
     }
 
     /**
      * Records the Evaluation Result in the DB and connects it to the URL
      * Also persists the URL as WebPage in the DB if not already existing
-     * @param  EVALVAL  The result of the evaluation process as JsonObject
-     * @param  URL      url of the page that has been evaluated
+     * @param  EVALVAL      The result of the evaluation process as JsonObject
+     * @param  WEBPAGE      page that has been evaluated
      * @param  TICKETNUMBER The tiketnumber this Evaluation has been requested with
      */
-    private static void persistEvaluation(final JSONObject EVALVAL, final String URL, final String TICKETNUMBER) {
-
-        EvaluationResultDAO evalDAO = new EvaluationResultDAO();
+    private static void persistEvaluation(final JSONObject EVALVAL, final WebPage WEBPAGE, final String TICKETNUMBER) {
 
         EvaluationResult evaluationResult = new EvaluationResult(TICKETNUMBER);
         evaluationResult.setResult(EVALVAL);
-        evalDAO.save(evaluationResult);
 
-        WebPageDAO webPageDAO = new WebPageDAO();
-        WebPage webpage = new WebPage(URL);
-
-        webPageDAO.addEvaluationResult(webpage, evaluationResult);
+        new WebPageDAO().addEvaluationResult(WEBPAGE, evaluationResult);
 
     }
 
-    private static void persistEvaluation(final EvaluationValue EVALVAL, final String URL, final String TICKETNUMBER) {
-        WebsiteHtmlController.persistEvaluation(EVALVAL.toJson(), URL, TICKETNUMBER);
+    private static void persistEvaluation(final EvaluationValue EVALVAL, final WebPage WEBPAGE, final String TICKETNUMBER) {
+        WebsiteHtmlController.persistEvaluation(EVALVAL.toJson(), WEBPAGE, TICKETNUMBER);
     }
 
 }

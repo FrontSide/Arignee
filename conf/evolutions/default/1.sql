@@ -5,6 +5,7 @@
 
 create table evaluation_result (
   id                        bigint not null,
+  web_page_id               integer not null,
   ticket_number             varchar(255),
   result                    text,
   constraint uq_evaluation_result_ticket_numb unique (ticket_number),
@@ -32,8 +33,10 @@ create sequence hyperlink_seq;
 
 create sequence web_page_seq;
 
-alter table hyperlink add constraint fk_hyperlink_parentPage_1 foreign key (parent_page_id) references web_page (id);
-create index ix_hyperlink_parentPage_1 on hyperlink (parent_page_id);
+alter table evaluation_result add constraint fk_evaluation_result_web_page_1 foreign key (web_page_id) references web_page (id);
+create index ix_evaluation_result_web_page_1 on evaluation_result (web_page_id);
+alter table hyperlink add constraint fk_hyperlink_parentPage_2 foreign key (parent_page_id) references web_page (id);
+create index ix_hyperlink_parentPage_2 on hyperlink (parent_page_id);
 
 
 

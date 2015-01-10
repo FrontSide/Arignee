@@ -3,6 +3,8 @@ package models.evaluation;
 import java.util.Map;
 import java.util.Map.*;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import org.json.JSONObject;
 import evaluators.enums.EvaluatorKey;
 
@@ -24,6 +26,23 @@ public class EvaluationValueContainer implements EvaluationValue {
                 json.put(e.getKey().toString(), ((EvaluationValueFigure) e.getValue()).getValue());
         }
         return json;
+    }
+
+    @Override
+    public EvaluationValue getLightweightValue(List<EvaluatorKey> blankOutKeys) {
+        EvaluationValueContainer slim = new EvaluationValueContainer();
+        for (Map.Entry<EvaluatorKey, EvaluationValue> e : this.results.entrySet()) {
+            if (blankOutKeys.contains(e.getKey())) continue;
+            slim.add(e.getKey(), e.getValue().getLightweightValue(blankOutKeys));
+        }
+        return slim;
+    }
+
+    @Override
+    public EvaluationValue getLightweightValue(EvaluatorKey blankOutKey) {
+        List<EvaluatorKey> keys = new ArrayList<>();
+        keys.add(blankOutKey);
+        return getLightweightValue(keys);
     }
 
     @Override

@@ -45,6 +45,7 @@ public class WebPage extends Model {
     public List<Hyperlink> hyperlinks;
 
     /* All evaluation results of this Page */
+    @OneToMany(cascade=CascadeType.PERSIST)
     public List<EvaluationResult> evaluations = new ArrayList<>();
 
     public void addEvaluationResult(EvaluationResult e) {
