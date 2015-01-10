@@ -51,6 +51,10 @@ public class WebPageDAO implements DAO<WebPage> {
         return this.find.where().eq("id", id).findUnique();
     }
 
+    public WebPage getByUrl(String url) {
+        return this.find.where().eq("url", url).findUnique();
+    }
+
     @Override
     public void remove(WebPage model) {
 

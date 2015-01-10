@@ -11,6 +11,7 @@ import static play.libs.F.Promise.promise;
 
 import java.util.concurrent.Callable;
 import java.util.Map;
+import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONObject;
 
@@ -19,6 +20,9 @@ import ticketing.TicketHandler;
 import ticketing.TicketStatus;
 import ticketing.TicketNotFinishedException;
 import models.ticketing.Ticket;
+import models.persistency.WebPage;
+import models.persistency.EvaluationResult;
+import daos.WebPageDAO;
 
 public class Application extends Controller {
 
@@ -72,6 +76,28 @@ public class Application extends Controller {
         return ticketStatus(TICKETNUMBER);
     }
 
+    @BodyParser.Of(Json.class)
+    public static Result requestHtmlEvaluationHistory(final String URL, final String CATEGORY) {
+
+        logger.debug("Get evaluation history for URL :: " + URL + " :: and category :: " + CATEGORY);
+
+        WebPage wp = new WebPageDAO().getByUrl(URL); //LAZYLOADING ???? for evalresults
+        List<EvaluationResult> evaluations = wp.evaluations;
+
+        JSONObject job = new JSONObject();
+
+        for (EvaluationResult er : evaluations) {
+            JSONObject jsonEVAL = new JSONObject(er.result);
+            JSONObject catVal = new JSONObject(jsonEVAL.getString(CATEGORY));
+            String rating = catVal.getString("RATING");
+            String date = er.creDate.toString();
+            logger.debug("Found evaluation result from  :: " + date + " :: " + rating);
+            job.put(date, rating);
+        }
+
+        return ok(job.toString());
+
+    }
 
     /**
      * Requests the Status of a ticket according to its number.

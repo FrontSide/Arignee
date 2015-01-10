@@ -15,7 +15,7 @@ public class EvaluationValueContainer implements EvaluationValue {
     public void add(EvaluatorKey k, EvaluationValue v) {
         this.results.put(k, v);
     }
-
+    
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
