@@ -5,10 +5,12 @@ package models.persistency;
 * Stores a whole EvaluationResult for a Webpage
 */
 
+import java.util.List;
+import java.util.Date;
+import play.data.format.*;
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
 import javax.persistence.*;
-import java.util.List;
 import org.json.JSONObject;
 import models.evaluation.EvaluationValue;
 
@@ -21,6 +23,10 @@ public class EvaluationResult extends Model {
 
     @Id
     public long id;
+
+    @Required
+    @Formats.DateTime(pattern="dd/MM/yyyy-HH:mm")
+    public Date dueDate = new Date();
 
     /**
      * Stores the number of the ticket with which this EvaluationResult has

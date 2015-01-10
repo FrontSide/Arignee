@@ -6,6 +6,7 @@
 create table evaluation_result (
   id                        bigint not null,
   web_page_id               integer not null,
+  due_date                  timestamp,
   ticket_number             varchar(255),
   result                    text,
   constraint uq_evaluation_result_ticket_numb unique (ticket_number),

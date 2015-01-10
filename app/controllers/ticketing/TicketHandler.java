@@ -90,7 +90,9 @@ public class TicketHandler {
 
         if (t == null) {
             logger.info("ticket not in list. trying to get result from DB :: " + number);
-            r = Results.ok(this.getResultFromDB(number).getResult());
+            if (new EvaluationResultDAO().isResultForTicketAvailable(number))
+                r = Results.ok(this.getResultFromDB(number).getResult());
+            else r = null;
         }
         else if (!t.isFinished()) throw new TicketNotFinishedException();
         else r = t.getResponse().get(30000L);
@@ -109,7 +111,7 @@ public class TicketHandler {
         for (Ticket t : this.tickets) {
             if (number.equals(t.getNumber())) return t;
         }
-        
+
         return null;
     }
 
