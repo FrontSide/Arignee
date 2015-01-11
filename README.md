@@ -13,11 +13,9 @@ This Application is Part of my Bachelor Thesis I for the Bachelor of Science in 
 Technologies
 ============
 
-- [Play-Framework 2.3.0](https://www.playframework.com/documentation/2.3.0/Home)
-  A Java Web-Framework
+- [Play-Framework 2.3.0](https://www.playframework.com/documentation/2.3.0/Home) - A Java Web-Framework
 
-- [PostgreSQL](http://www.postgresql.org/)
-  Relational Database
+- [PostgreSQL](http://www.postgresql.org/) - Relational Database
 
 Libraries
 =========
@@ -31,31 +29,21 @@ Arignee depends on some vendor Libraries that are not included in the GIT reposi
 Those libraries are automatically downloaded from a Ivy repository, since they
 are listed in the build.sbt file.
 
-- [Jsoup](http://jsoup.org/) v1.8.1
-
-  Java HTML Parser
+- [Jsoup](http://jsoup.org/) v1.8.1 - Java HTML Parser
 
 - [JSON in Java](http://www.json.org/java/)
 
-- [Play-JSMessages](https://github.com/julienrf/play-jsmessages) v1.6.2
-
-  Send localized Strings (i18n) to client
+- [Play-JSMessages](https://github.com/julienrf/play-jsmessages) v1.6.2 - Send localized Strings (i18n) to client
 
 - [PostgreSQL JDBC Driver](http://jdbc.postgresql.org/) v9.1
 
 **Javacript/CSS:**
 
-- [Chart.js](https://github.com/nnnick/Chart.js) v1.0.1
+- [Chart.js](https://github.com/nnnick/Chart.js) v1.0.1 - **!! Download** chart.js.min **and copy to** /public/javascripts/vendors
 
-  **!! Download** chart.js.min **and copy to** /public/javascripts/vendors
+- [jQuery](http://jquery.com/) v2.1.1 - Added via CDN
 
-- [jQuery](http://jquery.com/) v2.1.1
-
-  Added via CDN
-
-- [Bootstrap](http://getbootstrap.com/) v3.3.1
-
-  Added via CDN
+- [Bootstrap](http://getbootstrap.com/) v3.3.1 - Added via CDN
 
 License
 =======
