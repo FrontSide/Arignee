@@ -43,10 +43,26 @@
                     <div class="col-lg-6">
                         <div class="input-group">
                             <span class="input-group-btn">
+                                <!-- Button with drop-down on the side -->
                                 <button     id="url_send_btn"
                                             class="btn btn-success"
                                             type="button" /> GO
                                 </button>
+                                <button
+                                    class="btn btn-primary dropdown-toggle"
+                                    type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-expanded="true">
+                                    <span class="caret"></span>
+                                </button>
+                                <ul     class="dropdown-menu" role="menu"
+                                        aria-labelledby="dropdownMenu1">
+                                    <li role="presentation">
+                                        <a  role="menuitem" tabindex="-1"
+                                            id="url_history_send_btn"
+                                            href="#">History
+                                        </a>
+                                    </li>
+                                </ul>
                             </span>
                             <input  class="form-control" type="text"
                                     id="url" name="url" placeholder="URL" />

@@ -15,6 +15,7 @@ dist
 /.settings
 /lib
 /javadoc
+vendors
 
 *~
 

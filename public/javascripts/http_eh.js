@@ -8,12 +8,18 @@
 
 $("#trends_kw_send_btn").click(function(){
     console.log("trends_kw_send_btn TRIGGERED");
-    /* from trends_kw.js */
+    /* from http_req.js */
     trendsKeywordRequest($("#keyphrase").val());
 });
 
 $("#url_send_btn").click(function(){
     console.log("url_send_btn TRIGGERED");
-    /* from html_content.js */
+    /* from http_req.js */
     websiteHtmlEvaluationRequest($("#url").val());
+});
+
+$("#url_history_send_btn").click(function(){
+    console.log("url_history_send_btn TRIGGERED");
+    /* from http_req.js */
+    websiteHtmlEvaluationHistoryRequest($("#url").val());
 });

@@ -12,6 +12,7 @@
 
 var HTML_REQ_BASE_URL = "/eval/?url="
 var TICKET_STATUS_BASE_URL = "/ticket/"
+var HTML_HISTORY_REQ_BASE_URL = "/history/?url="
 var EVAL_URL_TITLE_CONTAINER = $("#eval_url_title")
 var ticketnumber
 var urlToEvaluate
@@ -84,7 +85,7 @@ function websiteHtmlEvaluationRequest(URL){
     console.log("html_content_request TRIGGERED WITH URL :: " + urlToEvaluate)
 
     //Assemble URL for HTTP request to Arignee Server
-    var URL = HTML_REQ_BASE_URL + urlToEvaluate
+    var REQ_URL = HTML_REQ_BASE_URL + urlToEvaluate
 
     //Reset ticketnumber
     ticketnumber = -1
@@ -98,7 +99,7 @@ function websiteHtmlEvaluationRequest(URL){
 
     /* trigger http request -- send ticketInspector as callback function
      * for received data */
-    send(URL, ticketInspector)
+    send(REQ_URL, ticketInspector)
 
 }
 
@@ -112,9 +113,25 @@ function websiteHtmlEvaluationRequest(URL){
  * @param {String} EVALUATORKEY Category of which the evaluation-result-history
  *                              for the given URL is to load
  */
-function websiteHtmlEvaluationHistoryRequest(URL, EVALUATORKEY) {
+function websiteHtmlEvaluationHistoryRequest(URL) {
 
-    
+    var REQ_URL = HTML_HISTORY_REQ_BASE_URL + URL;
+
+    //Reset GUI elements
+    resetEvalRender()
+    resetProgressBar()
+    hideAllErrors()
+
+    EVAL_URL_TITLE_CONTAINER.html("Requesting history for <b>" + URL + "</b>...")
+
+    //Render ProgressBar
+    setProgressbarRequesting()
+    updateProgressbar(0)
+    showProgressbar()
+    setProgressbarLabel("Requesting history for <b>" + URL + "</b>...")
+    runPseudoProgress(3000, 50)
+
+    send(REQ_URL, websiteHtmlEvaluationHistoryRender)
 
 }
 

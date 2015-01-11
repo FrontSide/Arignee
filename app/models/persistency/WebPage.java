@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
+import daos.EvaluationResultDAO;
 
 import play.Logger;
 import play.Logger.ALogger;
@@ -50,6 +51,15 @@ public class WebPage extends Model {
 
     public void addEvaluationResult(EvaluationResult e) {
         this.evaluations.add(e);
+    }
+
+    /**
+     * Loads all the Evaluation results for this webpage
+     * using the EvaluationResultDAO (not automatically loadad due to LazyLoad)
+     * @return EvaluationResults for this WebPage
+     */
+    public List <EvaluationResult> getEvaluations() {
+        return new EvaluationResultDAO().getByWebPageId(this.id);
     }
 
     @Override

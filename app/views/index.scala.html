@@ -27,11 +27,15 @@
     <div id="eval_res_wrapper"> <!-- FILLED BY html_eval_render.js --> </div>
 
 }{
-    <script src="@routes.Assets.at("javascripts/progressbar_handler.js")" type="text/javascript">
-    </script>
-    <script src="@routes.Assets.at("javascripts/errordisplay_handler.js")" type="text/javascript">
-    </script>
+    <!-- Venors -->
+    <script src="@routes.Assets.at("javascripts/vendors/chart.min.js")" type="text/javascript"></script>
+
+    <!-- Arignee -->
+    <script src="@routes.Assets.at("javascripts/gui_helper.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/progressbar_handler.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/errordisplay_handler.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/html_eval_render.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/history_render.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/http_req.js")" type="text/javascript"></script>
     <script src="@routes.Assets.at("javascripts/http_eh.js")" type="text/javascript"></script>
 }

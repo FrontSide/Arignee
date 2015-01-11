@@ -91,7 +91,7 @@ public class TicketHandler {
         if (t == null) {
             logger.info("ticket not in list. trying to get result from DB :: " + number);
             if (new EvaluationResultDAO().isResultForTicketAvailable(number))
-                r = Results.ok(this.getResultFromDB(number).getResult());
+                r = Results.ok(this.getResultFromDB(number).getResult().toString());
             else r = null;
         }
         else if (!t.isFinished()) throw new TicketNotFinishedException();

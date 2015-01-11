@@ -47,8 +47,8 @@ public class EvaluationResult extends Model {
         this.result = result.toString();
     }
 
-    public String getResult() {
-        return this.result;
+    public JSONObject getResult() {
+        return new JSONObject(this.result);
     }
 
     @Override

@@ -4,6 +4,7 @@ package daos;
 *
 */
 
+import java.util.List;
 import models.persistency.EvaluationResult;
 import models.persistency.Hyperlink;
 import com.avaje.ebean.Ebean;
@@ -39,6 +40,15 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
         String sql = "SELECT COUNT(ticket_number) AS count FROM evaluation_result WHERE ticket_number LIKE '" + ticketNumber + "'";
         SqlRow row = Ebean.createSqlQuery(sql).findUnique();
         return row.getInteger("count") == 1;
+    }
+
+    /**
+     * Retrains all the Evaluation Results with a matching webPage foreign key
+     * @param  webPageId Id of webpage to fetch eval results for
+     * @return           List of Evaluation Results for webPage
+     */
+    public List<EvaluationResult> getByWebPageId(int webPageId) {
+        return this.find.where().eq("web_page_id", webPageId).findList();
     }
 
     @Override

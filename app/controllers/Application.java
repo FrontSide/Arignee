@@ -77,22 +77,19 @@ public class Application extends Controller {
     }
 
     @BodyParser.Of(Json.class)
-    public static Result requestHtmlEvaluationHistory(final String URL, final String CATEGORY) {
+    public static Result requestHtmlEvaluationHistory(final String URL) {
 
-        logger.debug("Get evaluation history for URL :: " + URL + " :: and category :: " + CATEGORY);
+        logger.info("Get evaluation history for URL :: " + URL);
 
         WebPage wp = new WebPageDAO().getByUrl(URL); //LAZYLOADING ???? for evalresults
-        List<EvaluationResult> evaluations = wp.evaluations;
+        List<EvaluationResult> evaluations = wp.getEvaluations();
 
         JSONObject job = new JSONObject();
 
         for (EvaluationResult er : evaluations) {
-            JSONObject jsonEVAL = new JSONObject(er.result);
-            JSONObject catVal = new JSONObject(jsonEVAL.getString(CATEGORY));
-            String rating = catVal.getString("RATING");
+            JSONObject jsonEVAL = er.getResult();
             String date = er.creDate.toString();
-            logger.debug("Found evaluation result from  :: " + date + " :: " + rating);
-            job.put(date, rating);
+            job.put(date, jsonEVAL);
         }
 
         return ok(job.toString());

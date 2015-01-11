@@ -8,7 +8,7 @@ GET     /                           controllers.Application.index()
 # Paths for Ajax/Non-GUI Requests
 GET     /keyphrase/time/:kp         controllers.Application.kwpot(kp: String)
 GET     /eval/                      controllers.Application.requestHtmlEvaluation(url: String)
-GET     /history/:category/         controllers.Application.requestHtmlEvaluationHistory(url: String, category: String)
+GET     /history/                   controllers.Application.requestHtmlEvaluationHistory(url: String)
 GET     /ticket/:number             controllers.Application.ticketStatus(number: String)
 
 # Map static resources from the /public folder to the /assets URL path
