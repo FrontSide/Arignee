@@ -116,19 +116,3 @@ function websiteHtmlEvaluationContainerBuilder(json) {
     hideProgressbar()
 
 }
-
-/* returns a Bootstrap colour type (success, danger, warning...)
- * or a propritary one (defined in css)
- */
-function getColourType(RATING) {
-
-    switch(RATING) {
-        case "EXCELLENT" :  return "success";
-        case "GOOD" :       return "primary";
-        case "OK" :         return "info";
-        case "TENUOUS" :    return "warning";
-        case "POOR" :       return "danger"
-        default :           return "default"
-    }
-
-}

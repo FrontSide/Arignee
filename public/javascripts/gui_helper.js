@@ -22,9 +22,26 @@
  }
 
  function appendContainerWrapperContent(TO_APPEND) {
-     containerWrapper.html(containerWrapper.html() + TO_APPEND)
+     containerWrapper.append(TO_APPEND)
  }
 
  function setContainerWrapperContent(CONTENT) {
      containerWrapper.html(CONTENT)
+ }
+
+
+ /* returns a Bootstrap colour type (success, danger, warning...)
+ * or a propritary one (defined in css)
+ */
+ function getColourType(RATING) {
+
+     switch(RATING) {
+         case "EXCELLENT" :  return "success";
+         case "GOOD" :       return "primary";
+         case "OK" :         return "info";
+         case "TENUOUS" :    return "warning";
+         case "POOR" :       return "danger"
+         default :           return "default"
+     }
+
  }

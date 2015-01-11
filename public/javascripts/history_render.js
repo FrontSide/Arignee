@@ -6,11 +6,59 @@
  *Renders charts showing the history of evaluation results
  */
 
+function getIntOfRating(RATING) {
+    console.log("converting :: " + RATING + " to INT")
+    switch(RATING) {
+        case "EXCELLENT" :  return 5
+        case "GOOD" :       return 4
+        case "OK" :         return 3
+        case "TENUOUS" :    return 2
+        case "POOR" :       return 1
+        default :           return 0
+    }
+}
+
+function getRatingOfInt(RATING) {
+    console.log("converting :: " + RATING + " to RATING")
+    switch(parseInt(RATING)) {
+        case 5 :  return "EXCELLENT"
+        case 4 :  return "GOOD"
+        case 3 :  return "OK"
+        case 2 :  return "TENUOUS"
+        case 1 :  return "POOR"
+        default : return "NOT AVAILABLE"
+    }
+}
+
+function getColor(COUNTER, ELEMENT) {
+
+    var r
+    var g
+    var b
+    var a
+
+    switch(COUNTER) {
+        case 0 : r=220; g=200; b=200; break;
+        case 1 : r=200; g=220; b=200; break;
+        case 2 : r=200; g=200; b=220; break;
+        case 3 : r=220; g=220; b=200; break;
+        default : r=200; g=220; b=220;
+    }
+
+    switch(ELEMENT) {
+        case "FILL" : a=0.2; break
+        default : a=1
+    }
+
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")"
+
+}
 
  /* Takes results from HTTP response and initiates the rendering */
  function websiteHtmlEvaluationHistoryRender(RESULTS) {
-     console.log("EvaluationHistoryRendering -- full json received by html_eval_render :: " + RESULTS)
-     websiteHtmlEvaluationHistoryBuilder(RESULTS)
+     var json = $.parseJSON(RESULTS)
+     console.log("EvaluationHistoryRendering -- full json received by html_eval_render :: " + json)
+     websiteHtmlEvaluationHistoryBuilder(json)
  }
 
 /**
@@ -22,41 +70,109 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
     resetEvalRender()
     showContainerWrapper()
 
-    var content = ""
+    /* -------------------------------------------------- */
+    /* COLLECTING DATA ---------------------------------- */
+    /* -------------------------------------------------- */
 
-    var data = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-            {
-                label: "My First dataset",
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-                label: "My Second dataset",
-                fillColor: "rgba(151,187,205,0.2)",
-                strokeColor: "rgba(151,187,205,1)",
-                pointColor: "rgba(151,187,205,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(151,187,205,1)",
-                data: [28, 48, 40, 19, 86, 27, 90]
+    var dates = []
+    var datasets = {}
+
+    /* Stores the overall ratings for the WebPage */
+    datasets["OVERALL"] = {}
+    datasets["OVERALL"]["OVERALL"] = []
+
+    for (var date in json) {
+
+        console.log("date found :: " + date)
+
+        dates.push(date)
+        datasets["OVERALL"]["OVERALL"].push(getIntOfRating(json[date].RATING))
+
+        /* Each Category gets one chart */
+        for (var cat in json[date]) {
+
+            /* Create Dataset for Category if not Existing */
+            if (datasets[cat] == null) {
+                console.log("category found :: " + cat)
+                datasets[cat] = {}
+                datasets[cat]["OVERALL"] = []
             }
-        ]
+
+            datasets[cat]["OVERALL"].push(getIntOfRating(json[date][cat].RATING))
+
+            /* Each Sub-Category gets one Line in the chart */
+            for (var subcat in json[date][cat]) {
+
+                /* Create Dataset for Subcategory if not Existing */
+                if (datasets[cat][subcat] == null) {
+                    console.log("sub-category found :: " + subcat)
+                    datasets[cat][subcat] = []
+                }
+
+                datasets[cat][subcat].push(getIntOfRating(json[date][cat][subcat].RATING))
+            }
+        }
+
+    }
+
+    /* -------------------------------------------------- */
+    /* RENDERING GRAPH ---------------------------------- */
+    /* -------------------------------------------------- */
+
+    /* Overwriting the axis of ordinates' (y-axis) labels*/
+    var options = {
+        scaleLabel : "<%= getRatingOfInt(value) %>"
     };
 
-    content += "<canvas id='myChart' width='600' height='300'></canvas>"
+    /* Iterate through datasets */
+    for (graph in datasets) {
 
-    /* render canvas before drawing charts */
-    appendContainerWrapperContent(content)
+        var chartID = "chart" + graph
+        var content = ""
 
-    var ctx = document.getElementById('myChart').getContext("2d");
-    var myLineChart = new Chart(ctx).Line(data);
+        content += "<div id='pan_title' class='panel panel-default'>"
+        + "<div class='panel-heading'>" + Messages(graph) + "</div>"
+        + "<div class='panel-body' id='" + chartID + "container'>"
+        + "<canvas id=" + chartID
+        + " width='600' height='300'></canvas>"
+        + "</div></div>"
+
+        appendContainerWrapperContent(content)
+
+        var lines = []
+
+        var i = 0
+        for (line in datasets[graph]) {
+
+            console.log("GRAPH :: " + graph + " :: LINE :: " + line + " :: DATA :: " + datasets[graph][line])
+
+            var data = {
+                label: line,
+                fillColor: getColor(i, "FILL"),
+                strokeColor: getColor(i, "STROKE"),
+                pointColor: getColor(i, "POINT"),
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: getColor(i, "STROKE"),
+                data: datasets[graph][line]
+            }
+
+            lines.push(data)
+            i++
+        }
+
+        var data = {
+            labels: dates,
+            datasets: lines
+        }
+
+        var ctx = document.getElementById(chartID).getContext("2d");
+        var lineChart = new Chart(ctx).Line(data, options);
+
+        var legend = lineChart.generateLegend();
+        $("#" + chartID + "container").append(legend)
+
+    }
 
     hideProgressbar()
 
