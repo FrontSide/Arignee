@@ -153,12 +153,13 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
      *             parameter or resource identifier
      */
     public static boolean isUrlAppendix(String s) {
-        try {
-            return "#?/".contains("" + s.charAt(0));
-        } catch (IndexOutOfBoundsException e) {
-            logger.error("Empty-String encountered in isUrlAppendix()");
+
+        if (s == null || s.equals("")) {
+            logger.warn("Empty-String encountered in isUrlAppendix()");
             return true;
         }
+
+        return "#?/".contains("" + s.charAt(0));
     }
 
     /**
@@ -183,15 +184,32 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
      * @return  true if both urls point to the same Page
      */
     public static boolean pointsToSameWebpage(String urla, String urlb) {
+
+        logger.debug("pointsToSameWebpage() :: " + urla + " :: " + urlb);
+
+        if (urla == null || urlb == null || urla.equals("") || urlb.equals("")) return false;
         if (urla.equals(urlb)) return true;
+
         urla = AbstractCollector.removeProtocols(urla);
         urlb = AbstractCollector.removeProtocols(urlb);
 
-        int hashtagIndex =  urla.indexOf('#');
-        if (hashtagIndex != -1) urla = urla.substring(0, hashtagIndex);
+        logger.debug("pointsToSameWebpage() no Prot :: " + urla + " :: " + urlb);
 
-        hashtagIndex = urlb.indexOf('#');
-        if (hashtagIndex != -1) urlb = urlb.substring(0, hashtagIndex);
+        if (urla.startsWith("www.")) urla = urla.replaceFirst("www.", "");
+        if (urlb.startsWith("www.")) urlb = urlb.replaceFirst("www.", "");
+
+        logger.debug("pointsToSameWebpage() no www :: " + urla + " :: " + urlb);
+
+        int idx =  urla.indexOf('#');
+        if (idx > 0) urla = urla.substring(0, idx);
+
+        idx = urlb.indexOf('#');
+        if (idx > 0) urlb = urlb.substring(0, idx);
+
+        if(urla.charAt(urla.length()-1) == '/') urla = urla.substring(0, urla.length()-1);
+        if(urlb.charAt(urlb.length()-1) == '/') urlb = urlb.substring(0, urlb.length()-1);
+
+        logger.debug("pointsToSameWebpage() trimmed :: " + urla + " :: " + urlb);
 
         return (urla.equals(urlb) || urla.equals("/") || urlb.equals("/"));
 

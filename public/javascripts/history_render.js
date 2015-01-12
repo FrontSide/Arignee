@@ -3,7 +3,7 @@
 /* Evaluation Result History Renerer */
 
 /*
- *Renders charts showing the history of evaluation results
+ * Renders charts showing the history of evaluation results
  */
 
 function getIntOfRating(RATING) {
@@ -38,11 +38,11 @@ function getColor(COUNTER, ELEMENT) {
     var a
 
     switch(COUNTER) {
-        case 0 : r=220; g=200; b=200; break;
-        case 1 : r=200; g=220; b=200; break;
-        case 2 : r=200; g=200; b=220; break;
-        case 3 : r=220; g=220; b=200; break;
-        default : r=200; g=220; b=220;
+        case 0 : r=220; g=200; b=200; break
+        case 1 : r=200; g=220; b=200; break
+        case 2 : r=200; g=200; b=220; break
+        case 3 : r=220; g=220; b=200; break
+        default : r=200; g=220; b=220
     }
 
     switch(ELEMENT) {
@@ -81,15 +81,20 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
     datasets["OVERALL"] = {}
     datasets["OVERALL"]["OVERALL"] = []
 
-    for (var date in json) {
+    for (var i=0; i<json.length; i++) {
 
-        console.log("date found :: " + date)
+        var kvPair = json[i]
+
+        console.log("kvPair :: " + kvPair)
+
+        var date = Object.keys(kvPair)[0]
+        var eval = kvPair[date]
 
         dates.push(date)
-        datasets["OVERALL"]["OVERALL"].push(getIntOfRating(json[date].RATING))
+        datasets["OVERALL"]["OVERALL"].push(getIntOfRating(eval.RATING))
 
         /* Each Category gets one chart */
-        for (var cat in json[date]) {
+        for (var cat in eval) {
 
             /* Create Dataset for Category if not Existing */
             if (datasets[cat] == null) {
@@ -98,10 +103,10 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
                 datasets[cat]["OVERALL"] = []
             }
 
-            datasets[cat]["OVERALL"].push(getIntOfRating(json[date][cat].RATING))
+            datasets[cat]["OVERALL"].push(getIntOfRating(eval[cat].RATING))
 
             /* Each Sub-Category gets one Line in the chart */
-            for (var subcat in json[date][cat]) {
+            for (var subcat in eval[cat]) {
 
                 /* Create Dataset for Subcategory if not Existing */
                 if (datasets[cat][subcat] == null) {
@@ -109,7 +114,7 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
                     datasets[cat][subcat] = []
                 }
 
-                datasets[cat][subcat].push(getIntOfRating(json[date][cat][subcat].RATING))
+                datasets[cat][subcat].push(getIntOfRating(eval[cat][subcat].RATING))
             }
         }
 
@@ -121,8 +126,17 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
 
     /* Overwriting the axis of ordinates' (y-axis) labels*/
     var options = {
-        scaleLabel : "<%= getRatingOfInt(value) %>"
+        scaleLabel : "<%= getRatingOfInt(value) %>",
+        legendTemplate :
+            "<% for (var i=0; i<datasets.length; i++){%>"
+            +   "<div class=\"graphLegendElement\" style=\"border-color:<%=datasets[i].strokeColor%>\" >"
+            +       "<%if(datasets[i].label){%>"
+            +           "<%=datasets[i].label%>"
+            +       "<%}%>"
+            +   "</div>"
+            + "<%}%>"
     };
+
 
     /* Iterate through datasets */
     for (graph in datasets) {
@@ -133,8 +147,8 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
         content += "<div id='pan_title' class='panel panel-default'>"
         + "<div class='panel-heading'>" + Messages(graph) + "</div>"
         + "<div class='panel-body' id='" + chartID + "container'>"
-        + "<canvas id=" + chartID
-        + " width='600' height='300'></canvas>"
+        + "<canvas class='historyGraph' id=" + chartID
+        + " width='600px' height='300'></canvas>"
         + "</div></div>"
 
         appendContainerWrapperContent(content)
@@ -147,7 +161,7 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
             console.log("GRAPH :: " + graph + " :: LINE :: " + line + " :: DATA :: " + datasets[graph][line])
 
             var data = {
-                label: line,
+                label: Messages(line),
                 fillColor: getColor(i, "FILL"),
                 strokeColor: getColor(i, "STROKE"),
                 pointColor: getColor(i, "POINT"),

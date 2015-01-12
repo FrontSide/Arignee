@@ -7,6 +7,7 @@ package models.persistency;
 
 import java.util.List;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import play.data.format.*;
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
@@ -19,6 +20,7 @@ public class EvaluationResult extends Model {
 
     public EvaluationResult(String ticketNumber) {
         this.ticketNumber = ticketNumber;
+        this.creDate = new Date();
     }
 
     @Id
@@ -26,7 +28,11 @@ public class EvaluationResult extends Model {
 
     @Required
     @Formats.DateTime(pattern="dd/MM/yyyy-HH:mm")
-    public Date creDate = new Date();
+    public Date creDate;
+
+    public String getSimpleCreDate() {
+        return new SimpleDateFormat("dd.MM.yyyy hhaa").format(this.creDate);
+    }
 
     /**
      * Stores the number of the ticket with which this EvaluationResult has

@@ -36,3 +36,20 @@ div.well.additional {
     font-size: 9px;
     color: #555;
 }
+
+canvas.historyGraph {
+    float: left;
+    margin:10px;
+    widht: 100%;
+}
+
+div.graphLegendElement {
+    font-family: Arial;
+    font-weight: bold;
+    margin: 5px;
+    margin-left: 10px;
+    width: 400px;
+    border-left: solid 10px;
+    padding-left: 10px;
+    float: left;
+}

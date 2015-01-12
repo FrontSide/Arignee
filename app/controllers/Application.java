@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import views.html.*;
 import ticketing.TicketHandler;
@@ -84,15 +85,21 @@ public class Application extends Controller {
         WebPage wp = new WebPageDAO().getByUrl(URL); //LAZYLOADING ???? for evalresults
         List<EvaluationResult> evaluations = wp.getEvaluations();
 
-        JSONObject job = new JSONObject();
+        /* Use array to save date/eval pairs due to sorting
+         * --> JSONObject-Keys are not sorted
+         */
+        JSONArray jar = new JSONArray();
 
         for (EvaluationResult er : evaluations) {
+            JSONObject kvPair = new JSONObject();
             JSONObject jsonEVAL = er.getResult();
-            String date = er.creDate.toString();
-            job.put(date, jsonEVAL);
+            String date = er.getSimpleCreDate();
+            logger.info("date of eval is :: " +  date);
+            kvPair.put(date, jsonEVAL);
+            jar.put(kvPair);
         }
 
-        return ok(job.toString());
+        return ok(jar.toString());
 
     }
 
