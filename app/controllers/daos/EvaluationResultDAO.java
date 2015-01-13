@@ -48,7 +48,7 @@ public class EvaluationResultDAO implements DAO<EvaluationResult> {
      * @return           List of Evaluation Results for webPage
      */
     public List<EvaluationResult> getByWebPageId(int webPageId) {
-        List<EvaluationResult> list = this.find.where().eq("web_page_id", webPageId).orderBy("cre_date DESC").findList();
+        List<EvaluationResult> list = this.find.where().eq("web_page_id", webPageId).orderBy("cre_date ASC").findList();
         logger.debug("history list :: " + list);
         return list;
     }

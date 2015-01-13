@@ -16,3 +16,14 @@ EXTERN_BACKLINK_RATIO_EVAL=Rating the ratio of Domain-Extern backlinks...
 EVALUATION_FINISHED=Evaluation process finished.
 RESPONSE_AVAILABLE=Waiting for client to retrain data...
 TICKET_NOT_FOUND=Invalid Request!
+
+# Evaluation Keys
+OVERALL=Overall
+
+# Evaluation Ratings
+EXCELLENT=Excellent
+GOOD=Good
+OK=OK
+TENUOUS=Tenuous
+POOR=Poor
+NOT_AVAILABLE=n/A

@@ -26,7 +26,7 @@ function getRatingOfInt(RATING) {
         case 3 :  return "OK"
         case 2 :  return "TENUOUS"
         case 1 :  return "POOR"
-        default : return "NOT AVAILABLE"
+        default : return "NOT_AVAILABLE"
     }
 }
 
@@ -38,11 +38,11 @@ function getColor(COUNTER, ELEMENT) {
     var a
 
     switch(COUNTER) {
-        case 0 : r=220; g=200; b=200; break
-        case 1 : r=200; g=220; b=200; break
-        case 2 : r=200; g=200; b=220; break
-        case 3 : r=220; g=220; b=200; break
-        default : r=200; g=220; b=220
+        case 0 : r=220; g=100; b=100; break
+        case 1 : r=100; g=220; b=100; break
+        case 2 : r=100; g=100; b=220; break
+        case 3 : r=220; g=220; b=100; break
+        default : r=100; g=220; b=220
     }
 
     switch(ELEMENT) {
@@ -126,7 +126,9 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
 
     /* Overwriting the axis of ordinates' (y-axis) labels*/
     var options = {
-        scaleLabel : "<%= getRatingOfInt(value) %>",
+        scaleLabel : "<%= Messages(getRatingOfInt(value)) %>",
+        responsive : true,
+        multiTooltipTemplate: "<%= Messages(getRatingOfInt(value)) %>",
         legendTemplate :
             "<% for (var i=0; i<datasets.length; i++){%>"
             +   "<div class=\"graphLegendElement\" style=\"border-color:<%=datasets[i].strokeColor%>\" >"
