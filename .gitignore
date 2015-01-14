@@ -17,6 +17,8 @@ dist
 /javadoc
 vendors
 
+quickscript.sh
+
 *~
 
 ##PLAY

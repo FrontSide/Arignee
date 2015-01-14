@@ -10,6 +10,45 @@ Background
 
 This Application is Part of my Bachelor Thesis I for the Bachelor of Science in Computing Degree Programme.
 
+You can get some information on my [Bachelor I Blog](www.dary.info/blog/bac1).
+
+API
+===
+
+Arignee uses a ReST-API witch which Website-evaluations can be triggered and evaluation results can be retained.
+
+I use a ticketing system that takes advantage of the non-blocking I/O of Play!
+Get some more information about that on my Blog!
+
+| You request                |     You get |
+|:---------------------------|------------:|
+| /eval/?url=[website to evaluate] | A ticket-number (immediately) - ( <our evaluation request is queques and silently started on the server as soon as Play! is ready to process it)
+| /ticket/[ticket-number] | Either a ticket-number and the status for this ticket or the evaluation result if it's already available. For the first time after the evaluation result is available, you get some additional information with the results. After that you receive a distilled version without any text.
+| /history/?url=[website to get evaluation history from] | All evaluation results for this URL with the according date when the result was created|
+
+
+Install
+=======
+
+**Build from Source**
+
+If you want to build Arignee from the source on your own machine you need the Play! Framework installed (see Technologies). You should be able to deploy it by simply running the activator script in the root folder.
+
+    ./activator run
+
+However, you need an application.conf file in the /conf folder. (Tip: Try renaming the travis.conf file to application.conf, that might work).
+
+Also you need a Database (I use PostgreSQL).
+
+Last but not least, you might have to download some libraries (see Libraries) that are not automatically downloaded or integrated.
+
+I will give some more detailed instructions on building the project once I'be got a working release.
+
+
+**Running the Compiled Application**
+
+I will upload the compiled application and give installation instructions once I've got a working release.
+
 Technologies
 ============
 

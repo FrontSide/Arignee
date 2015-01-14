@@ -148,9 +148,11 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
 
         content += "<div id='pan_title' class='panel panel-default'>"
         + "<div class='panel-heading'>" + Messages(graph) + "</div>"
-        + "<div class='panel-body' id='" + chartID + "container'>"
+        + "<div class='panel-body'>"
+        + "<div class='chartContainer' id='" + chartID + "container'>"
         + "<canvas class='historyGraph' id=" + chartID
         + " width='600px' height='300'></canvas>"
+        + "</div>"
         + "</div></div>"
 
         appendContainerWrapperContent(content)

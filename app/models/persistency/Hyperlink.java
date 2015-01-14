@@ -23,9 +23,13 @@ public class Hyperlink extends Model {
     @ManyToOne
     public WebPage parentPage;
 
+    /* The WebPage this hyperlink points to
+     * (if it points to a WebPage at all) */
+    public WebPage targetPage
+
     /* The value of this Link's href Attribut */
     @Required
-    public String target;
+    public String href;
 
     /* The Link's Text as it is seen on the Webpage */
     public String text;

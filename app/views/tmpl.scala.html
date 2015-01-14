@@ -14,6 +14,7 @@
         <link   rel="stylesheet" media="screen"
                 href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
         <!-- JavaScript -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
@@ -27,47 +28,42 @@
                     <h3>Arignée <small> v0.1-DEV </small> </h3>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6">
-                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <button     id="trends_kw_send_btn"
-                                            class="btn btn-success"
-                                            type="button" disabled/> GO
-                                </button>
-                            </span>
-                            <input  class="form-control" type="text"
-                                    id="keyphrase" name="keyphrase"
-                                    placeholder="Keyword(s)" disabled/>
-                        </div><!-- /input-group -->
-                    </div><!-- /.col-lg-6 -->
-                    <div class="col-lg-6">
+                    <div class="col-lg-8">
                         <div class="input-group">
                             <span class="input-group-btn">
                                 <!-- Button with drop-down on the side -->
                                 <button     id="url_send_btn"
                                             class="btn btn-success"
-                                            type="button" /> GO
+                                            type="button"
+                                            title="Evaluate Website" />
+                                            <i class="fa fa-graduation-cap"></i>
+                                            Evaluate
                                 </button>
                                 <button
-                                    class="btn btn-primary dropdown-toggle"
-                                    type="button" id="dropdownMenu1"
-                                    data-toggle="dropdown" aria-expanded="true">
-                                    <span class="caret"></span>
+                                    class="btn btn-primary"
+                                    type="button" id="url_history_send_btn"
+                                    alt="Show Evaluation History" >
+                                    <i class="fa fa-line-chart"></i>
                                 </button>
-                                <ul     class="dropdown-menu" role="menu"
-                                        aria-labelledby="dropdownMenu1">
-                                    <li role="presentation">
-                                        <a  role="menuitem" tabindex="-1"
-                                            id="url_history_send_btn"
-                                            href="#">History
-                                        </a>
-                                    </li>
-                                </ul>
                             </span>
                             <input  class="form-control" type="text"
                                     id="url" name="url" placeholder="URL" />
                         </div><!-- /input-group -->
-                    </div><!-- /.col-lg-6 -->
+                    </div><!-- /.col-lg-8 -->
+                    <div class="col-lg-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button id="trends_kw_send_btn"
+                                        class="btn btn-success"
+                                        alt="Analyse Keyword"
+                                        type="button" disabled/> GO
+                            </button>
+                        </span>
+                        <input  class="form-control" type="text"
+                        id="keyphrase" name="keyphrase"
+                        placeholder="Keyword(s)" disabled/>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-4 -->
                 </div>
             </div> <!-- /Jumbotron -->
             @content
