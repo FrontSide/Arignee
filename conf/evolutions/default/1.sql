@@ -16,7 +16,7 @@ create table evaluation_result (
 create table hyperlink (
   id                        bigint not null,
   parent_page_id            integer,
-  target                    varchar(255),
+  href                      varchar(255),
   text                      varchar(255),
   constraint pk_hyperlink primary key (id))
 ;

@@ -42,7 +42,7 @@ public class WebPage extends Model {
     public String url;
 
     /* All links of this page */
-    @OneToMany(cascade=CascadeType.PERSIST)
+    @OneToMany(cascade=CascadeType.PERSIST, mappedBy="parentPage")
     public List<Hyperlink> hyperlinks;
 
     /* All evaluation results of this Page */

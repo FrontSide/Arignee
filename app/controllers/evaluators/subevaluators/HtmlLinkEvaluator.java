@@ -108,7 +108,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         this.internalLinks = new ArrayList<>();
         this.externalLinks = new ArrayList<>();
         for (Hyperlink h : this.hyperlinks) {
-            if (AbstractCollector.isInternalUrl(this.url, h.target))
+            if (AbstractCollector.isInternalUrl(this.url, h.href))
                     this.internalLinks.add(h);
             else    this.externalLinks.add(h);
         }
@@ -198,7 +198,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         //Go through all HREFS on the website to evaluate
         for (Hyperlink h : links) {
 
-            String href = h.target;
+            String href = h.href;
 
             logger.info("browsing URL for backlinks :: " + href);
 
@@ -241,8 +241,8 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
             //Go through all the hrefs on the Link's target Website
             for (Hyperlink twh : targetWebsiteLinks) {
-                if (AbstractCollector.pointsToSameWebpage(this.url, twh.target)) {
-                    logger.info("URL was identified as backlink :: " + twh.target);
+                if (AbstractCollector.pointsToSameWebpage(this.url, twh.href)) {
+                    logger.info("URL was identified as backlink :: " + twh.href);
                     numOfBacklinks++;
                 }
             }

@@ -25,7 +25,7 @@ public class Hyperlink extends Model {
 
     /* The WebPage this hyperlink points to
      * (if it points to a WebPage at all) */
-    public WebPage targetPage
+    public WebPage targetPage;
 
     /* The value of this Link's href Attribut */
     @Required
@@ -36,7 +36,7 @@ public class Hyperlink extends Model {
 
     @Override
     public String toString(){
-        return "<a " + "href=\"" + target + "\"> " + text + " </a>";
+        return "<a " + "href=\"" + href + "\"> " + text + " </a>";
     }
 
     /**
@@ -47,7 +47,7 @@ public class Hyperlink extends Model {
     public static List<String> getUrls(List<Hyperlink> hyperlinks) {
         List<String> urls = new ArrayList<>();
         for (Hyperlink h : hyperlinks) {
-            urls.add(h.target);
+            urls.add(h.href);
         }
         return urls;
     }

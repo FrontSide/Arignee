@@ -22,9 +22,10 @@ Get some more information about that on my Blog!
 
 | You request                |     You get |
 |:---------------------------|------------:|
-| /eval/?url=[website to evaluate] | A ticket-number (immediately) - ( <our evaluation request is queques and silently started on the server as soon as Play! is ready to process it)
-| /ticket/[ticket-number] | Either a ticket-number and the status for this ticket or the evaluation result if it's already available. For the first time after the evaluation result is available, you get some additional information with the results. After that you receive a distilled version without any text.
-| /history/?url=[website to get evaluation history from] | All evaluation results for this URL with the according date when the result was created|
+| **/eval/?url=[website to evaluate]** | A ticket-number. Your evaluation request is queued and asynchronously started on the server as soon as Play! is ready to process it.
+| **/ticket/[ticket-number]** | Either a ticket-number and the status for this ticket or the evaluation result if it's already available.*
+| **/history/?url=[website to get evaluation history from]** | All evaluation results for this URL with the according date when the result was created|
+*For the first time after the evaluation result is available, you get some additional information with the results. After that you receive a distilled version without any text.
 
 
 Install

@@ -112,7 +112,7 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
             Element linkElement = it.next();
             Hyperlink h = new Hyperlink();
             h.text = linkElement.text();
-            h.target = linkElement.attr("href");
+            h.href = linkElement.attr("href");
             hyperlinks.add(h);
         }
 
