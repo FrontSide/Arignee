@@ -178,40 +178,44 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
     }
 
     /**
-     * Checks if two URLs are the same i.e. directing to the same Page
-     * @param   urla
-     * @param   urlb
-     * @return  true if both urls point to the same Page
+     * Checks if a Link links to its parent-Page
+     * (i.e. the page where it is displayed on
+     * @param   parentPageUrl   The Url of the page the link occurs on
+     * @param   linkHref        The Url the hyperlink links to
+     * @return  true if the link (linkHref) points to the paren Page(-Url)
      */
-    public static boolean pointsToSameWebpage(String urla, String urlb) {
+    public static boolean isARecursiveLink(String parentPageUrl, String linkHref) {
 
-        logger.debug("pointsToSameWebpage() :: " + urla + " :: " + urlb);
+        linkHref = linkHref.trim();
 
-        if (urla == null || urlb == null || urla.equals("") || urlb.equals("")) return false;
-        if (urla.equals(urlb)) return true;
+        logger.debug("isARecursiveLink() :: " + parentPageUrl + " :: " + linkHref);
 
-        urla = AbstractCollector.removeProtocols(urla);
-        urlb = AbstractCollector.removeProtocols(urlb);
+        if (linkHref == null || linkHref.equals("")) return true;
+        if (parentPageUrl.equals(linkHref)) return true;
+        if (AbstractCollector.isUrlAppendix(linkHref) &&
+           (linkHref.equals("/") || linkHref.matches("[/]?[#][\\w]*"))) return true;
 
-        logger.debug("pointsToSameWebpage() no Prot :: " + urla + " :: " + urlb);
+        parentPageUrl = AbstractCollector.removeProtocols(parentPageUrl);
+        linkHref = AbstractCollector.removeProtocols(linkHref);
 
-        if (urla.startsWith("www.")) urla = urla.replaceFirst("www.", "");
-        if (urlb.startsWith("www.")) urlb = urlb.replaceFirst("www.", "");
+        logger.debug("isARecursiveLink() no Prot :: " + parentPageUrl + " :: " + linkHref);
 
-        logger.debug("pointsToSameWebpage() no www :: " + urla + " :: " + urlb);
+        if (parentPageUrl.startsWith("www.")) parentPageUrl = parentPageUrl.replaceFirst("www.", "");
+        if (linkHref.startsWith("www.")) linkHref = linkHref.replaceFirst("www.", "");
 
-        int idx =  urla.indexOf('#');
-        if (idx > 0) urla = urla.substring(0, idx);
+        logger.debug("isARecursiveLink() no www :: " + parentPageUrl + " :: " + linkHref);
 
-        idx = urlb.indexOf('#');
-        if (idx > 0) urlb = urlb.substring(0, idx);
+        //Remove Resource Identifier from both parentSideUrl and LinkHref
+        int idx =  parentPageUrl.indexOf('#');
+        if (idx > 0) parentPageUrl = parentPageUrl.substring(0, idx);
 
-        if(urla.charAt(urla.length()-1) == '/') urla = urla.substring(0, urla.length()-1);
-        if(urlb.charAt(urlb.length()-1) == '/') urlb = urlb.substring(0, urlb.length()-1);
+        idx = linkHref.indexOf('#');
+        if (idx > 0) linkHref = linkHref.substring(0, idx);
+        if(linkHref.charAt(linkHref.length()-1) == '/') linkHref = linkHref.substring(0, linkHref.length()-1);
 
-        logger.debug("pointsToSameWebpage() trimmed :: " + urla + " :: " + urlb);
+        logger.debug("isARecursiveLink() trimmed :: " + parentPageUrl + " :: " + linkHref);
 
-        return (urla.equals(urlb) || urla.equals("/") || urlb.equals("/"));
+        return (parentPageUrl.equals(linkHref) || linkHref.equals("/"));
 
     }
 

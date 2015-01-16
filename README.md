@@ -17,15 +17,54 @@ API
 
 Arignee uses a ReST-API witch which Website-evaluations can be triggered and evaluation results can be retained.
 
+**All responses from the API are in JSON Objects/Arrays**
+
 I use a ticketing system that takes advantage of the non-blocking I/O of Play!
 Get some more information about that on my Blog!
 
 | You request                |     You get |
 |:---------------------------|------------:|
-| **/eval/?url=[website to evaluate]** | A ticket-number. Your evaluation request is queued and asynchronously started on the server as soon as Play! is ready to process it.
-| **/ticket/[ticket-number]** | Either a ticket-number and the status for this ticket or the evaluation result if it's already available.*
-| **/history/?url=[website to get evaluation history from]** | All evaluation results for this URL with the according date when the result was created|
+| `/eval/?url=[www.xyz.com]` | A ticket-number. Your evaluation request is queued and asynchronously started on the server as soon as Play! is ready to process it.
+| `/ticket/[ticket-number]` | Either a ticket-number and the status for this ticket or the evaluation result if it's already available.*
+| `/history/?url=[www.xyz.com]` | All evaluation results for this URL with the according date when the result was created|
 *For the first time after the evaluation result is available, you get some additional information with the results. After that you receive a distilled version without any text.
+
+**Example**
+
+Let's say you want to evaluate the website **www.dary.info** by using Arignee's API whereas Arignee is running on your local machine on Port 9000 (default for Play applications).
+
+- Triggering the evaluation with
+
+
+    localhost:9000/eval/?url=www.dary.info
+
+The response will be something like:
+
+    {TICKET:"7dc53df5-703e-49b3-8670-b1c468f47f1f", STATUS: "QUEUING"}
+
+- Requesting the Ticket-Status
+
+
+    localhost:9000/ticket/7dc53df5-703e-49b3-8670-b1c468f47f1f
+
+The response will be something like:
+
+    {TICKET:"7dc53df5-703e-49b3-8670-b1c468f47f1f", STATUS: "EVAL_LINK_AMOUNT"}
+
+This means that the request is being processed and the evaluation is happening at the moment. Some time later by again requesting `/ticket/[ticket-number]` the full evaluation is being returned as a json object which has a form similar  to:
+
+    - RATING : GOOD
+    - LINK
+    -- RATING : EXCELLENT
+    -- AMOUNT
+    --- RATING : GOOD
+    --- IDEAL : 123
+    --- ACTUAL : 132
+    -- EXTERNAL_BAKLINKS
+    --- RATING : EXCELLENT
+    .... etc. ....
+
+
 
 
 Install

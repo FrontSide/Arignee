@@ -203,7 +203,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
             logger.info("browsing URL for backlinks :: " + href);
 
             //First check if this link just refers to its own page
-            if (AbstractCollector.pointsToSameWebpage(this.url, href)) {
+            if (AbstractCollector.isARecursiveLink(this.url, href)) {
                 logger.info("recursive URL encountered :: " + href);
                 logger.warn("skipping iteration...");
                 continue;
@@ -241,7 +241,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
 
             //Go through all the hrefs on the Link's target Website
             for (Hyperlink twh : targetWebsiteLinks) {
-                if (AbstractCollector.pointsToSameWebpage(this.url, twh.href)) {
+                if (AbstractCollector.isARecursiveLink(this.url, twh.href)) {
                     logger.info("URL was identified as backlink :: " + twh.href);
                     numOfBacklinks++;
                 }
