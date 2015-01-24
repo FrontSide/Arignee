@@ -23,6 +23,7 @@ import java.util.Iterator;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import models.persistency.Hyperlink;
+import models.persistency.WebPage;
 import models.collection.CollectorValue;
 import models.collection.CollectorStringValue;
 import models.collection.CollectorModelValue;
@@ -50,8 +51,8 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
         Map<WebsiteHtmlCollectorKey, CollectorValue> results = new HashMap<>();
 
         /* Add eval-Page Url */
-        results.put(WebsiteHtmlCollectorKey.URL,
-                    new CollectorStringValue(this.url()));
+        results.put(WebsiteHtmlCollectorKey.WEBPAGE,
+                    new CollectorModelValue(new WebPage(this.url())));
 
         /* Add extracted Title */
         results.put(WebsiteHtmlCollectorKey.TITLE,

@@ -6,6 +6,7 @@ package collectors;
  * and extracting useful data from it
  */
 
+import java.net.URL;
 import java.lang.RuntimeException;
 import java.util.Map;
 import collectors.enums.CollectorKey;
@@ -27,12 +28,13 @@ public interface Collector<T> {
      * @param  url  url to set
      * @return      this
      */
+    Collector url(URL url);
     Collector url(String url);
 
     /**
      * @returns: the Collectors accessed url
      */
-    String url();
+    URL url();
 
     /**
      * Setter for raw Data

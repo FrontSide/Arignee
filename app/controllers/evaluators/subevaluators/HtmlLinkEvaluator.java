@@ -4,6 +4,7 @@ package evaluators.subevaluators;
   * Used by WebsiteHtmlEvaluator
   */
 
+import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import ticketing.TicketStatus;
 import evaluators.AbstractEvaluator;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.enums.Rating;
-import collectors.AbstractCollector;
+import url.URLHandler;
 import collectors.WebsiteHtmlCollector;
 import collectors.WebsiteHtmlCollectorFactory;
 import models.evaluation.EvaluationValue;
@@ -38,25 +39,24 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
     private int linkAmount;
 
     private List<Hyperlink> hyperlinks;
-    private String url;
+    private WebPage webPage;
 
     public HtmlLinkEvaluator(){}
-    public HtmlLinkEvaluator(List<Hyperlink> hyperlinks, String url) {
-        this.setHyperlinks(hyperlinks);
-        this.setUrl(url);
+    public HtmlLinkEvaluator(List<Hyperlink> hyperlinks, WebPage webPage) {
+        this.pass(hyperlinks, webPage);
     }
 
     private void setHyperlinks(List<Hyperlink> hyperlinks) {
         this.hyperlinks = hyperlinks;
     }
 
-    private void setUrl(String url) {
-        this.url = url;
+    private void setWebPage(WebPage webPage) {
+        this.webPage = webPage;
     }
 
-    public void pass(List<Hyperlink> hyperlinks, String url) {
+    public void pass(List<Hyperlink> hyperlinks, WebPage webPage) {
         this.setHyperlinks(hyperlinks);
-        this.setUrl(url);
+        this.setWebPage(webPage);
     }
 
     /**
@@ -70,12 +70,12 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         if (this.hyperlinks == null)
             throw new IllegalStateException("Hyperlinks are missing, try pass(...)");
 
-        if (this.url == null)
-            throw new IllegalStateException("URL is missing, try pass(...)");
+        if (this.webPage == null)
+            throw new IllegalStateException("WebPage is missing, try pass(...)");
 
         this.result = new EvaluationValueContainer();
         this.linkAmount = this.hyperlinks.size();
-        logger.info(this.linkAmount + " :: links found on :: " + this.url);
+        logger.info(this.linkAmount + " :: links found on :: " + this.webPage.url);
 
         //Call concrete Link-Evaluation Methods
         this.updateTicketStatus(TicketStatus.LINK_AMOUNT_EVAL);
@@ -108,7 +108,7 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         this.internalLinks = new ArrayList<>();
         this.externalLinks = new ArrayList<>();
         for (Hyperlink h : this.hyperlinks) {
-            if (AbstractCollector.isInternalUrl(this.url, h.href))
+            if (URLHandler.isInternalUrl(this.webPage, h.href))
                     this.internalLinks.add(h);
             else    this.externalLinks.add(h);
         }
@@ -146,11 +146,6 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         linkAmountResults.add(WebsiteHtmlEvaluatorKey.DIV,
                                     new EvaluationValueFigure(linkAmountDiv));
 
-        EvaluationValueContainer additionals = new EvaluationValueContainer();
-        additionals.add(WebsiteHtmlEvaluatorKey.FOUND_URLS,
-                                    new EvaluationValueFigure(Hyperlink.getUrls(this.hyperlinks)));
-        linkAmountResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL, additionals);
-
         Rating linkAmountRating;
 
         if (linkAmountDiv > 200 || linkAmount < 4) linkAmountRating = Rating.POOR;
@@ -178,13 +173,9 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
      * @param  links List of links on the source page that are to be evaluated
      * @return       Evaluation result as EvaluationValue
      */
-     /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
-     /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
     private EvaluationValue rateBackLinkRatio(List<Hyperlink> links) {
 
         logger.info("starting backLinkRatio-Rating...");
-
-        int numOfBacklinks = 0;
 
         //List with all WebPages that are linked to from the source-Page
         List<WebPage> pagesLinkedTo = new ArrayList<>();
@@ -203,20 +194,15 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
             logger.info("browsing URL for backlinks :: " + href);
 
             //First check if this link just refers to its own page
-            if (AbstractCollector.isARecursiveLink(this.url, href)) {
-                logger.info("recursive URL encountered :: " + href);
-                logger.warn("skipping iteration...");
-                continue;
-            }
+            if (URLHandler.isARecursiveLink(this.webPage, href)) continue;
 
             collectors.Collector collector = COLLECTORFACTORY.create();
 
             /* Check if href is an url-appendix (parameter, path, #)
              * If so, build a complete url with the url of the eval-WebPage */
-            if (AbstractCollector.isUrlAppendix(href))
-                href = AbstractCollector.trimToBaseUrl(this.url) + href;
+            if (URLHandler.isUrlAppendix(href))
+                href = this.webPage.url.getHost() + href;
 
-            logger.debug("create new WebPage Object with :: " + href);
             WebPage targetWebsite = new WebPage(href);
             logger.debug("done creating.");
             pagesLinkedTo.add(targetWebsite);
@@ -237,33 +223,21 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
             }
 
             targetWebsite.hyperlinks = targetWebsiteLinks;
-            int numOfBacklinksBefore = numOfBacklinks;
 
             //Go through all the hrefs on the Link's target Website
             for (Hyperlink twh : targetWebsiteLinks) {
-                if (AbstractCollector.isARecursiveLink(this.url, twh.href)) {
+                if (URLHandler.isARecursiveLink(this.webPage, twh.href)) {
                     logger.info("URL was identified as backlink :: " + twh.href);
-                    numOfBacklinks++;
+                    pagesWithBacklinks.add(targetWebsite);
+                    break; //break if backlink detected
                 }
             }
 
-            int currentPageBacklinks = numOfBacklinks - numOfBacklinksBefore;
-
-            //Add webPage to list of webpage with backlinks if has backlinks
-            if (currentPageBacklinks > 0) {
-                pagesWithBacklinks.add(targetWebsite);
-            }
-
-
-            logger.info("The URL \"" + h + "\" has :: "
-                                + currentPageBacklinks + " backlinks");
+            logger.info("The URL \"" + h + "\" has >= 1 backlinks");
 
         }
 
-        /*** WRONG !!! PAGE OF BACKLINK DISTINCTION NEEDED !!! ***/
-        /*** ONE ORE MORE BACKLINKS PER LINKED-TO PAGE NEEDED !!!! */
-
-        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, numOfBacklinks);
+        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, pagesWithBacklinks.size());
 
         EvaluationValueContainer backlinkRatioResults = new EvaluationValueContainer();
 
@@ -274,13 +248,6 @@ public class HtmlLinkEvaluator extends AbstractSubEvaluator {
         backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.DIV,
                                     new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
 
-        /* Add additional info */
-        EvaluationValueContainer additionals = new EvaluationValueContainer();
-
-        additionals.add(WebsiteHtmlEvaluatorKey.FOUND_URLS,
-                                    new EvaluationValueFigure(WebPage.getUrls(pagesWithBacklinks)));
-
-        backlinkRatioResults.add(WebsiteHtmlEvaluatorKey.ADDITIONAL, additionals);
 
         Rating backlinkRatioRating;
 

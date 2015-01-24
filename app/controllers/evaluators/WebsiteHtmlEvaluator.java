@@ -10,6 +10,7 @@ package evaluators;
   * Data by the controller
   */
 
+import java.net.URL;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import evaluators.enums.EvaluatorKey;
 import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import evaluators.subevaluators.HtmlLinkEvaluator;
 import models.persistency.Hyperlink;
+import models.persistency.WebPage;
 import models.evaluation.EvaluationValueContainer;
 import models.collection.CollectorValue;
 
@@ -36,8 +38,8 @@ public class WebsiteHtmlEvaluator extends AbstractEvaluator {
 
         //Get LinkEvaluation Results
         List<Hyperlink> links = (List<Hyperlink>) collected.get(WebsiteHtmlCollectorKey.LINKS).getList();
-        String url = (String) collected.get(WebsiteHtmlCollectorKey.URL).getValue();
-        HtmlLinkEvaluator linkEvaluator = new HtmlLinkEvaluator(links, url);
+        WebPage wp = (WebPage) collected.get(WebsiteHtmlCollectorKey.WEBPAGE).getValue();
+        HtmlLinkEvaluator linkEvaluator = new HtmlLinkEvaluator(links, wp);
         linkEvaluator.setTicketNumber(this.ticketNumber);
         this.result.add(WebsiteHtmlEvaluatorKey.LINKS, linkEvaluator.get());
 

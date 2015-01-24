@@ -27,7 +27,7 @@ public class Hyperlink extends Model {
      * (if it points to a WebPage at all) */
     public WebPage targetPage;
 
-    /* The value of this Link's href Attribut */
+    /* The value of this Link's href Attribute */
     @Required
     public String href;
 
@@ -40,11 +40,20 @@ public class Hyperlink extends Model {
     }
 
     /**
+    * Checks if a Hyperlink links to the same webpage as this one
+    * @param   link    Hyperlink to compare
+    * @return  true if both hyperlnks point to the same webpage
+    */
+    public boolean pointsToSameWebPage(Hyperlink link) {
+        return this.targetPage.equals(link.targetPage);
+    }
+
+    /**
     * Returns a List with all the urls/hrefs from a list of hyperlinks
     * @param  hyperlinks    List of hyperlink Objects
     * @return               List of urls/hrefs from the passed hyperlink objects
     */
-    public static List<String> getUrls(List<Hyperlink> hyperlinks) {
+    public static List<String> getHrefs(List<Hyperlink> hyperlinks) {
         List<String> urls = new ArrayList<>();
         for (Hyperlink h : hyperlinks) {
             urls.add(h.href);

@@ -4,9 +4,11 @@ import play.Logger;
 import java.util.List;
 import java.util.ArrayList;
 
-import collectors.AbstractCollector;
+import models.persistency.WebPage;
 
-public class IsARecursiveLinkTest extends AbstractCollectorTest {
+import url.URLHandler;
+
+public class IsARecursiveLinkTest extends URLHandlerTest {
 
     @Before
     public void setup() {
@@ -114,7 +116,7 @@ public class IsARecursiveLinkTest extends AbstractCollectorTest {
     /* --------------------------------------------------- */
 
     private boolean isARecursiveLinkInvoker(String urla, String urlb) {
-        return AbstractCollector.isARecursiveLink(urla, urlb);
+        return URLHandler.isARecursiveLink(new WebPage(urla), urlb);
     }
 
 }

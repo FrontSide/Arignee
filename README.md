@@ -112,6 +112,8 @@ are listed in the build.sbt file.
 
 - [JSON in Java](http://www.json.org/java/)
 
+- [Apache Commons Lang](http://commons.apache.org/proper/commons-lang/javadocs/api-release/index.html)
+
 - [Play-JSMessages](https://github.com/julienrf/play-jsmessages) v1.6.2 - Send localized Strings (i18n) to client
 
 - [PostgreSQL JDBC Driver](http://jdbc.postgresql.org/) v9.1

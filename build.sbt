@@ -14,5 +14,6 @@ libraryDependencies ++= Seq(
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   "org.jsoup"%"jsoup"%"1.8.1",
   "org.json"%"json"%"20140107",
-  "org.julienrf" %% "play-jsmessages" % "1.6.2"
+  "org.julienrf" %% "play-jsmessages" % "1.6.2",
+  "org.apache.commons" % "commons-lang3" % "3.3.2"
 )

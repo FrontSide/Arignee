@@ -9,10 +9,13 @@ import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
+import url.URLHandler;
+
 import play.Logger;
 import play.Logger.ALogger;
 
 import java.io.IOException;
+import java.net.URL;
 import java.net.MalformedURLException;
 
 public class JsoupHTTPConnector extends HTTPConnector<Element>
@@ -22,12 +25,12 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
 
     private final int MAX_CONNECTION_ATTEMPTS = 5;
 
-    public Element request(final String URL) throws MalformedURLException {
+    public Element request(final URL URL) throws MalformedURLException {
         logger.debug("sending http request to :: " + URL + "...");
         return request(URL, 1);
     }
 
-    private Element request(final String URL, int attempts) throws MalformedURLException {
+    private Element request(final URL URL, int attempts) throws MalformedURLException {
 
         if (attempts++ > MAX_CONNECTION_ATTEMPTS) {
             logger.error("Maximum number of HTTP requests exceeded!");
@@ -37,21 +40,12 @@ public class JsoupHTTPConnector extends HTTPConnector<Element>
         Element doc = null;
 
         try {
-            doc = Jsoup.connect(URL).get();
+            doc = Jsoup.connect(URL.toString()).get();
         } catch (IOException e) {
-            throw new MalformedURLException("Invlid URL :: " + URL);
+            throw new MalformedURLException("Could not connect to :: " + URL);
         } catch (IllegalArgumentException e) {
-            /* TODO: Checking if the URL is malformed should happen somewhere
-             * else or at least additionally on client side --> real-time feedback */
-            logger.warn("malformed URL encountered :: " + URL);
-            logger.debug("trying variations...");
-            if (!URL.startsWith("http://") && !URL.startsWith("https://"))
-                return request("http://" + URL, attempts);
-            if (URL.startsWith("http://"))
-                return request("https://" + URL.substring(7), attempts);
-            if (URL.startsWith("https://"))
-                return request("https://" + URL.substring(8), attempts);
-            throw new MalformedURLException("Invlid URL :: " + URL);
+            request(URLHandler.swapSecureHttpProtocolFromUrl(URL), attempts);
+            throw new MalformedURLException("Target does not seem to exist :: " + URL);
         }
 
         logger.info("HTTP-request successfully finished :: " + URL);

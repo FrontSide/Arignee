@@ -5,13 +5,17 @@ package models.persistency;
  * Stores information about a WebPage
  */
 
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.ArrayList;
 import javax.persistence.*;
 
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
+
 import daos.EvaluationResultDAO;
+import url.URLHandler;
 
 import play.Logger;
 import play.Logger.ALogger;
@@ -19,14 +23,14 @@ import play.Logger.ALogger;
 @Entity
 public class WebPage extends Model {
 
+    private static final ALogger logger = Logger.of(WebPage.class);
+
     public WebPage(String url) {
-        this.url = url;
-        this.setId();
+        this.url = URLHandler.getInstance().create(url);
     }
 
-    public WebPage(String url, EvaluationResult evaluation) {
+    public WebPage(URL url) {
         this.url = url;
-        this.addEvaluationResult(evaluation);
         this.setId();
     }
 
@@ -39,7 +43,7 @@ public class WebPage extends Model {
     /* This WebPage's url as fetched */
     @Column(unique=true)
     @Required
-    public String url;
+    public URL url;
 
     /* All links of this page */
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="parentPage")
@@ -64,7 +68,7 @@ public class WebPage extends Model {
 
     @Override
     public String toString(){
-        return this.url;
+        return this.url.toString();
     }
 
     @Override
@@ -87,7 +91,7 @@ public class WebPage extends Model {
     public static List<String> getUrls(List<WebPage> webPages) {
         List<String> urls = new ArrayList<>();
         for (WebPage wp : webPages) {
-            urls.add(wp.url);
+            urls.add(wp.url.toString());
         }
         return urls;
     }

@@ -76,7 +76,7 @@ public class WebsiteHtmlController extends Controller {
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
 
         /* Assembling WebPage object from Collected data */
-        WebPage webPage = new WebPage((String) collectedData.get(WebsiteHtmlCollectorKey.URL).getValue());
+        WebPage webPage = (WebPage) collectedData.get(WebsiteHtmlCollectorKey.WEBPAGE).getValue();
 
         /* Create Evaluator, pass data from Collector and obtain eval. results */
         logger.debug("creating evaluator and passing collected data...");
