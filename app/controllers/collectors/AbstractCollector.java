@@ -61,6 +61,7 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
                 this.fetch();
             } catch (RuntimeException e) {
                 logger.error("Fetching raw data via HTTPConnector failed!");
+                this.updateTicketStatus(TicketStatus.INVALID_URL);
             }
         }
         return this.initExtract();

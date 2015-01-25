@@ -47,7 +47,9 @@ function websiteHtmlEvaluationContainerBuilder(json) {
 
         //Panel Heading
         content +=  "<div id='pan_title' class='panel " + panel_type
-                    + "'>" + "<div class='panel-heading'>" + Messages(top);
+                    + " eval-category-container'>"
+                    + "<div class='panel-heading eval-category-header'>"
+                    + Messages(top);
 
         //Panel Heading Overall-Category-Rating Label
         content +=  " <span id='lab_links_amount' class='badge'>" +

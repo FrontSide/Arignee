@@ -28,6 +28,21 @@ body > .container > .jumbotron /*Main jumbotron*//*Bootstrap Override*/ {
 
 
 /* Result Rendering */
+
+div.eval-category-container {
+    width: 30%;
+    min-width: 200px;
+    float: left;
+    margin: 5px;
+    box-shadow: 2px 2px 5px #222;
+}
+
+div.eval-category-header {
+    height: 200px;
+    text-align: center;
+    font-size: 50px;
+}
+
 div.panel-body > span.sub-title {
     font-weight: bold;
 }

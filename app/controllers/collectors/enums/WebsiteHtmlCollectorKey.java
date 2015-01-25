@@ -9,6 +9,7 @@ public enum WebsiteHtmlCollectorKey implements CollectorKey {
 
     WEBPAGE,
     TITLE,
-    LINKS
+    INTERNAL_LINKS,
+    EXTERNAL_LINKS
 
 }

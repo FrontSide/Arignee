@@ -6,7 +6,6 @@
 GET     /                           controllers.Application.index()
 
 # Paths for Ajax/Non-GUI Requests
-GET     /keyphrase/time/:kp         controllers.Application.kwpot(kp: String)
 GET     /eval/                      controllers.Application.requestHtmlEvaluation(url: String)
 GET     /history/                   controllers.Application.requestHtmlEvaluationHistory(url: String)
 GET     /ticket/:number             controllers.Application.ticketStatus(number: String)

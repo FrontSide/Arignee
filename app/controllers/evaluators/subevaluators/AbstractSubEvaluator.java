@@ -21,7 +21,7 @@ import ticketing.TicketStatus;
 import ticketing.TicketHandler;
 import ticketing.TicketProcessor;
 
-public abstract class AbstractSubEvaluator implements Evaluator, TicketProcessor {
+public abstract class AbstractSubEvaluator<PassedData> implements Evaluator<PassedData>, TicketProcessor {
 
     private static final ALogger logger = Logger.of(AbstractSubEvaluator.class);
 
@@ -45,15 +45,7 @@ public abstract class AbstractSubEvaluator implements Evaluator, TicketProcessor
 
     public abstract EvaluationValue get();
 
-   /** This method has to be overriden OR BETTER overloaded by the concrete
-     * SubEvaluator it is not intended to be used
-     * for the data coming from the collector but merely for sub-collections
-     */
-    public Evaluator pass(Map<? extends CollectorKey, CollectorValue> collected) {
-        Logger.error("The pass(Map<? extends CollectorKey, List<String>>)" +
-                        " method is not available for SubEvaluators");
-        return this;
-    }
+    public abstract Evaluator pass(PassedData collected);
 
 
 }

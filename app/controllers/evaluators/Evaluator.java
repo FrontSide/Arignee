@@ -7,7 +7,7 @@ import models.collection.CollectorValue;
 import models.evaluation.EvaluationValue;
 import collectors.enums.CollectorKey;
 
-public interface Evaluator {
+public interface Evaluator<PassedData> {
 
     /**
      * Defines the method that is accessed publicly.
@@ -19,8 +19,9 @@ public interface Evaluator {
     EvaluationValue get();
 
     /**
-      * Passes the data collected by the Collector to the Evaluator
+      * Passes the data which is to be evaluated
+      * to the Evaluator
       */
-    Evaluator pass(Map<? extends CollectorKey, CollectorValue> collected);
+    Evaluator pass(PassedData data);
 
 }

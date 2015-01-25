@@ -27,7 +27,7 @@ import collectors.WebsiteHtmlCollector;
 import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.EvaluatorKey;
-import evaluators.enums.WebsiteHtmlEvaluatorKey;
+import evaluators.SEOEvaluator;
 import models.collection.CollectorValue;
 import models.evaluation.EvaluationValueFigure;
 import models.evaluation.EvaluationValue;
@@ -37,20 +37,16 @@ import models.persistency.EvaluationResult;
 import models.persistency.WebPage;
 import daos.WebPageDAO;
 import daos.EvaluationResultDAO;
-import evaluators.EvaluatorFactory;
 import ticketing.TicketHandler;
 import ticketing.TicketStatus;
 import ticketing.TicketProcessor;
 
-public class WebsiteHtmlController extends Controller {
+public class EvaluationController extends Controller {
 
-    private static final ALogger logger = Logger.of(WebsiteHtmlController.class);
+    private static final ALogger logger = Logger.of(EvaluationController.class);
 
     private static final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
                                 WebsiteHtmlCollectorFactory.getInstance();
-
-    private static final EvaluatorFactory EVALUATORFACTORY =
-                                EvaluatorFactory.getInstance();
 
     private static final TicketHandler TICKETHANDLER =
                                 TicketHandler.getInstance();
@@ -65,35 +61,30 @@ public class WebsiteHtmlController extends Controller {
     public static JSONObject evaluate(final String URL, final String TICKETNUMBER) {
 
         logger.debug("invoking collector for URL :: " + URL + " ...");
-        WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.STARTING);
+        EvaluationController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.STARTING);
 
         /* Create Collector and pass ticket-number */
-        collectors.Collector collector =
-                    (collectors.Collector) WebsiteHtmlController.COLLECTORFACTORY.create();
+        WebsiteHtmlCollector collector = EvaluationController.COLLECTORFACTORY.create();
+
         ((TicketProcessor) collector).setTicketNumber(TICKETNUMBER);
 
-        /* Fetch extracted data */
+        EvaluationValue evaluationResult = new EvaluationValueContainer();
+
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
+
+        //Evaluation For Search Engine Optimization
+        evaluators.Evaluator seoEvaluator = new SEOEvaluator();
+        seoEvaluator.pass(collectedData);
+        ((TicketProcessor) seoEvaluator).setTicketNumber(TICKETNUMBER);
+        evaluationResult.add(EvaluatorKey.SEO, seoEvaluator.get());
 
         /* Assembling WebPage object from Collected data */
         WebPage webPage = (WebPage) collectedData.get(WebsiteHtmlCollectorKey.WEBPAGE).getValue();
 
-        /* Create Evaluator, pass data from Collector and obtain eval. results */
-        logger.debug("creating evaluator and passing collected data...");
-        evaluators.Evaluator evaluator =
-                        WebsiteHtmlController.EVALUATORFACTORY.create();
-        ((TicketProcessor) evaluator).setTicketNumber(TICKETNUMBER);
-
-        /* FetchEvaluation Result  */
-        EvaluationValue evalResult = evaluator.pass(collectedData).get();
-
         /* Persist Evaluation Result associated to WebPage */
-        WebsiteHtmlController.persistEvaluation(evalResult.getLightweightValue(WebsiteHtmlEvaluatorKey.ADDITIONAL), webPage, TICKETNUMBER);
-
-        JSONObject evalResultJson = evalResult.toJson();
-
-
-        WebsiteHtmlController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.EVALUATION_FINISHED);
+        EvaluationController.persistEvaluation(evaluationResult, webPage, TICKETNUMBER);
+        JSONObject evalResultJson = evaluationResult.toJson();
+        EvaluationController.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.EVALUATION_FINISHED);
 
         return evalResultJson;
 
@@ -116,7 +107,7 @@ public class WebsiteHtmlController extends Controller {
     }
 
     private static void persistEvaluation(final EvaluationValue EVALVAL, final WebPage WEBPAGE, final String TICKETNUMBER) {
-        WebsiteHtmlController.persistEvaluation(EVALVAL.toJson(), WEBPAGE, TICKETNUMBER);
+        EvaluationController.persistEvaluation(EVALVAL.toJson(), WEBPAGE, TICKETNUMBER);
     }
 
 }

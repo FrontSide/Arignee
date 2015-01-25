@@ -35,40 +35,73 @@ public class URLHandler {
 
     /**
      * Instantiates a java.net.URL object from a given string
+     * (Throws Illegal Argument Exception if not possible to create url)
      * @param  url string to be converted to URL object
      * @return     url object
      */
     public URL create(String url) throws IllegalArgumentException {
 
-        if (StringUtils.countMatches(url, ".") < 1)
-            throw new IllegalArgumentException("No . found in url String");
-        else if (StringUtils.countMatches(url, ".") == 1)
-            url = "www." + url;
+        logger.debug("Try creating url from :: " + url);
 
         try {
             return new URL(url);
         } catch (MalformedURLException e) {
-            logger.warn("no protocol :: " + url);
+            logger.warn("non-valid url :: " + url + " :: trying to modify...");
         }
 
+        if (!url.matches("(.)*(://)(.)*")) url = HTTP_PROTOCOL + "://" + url;
+
+        logger.debug("After protocol sub :: " + url);
+
+        if (StringUtils.countMatches(url, ".") < 1)
+            throw new IllegalArgumentException("No . found in url String");
+        else if (StringUtils.countMatches(url, ".") == 1) {
+            logger.debug("One . found in :: " + url);
+            String[] urlSplit = url.split("://");
+            if (urlSplit.length != 2)
+                throw new IllegalArgumentException( "cannot create url from :: "
+                                                    + url);
+            url = urlSplit[0] + "://www." + urlSplit[1];
+        }
+
+        logger.debug("checked url-string is :: " + url);
+
         try {
-            return new URL(HTTP_PROTOCOL + "://" + url);
+            return new URL(url);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("cannot crate url from :: " + url);
         }
 
     }
 
-    public URL createFromComponents(String protocol, String host, String path, String query, String ref) throws IllegalArgumentException {
+    /**
+     * Creates a URL by combining parameters
+     * (throws Illegal Argument Exception if no host is given)
+     * @param   protocol    e.g. http
+     * @param   host        e.g. www.dary.info
+     * @param   path        e.g. /blog/ireland
+     * @param   query       e.g. ?page=1
+     * @param   ref         e.g. #top
+     * @return  The assembled URL object
+     */
+    public URL createFromComponents(    String protocol,
+                                        String host,
+                                        String path,
+                                        String query,
+                                        String ref )
+                                        throws IllegalArgumentException {
+
         protocol = (protocol == null) ? protocol = HTTP_PROTOCOL : protocol;
         if (host == null) throw new IllegalArgumentException("No host given!");
         path = (path == null) ? "" : path;
+        path = (path.startsWith("/")) ? path : "/" + path;
         query = (query == null) ? "" : query;
         ref = (ref == null) ? "" : "#" + ref;
 
         logger.debug("createFrom :: " + protocol + " :: " + host + " :: " + path + " :: " + query + " :: " + ref);
 
         return this.create(protocol + "://" + host + path + query + ref);
+
     }
 
     /*************************************************/
@@ -91,20 +124,27 @@ public class URLHandler {
     * @return              true if the passed url is considered an
     *                      internal url or merely a path
     */
-    public static boolean isInternalUrl(URL domainUrl, URL url) {
-        return getTrimmedHost(domainUrl).equals(getTrimmedHost(url));
+    public static boolean isInternalUrl(URL domainURL, URL url) {
+        return getTrimmedHost(domainURL).equals(getTrimmedHost(url));
     }
 
+    public static boolean isInternalUrl(URL domainURL, String urlS) {
+        if (urlS.equals("")) return true;
+        if (!urlS.contains(".")) return true;
+        if ("#?/".contains(urlS.charAt(0) + "")) return true;
+        URL url = URLHandler.getInstance().create(urlS);
+        if (url != null) return isInternalUrl(domainURL, url);
+        return false;
+    }
+
+    /* Overload */
     public static boolean isInternalUrl(WebPage domain, URL url) {
         return isInternalUrl(domain.url, url);
     }
 
+    /* Overload */
     public static boolean isInternalUrl(WebPage domain, String urlS) {
-        if (urlS.equals("")) return true;
-        if ("#?/".contains(urlS.charAt(0) + "")) return true;
-        URL url = URLHandler.getInstance().create(urlS);
-        if (url != null) return isInternalUrl(domain.url, url);
-        return false;
+        return isInternalUrl(domain.url, urlS);
     }
 
     /**
@@ -137,7 +177,7 @@ public class URLHandler {
 
     /**
     * Checks if a Link links to its parent-Page
-    * (i.e. the page where it is displayed on
+    * (i.e. the page where it is displayed on)
     * @param   parentPageUrl   The Url of the page the link occurs on
     * @param   linkHref        The Url the hyperlink links to
     * @return  true if the link (linkHref) points to the paren Page(-Url)
@@ -164,58 +204,102 @@ public class URLHandler {
         }
 
         if (parentPageUrl == null) {
-            return (linkHref == null) ? parentPageUrlS.equals(linkHrefS) : isARecursiveLink(parentPageUrlS, removeProtocolAndWWW(linkHref));
+
+            return (linkHref == null)   ? parentPageUrlS.equals(linkHrefS)
+                                        : isARecursiveLink(parentPageUrlS,
+                                            removeProtocolAndWWW(linkHref));
+
         }
 
-        return (linkHref == null) ? isARecursiveLink(parentPageUrl, linkHrefS) : isARecursiveLink(parentPageUrl, linkHref);
+        return (linkHref == null)   ? isARecursiveLink(parentPageUrl, linkHrefS)
+                                    : isARecursiveLink(parentPageUrl, linkHref);
     }
 
 
+    /* Overload */
     public static boolean isARecursiveLink(WebPage parentPage, String linkHref) {
         //calls overload URL String
         return isARecursiveLink(parentPage.url, linkHref);
     }
 
+    /* Overload */
     public static boolean isARecursiveLink(URL parentPageUrl, String linkHref) {
 
-        logger.debug("isARecursiveLink URL String :: " + parentPageUrl + " :: " + linkHref);
+        logger.debug("isARecursiveLink URL String :: "
+                                    + parentPageUrl + " :: " + linkHref);
 
+        //Try converting linkHref to URL
         try {
-            return isARecursiveLink(parentPageUrl, URLHandler.getInstance().create(linkHref));
+
+            return isARecursiveLink(parentPageUrl, URLHandler.getInstance()
+                                                    .create(linkHref));
+
         } catch (IllegalArgumentException e) {
             logger.warn("could not create url from :: " + linkHref);
         }
 
+        //Check if linkHref is merely an URL appendix
         if (isUrlAppendix(linkHref)) {
+
+            //If it's nothing but an irrelevant URL appendix it is already true
             if (isIrrelevantURLAppendix(linkHref)) return true;
 
+            //Tring preceeding slash
             if (linkHref.startsWith("/"))
                 linkHref = linkHref.substring(1, linkHref.length());
 
+            //Try to create URL by adding the linkHref
+            //(which we know here is a URL appendix)
+            //to the parentPageUrl (without appendix)
             try {
-                return isARecursiveLink(parentPageUrl, URLHandler.getInstance().createFromComponents(parentPageUrl.getProtocol(), getTrimmedHost(parentPageUrl), "/" +  linkHref, null, null));
+
+                return isARecursiveLink(parentPageUrl, URLHandler.getInstance()
+                                        .createFromComponents(
+                                            parentPageUrl.getProtocol(),
+                                            getTrimmedHost(parentPageUrl),
+                                            "/" +  linkHref, null, null));
+
             } catch (IllegalArgumentException e) {
                 logger.warn("could not create url from :: " + linkHref);
             }
         }
 
+        //Remove protocol and www from parentPage url
+        //and call String, String overload
         return isARecursiveLink(removeProtocolAndWWW(parentPageUrl), linkHref);
     }
 
+    /* Overload */
     public static boolean isARecursiveLink(URL parentPageUrl, URL linkHref) {
-        logger.debug("isARecursiveLink URL URL :: " + parentPageUrl + " :: " + linkHref);
+        logger.debug("isARecursiveLink URL URL :: "
+                                    + parentPageUrl + " :: " + linkHref);
+
         // If URL appendix is irrelevant - remove it from url
         if (isIrrelevantURLAppendix(trimToUrlAppendix(linkHref))) {
             try {
-                linkHref = URLHandler.getInstance().createFromComponents(linkHref.getProtocol(), getTrimmedHost(linkHref), null, null, null);
+
+                linkHref = URLHandler.getInstance().createFromComponents(
+                                                    linkHref.getProtocol(),
+                                                    getTrimmedHost(linkHref),
+                                                    null, null, null);
+
             } catch (IllegalArgumentException e) {
                 logger.warn("could not create url from :: " + linkHref);
             }
-            logger.debug("isARecursiveLink URL URL after assmb. :: " + parentPageUrl + " :: " + linkHref);
+
+            logger.debug("isARecursiveLink URL URL after assmb. :: "
+                                    + parentPageUrl + " :: " + linkHref);
+
         }
+
+        //First try String comparison before calling th URL equals
+        if (parentPageUrl.toString().equals(linkHref.toString())) return true;
+
+        //Compare URLs
         return parentPageUrl.equals(linkHref);
     }
 
+    /* Overload */
     public static boolean isARecursiveLink(WebPage parentPage, URL linkHref) {
         //calls overload URL URL
         return isARecursiveLink(parentPage.url, linkHref);
@@ -262,6 +346,7 @@ public class URLHandler {
     */
     private static String trimToUrlAppendix(URL url) {
         String path = (url.getPath() == null) ? "" : url.getPath();
+        path = (path.startsWith("/")) ? path : "/" + path;
         String query = (url.getQuery() == null) ? "" : url.getQuery();
         String ref = (url.getRef() == null) ? "" : url.getRef();
         return  path + query + "#" + ref;

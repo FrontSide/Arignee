@@ -12,10 +12,12 @@ import static play.libs.F.Promise.promise;
 import java.util.concurrent.Callable;
 import java.util.Map;
 import java.util.List;
+import java.net.URL;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import url.URLHandler;
 import views.html.*;
 import ticketing.TicketHandler;
 import ticketing.TicketStatus;
@@ -35,13 +37,6 @@ public class Application extends Controller {
         return ok(index.render(null));
     }
 
-    public static Result kwpot(String kp) {
-        //return ok(index.render(GoogleTrendsController.getKeywordTimePopularity(kp)));
-        new GoogleTrendsController().getKeywordTimePopularity(kp);
-        return index();
-    }
-
-
     @BodyParser.Of(Json.class)
     public static Result requestHtmlEvaluation(String url) {
         final String URL = url;
@@ -55,7 +50,7 @@ public class Application extends Controller {
         Promise<JSONObject> promiseOfEvaluationResult = Promise.promise(
             new Function0<JSONObject>() {
                 public JSONObject apply() {
-                    JSONObject result = WebsiteHtmlController.evaluate(URL, TICKETNUMBER);
+                    JSONObject result = EvaluationController.evaluate(URL, TICKETNUMBER);
                     Application.TICKETHANDLER.updateStatus(TICKETNUMBER, TicketStatus.RESPONSE_AVAILABLE);
                     Application.TICKETHANDLER.markAsFinished(TICKETNUMBER);
                     return result;
@@ -78,11 +73,20 @@ public class Application extends Controller {
     }
 
     @BodyParser.Of(Json.class)
-    public static Result requestHtmlEvaluationHistory(final String URL) {
+    public static Result requestHtmlEvaluationHistory(final String URLSTRING) {
 
-        logger.info("Get evaluation history for URL :: " + URL);
+        URL url = null;
+        try {
+            url = URLHandler.getInstance().create(URLSTRING);
+        } catch (IllegalArgumentException e) {
+            logger.error("could not instantiate url from :: " + URLSTRING);
+            return badRequest("n/A");
+        }
 
-        WebPage wp = new WebPageDAO().getByUrl(URL); //LAZYLOADING ???? for evalresults
+        logger.info("Get evaluation history for URL :: " + url);
+
+        WebPage wp = new WebPageDAO().getByURL(url); //LAZYLOADING ???? for evalresults
+        if (wp == null) return notFound("Not found : " + url);
         List<EvaluationResult> evaluations = wp.getEvaluations();
 
         /* Use array to save date/eval pairs due to sorting

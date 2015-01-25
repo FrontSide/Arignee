@@ -28,6 +28,7 @@ import models.collection.CollectorValue;
 import models.collection.CollectorStringValue;
 import models.collection.CollectorModelValue;
 import ticketing.TicketStatus;
+import url.URLHandler;
 
 import play.Logger;
 
@@ -52,15 +53,17 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
 
         /* Add eval-Page Url */
         results.put(WebsiteHtmlCollectorKey.WEBPAGE,
-                    new CollectorModelValue(new WebPage(this.url())));
+                    new CollectorModelValue(getWebPage()));
+
+        results.put(WebsiteHtmlCollectorKey.INTERNAL_LINKS,
+                    new CollectorModelValue(getAllInternalLinks()));
+
+        results.put(WebsiteHtmlCollectorKey.EXTERNAL_LINKS,
+                    new CollectorModelValue(getAllExternalLinks()));
 
         /* Add extracted Title */
         results.put(WebsiteHtmlCollectorKey.TITLE,
                     new CollectorStringValue(((Document)this.raw()).title()));
-
-        /* Add extracted Hyperlinks */
-        results.put(WebsiteHtmlCollectorKey.LINKS,
-                    new CollectorModelValue<Hyperlink>(getHyperlinks()));
 
         return results;
 
@@ -104,6 +107,13 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
     }
 
     @Override
+    public WebPage getWebPage() {
+        WebPage webPage = new WebPage(url());
+        webPage.hyperlinks = getHyperlinks();
+        return webPage;
+    }
+
+    @Override
     public List<Hyperlink> getHyperlinks() {
 
         if (this.collectedLinks == null) collectHyperlinks();
@@ -118,7 +128,35 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
         }
 
         return hyperlinks;
+    }
 
+    private List<Hyperlink> internalLinks;
+    private List<Hyperlink> externalLinks;
+
+    /**
+    * Filters all the Hyperlinks from the full Hyperlink-List
+    * of the source page that can be identified as Domain-Internal-Links and
+    * puts those in the global "internalLinks"-List and the rest in the
+    * "externalLinks"-List
+    */
+    private void seperateInternalFromExternalLinks() {
+        this.internalLinks = new ArrayList<>();
+        this.externalLinks = new ArrayList<>();
+        for (Hyperlink h : getHyperlinks()) {
+            if (URLHandler.isInternalUrl(url(), h.href))
+                this.internalLinks.add(h);
+            else    this.externalLinks.add(h);
+        }
+    }
+
+    private List<Hyperlink> getAllInternalLinks() {
+        if (this.internalLinks == null) seperateInternalFromExternalLinks();
+        return this.internalLinks;
+    }
+
+    private List<Hyperlink> getAllExternalLinks() {
+        if (this.externalLinks == null) seperateInternalFromExternalLinks();
+        return this.externalLinks;
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
-import models.persistency.Hyperlink;
+import models.persistency.*;
 import play.Logger;
 import play.Logger.ALogger;
 
@@ -37,10 +37,17 @@ public class WebsiteHtmlCollector<T>    extends AbstractCollector<T>
         this.passData();
         return this.strategy.extractFromHtml();
     }
+
     public List<Hyperlink> getHyperlinks() {
         if (this.strategy == null) throw new NullPointerException("No WebsiteHtmlCollectorStrategy found");
         this.passData();
         return this.strategy.getHyperlinks();
+    }
+
+    public WebPage getWebPage() {
+        if (this.strategy == null) throw new NullPointerException("No WebsiteHtmlCollectorStrategy found");
+        this.passData();
+        return this.strategy.getWebPage();
     }
 
 }

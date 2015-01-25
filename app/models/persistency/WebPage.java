@@ -26,7 +26,7 @@ public class WebPage extends Model {
     private static final ALogger logger = Logger.of(WebPage.class);
 
     public WebPage(String url) {
-        this.url = URLHandler.getInstance().create(url);
+        this.setUrl(url);
     }
 
     public WebPage(URL url) {
@@ -44,6 +44,9 @@ public class WebPage extends Model {
     @Column(unique=true)
     @Required
     public URL url;
+    public void setUrl(String url) {
+        this.url = URLHandler.getInstance().create(url);
+    }
 
     /* All links of this page */
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="parentPage")

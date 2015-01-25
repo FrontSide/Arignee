@@ -6,7 +6,11 @@ package daos;
 
 import models.persistency.WebPage;
 import models.persistency.EvaluationResult;
+import url.URLHandler;
+
+import java.net.URL;
 import com.avaje.ebean.Ebean;
+
 import play.db.ebean.*;
 import play.db.ebean.Model.Finder;
 import play.Logger;
@@ -51,8 +55,16 @@ public class WebPageDAO implements DAO<WebPage> {
         return this.find.where().eq("id", id).findUnique();
     }
 
-    public WebPage getByUrl(String url) {
-        return this.find.where().eq("url", url).findUnique();
+    public WebPage getByURL(URL url) {
+        return this.find.where().eq("url", url.toString()).findUnique();
+    }
+
+    public WebPage getByURL(String url) {
+        try {
+            return this.find.where().eq("url", URLHandler.getInstance().create(url)).findUnique();
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     @Override

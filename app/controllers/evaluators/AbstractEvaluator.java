@@ -10,12 +10,11 @@ import models.collection.CollectorValue;
 import models.evaluation.EvaluationValue;
 import collectors.enums.CollectorKey;
 import evaluators.enums.EvaluatorKey;
-import evaluators.enums.WebsiteHtmlEvaluatorKey;
 import ticketing.TicketProcessor;
 import ticketing.TicketHandler;
 import ticketing.TicketStatus;
 
-public abstract class AbstractEvaluator implements Evaluator, TicketProcessor {
+public abstract class AbstractEvaluator implements Evaluator<Map<? extends CollectorKey, CollectorValue>>, TicketProcessor {
 
     private static final ALogger logger = Logger.of(AbstractEvaluator.class);
 

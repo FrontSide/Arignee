@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
-import models.persistency.Hyperlink;
+import models.persistency.*;
 
 public interface WebsiteHtmlCollectorStrategy {
 
@@ -19,9 +19,15 @@ public interface WebsiteHtmlCollectorStrategy {
     Map<? extends CollectorKey, CollectorValue> extractFromHtml();
 
     /**
-    * @ returns a List with all HyperlinkObjects (models.Hyperlinks)
-    * of a WebPage
+    * @return    a List with all HyperlinkObjects (models.Hyperlinks)
+    *            of a WebPage
     */
+
     List<Hyperlink> getHyperlinks();
+
+    /**
+     * @return   the WebPage object with all links
+     */
+    WebPage getWebPage();
 
 }

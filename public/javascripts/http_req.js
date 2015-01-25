@@ -162,9 +162,24 @@ function send(URL, CALLBACK) {
     console.log("sending HTTP-Requesting :: " + URL)
 
     //Send request to server
-    $.ajax({ url: URL, type: "GET" }).done(function(data) {
-        console.log("setting response :: " + data)
-        CALLBACK(data)
-    })
+    $.ajax({    url: URL,
+                type: "GET",
+                statusCode: {
+                    404: function() {
+                        resetProgressBar()
+                        displayError("<b> No data available! </b>")
+                    },
+                    500: function() {
+                        resetProgressBar()
+                        displayError("<b> Something's wrong! We couldn't finish the request. Sorry about that! </b>")
+                    }
+        }})
+        .done(function(data) {
+            console.log("setting response :: " + data)
+            CALLBACK(data)
+        })
+        .error(function(data) {
+            displayError("<b> Connection to Server failed! </b>")
+        })
 
 }
