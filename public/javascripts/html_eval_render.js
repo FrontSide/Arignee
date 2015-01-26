@@ -52,7 +52,7 @@ function websiteHtmlEvaluationContainerBuilder(json) {
                     + Messages(top);
 
         //Panel Heading Overall-Category-Rating Label
-        content +=  " <span id='lab_links_amount' class='badge'>" +
+        content +=  " <br /><span class='category-rating'>" +
                     categoryrating + "</span>" + "<br />"
 
         //Close Panel Heading

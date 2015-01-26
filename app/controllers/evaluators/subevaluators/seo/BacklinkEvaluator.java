@@ -29,10 +29,23 @@ public class BacklinkEvaluator extends AbstractSubEvaluator<WebPage> {
     private List<Hyperlink> hyperlinks;
     private int linkAmount = -1;
 
-    public BacklinkEvaluator() {}
+    private BacklinkEvaluationStrategy strategy;
 
-    public BacklinkEvaluator(WebPage webPage, List<Hyperlink> links) {
+    public BacklinkEvaluator(EBacklinkEvaluationStrategy strategy) {
+        setStrategy(strategy);
+    }
+
+    public BacklinkEvaluator(WebPage webPage, List<Hyperlink> links, EBacklinkEvaluationStrategy strategy) {
         pass(webPage, links);
+        setStrategy(strategy);
+    }
+
+    private void setStrategy(EBacklinkEvaluationStrategy strategy) {
+
+        if (strategy == EBacklinkEvaluationStrategy.EXTERNAL)
+            this.strategy = new ExternalBacklinkEvaluation();
+        else
+            this.strategy = new InternalBacklinkEvaluation();
     }
 
     public Evaluator pass(WebPage webPage) {
@@ -55,15 +68,13 @@ public class BacklinkEvaluator extends AbstractSubEvaluator<WebPage> {
             throw new IllegalStateException("Parameters missing, try pass(...)");
 
         logger.debug("BackLinkEvaluator get()");
-        this.result = rateBackLinkRatio(hyperlinks);
-
-        return this.result;
+        return getRating(getNumberOfPagesWithBacklink(hyperlinks));
 
     }
 
   /**
     * Measures how many of the links in a given list point to a page
-    * which points back to the source-page/url and rates this value
+    * which points back to the source-page/url
     *
     * Also crates (and adds to the Map) a List with all the WebPages
     * that the source page links to and that have a Link pointing back
@@ -72,83 +83,35 @@ public class BacklinkEvaluator extends AbstractSubEvaluator<WebPage> {
     * @param  links List of links on the source page that are to be evaluated
     * @return       Evaluation result as EvaluationValue
     */
-    private EvaluationValue rateBackLinkRatio(List<Hyperlink> links) {
+    private int getNumberOfPagesWithBacklink(List<Hyperlink> links) {
 
         logger.info("starting backLinkRatio-Rating...");
-
-        //List with all WebPages that are linked to from the source-Page
-        List<WebPage> pagesLinkedTo = new ArrayList<>();
-
-        //List with all Pages that have a backlink to the source-page
-        List<WebPage> pagesWithBacklinks = new ArrayList<>();
 
         final WebsiteHtmlCollectorFactory COLLECTORFACTORY =
                         WebsiteHtmlCollectorFactory.getInstance();
 
-        //Go through all HREFS on the website to evaluate
-        for (Hyperlink h : links) {
+        return strategy.getNumberOfPagesWithBacklink(this.webPage, links, COLLECTORFACTORY);
 
-            String href = h.href;
+    }
 
-            logger.info("browsing URL for backlinks :: " + href);
+    /**
+     * Rates the number of backlinks
+     * @param  numberOfPagesWithBacklink
+     * @return  EvaluationValue with Rating and add. info
+     */
+    private EvaluationValue getRating(int numberOfPagesWithBacklink) {
 
-            //First check if this link just refers to its own page
-            if (URLHandler.isARecursiveLink(this.webPage, href)) continue;
-
-            collectors.Collector collector = COLLECTORFACTORY.create();
-
-            /* Check if href is an url-appendix (parameter, path, #)
-            * If so, build a complete url with the url of the eval-WebPage */
-            if (URLHandler.isUrlAppendix(href)) {
-                href = (href.startsWith("/")) ? href : "/" + href;
-                href = this.webPage.url.getHost() + href;
-            }
-
-            WebPage targetWebsite = new WebPage(href);
-            logger.debug("done creating.");
-            pagesLinkedTo.add(targetWebsite);
-
-            List<Hyperlink> targetWebsiteLinks = null;
-
-            try {
-                //Get all the hrefs of the Links from the linked-to page
-                targetWebsiteLinks =
-                ((WebsiteHtmlCollector) collector.url(href).fetch())
-                .getHyperlinks();
-
-                if (targetWebsiteLinks == null) continue; //Skip if no links
-            } catch (RuntimeException e) {
-                logger.error("Failed to fetch hrefs for \"" + href + "\"");
-                logger.warn("skipping iteration...");
-                continue;
-            }
-
-            targetWebsite.hyperlinks = targetWebsiteLinks;
-
-            //Go through all the hrefs on the Link's target Website
-            for (Hyperlink twh : targetWebsiteLinks) {
-                if (URLHandler.isARecursiveLink(this.webPage, twh.href)) {
-                    logger.info("URL was identified as backlink :: " + twh.href);
-                    pagesWithBacklinks.add(targetWebsite);
-                    break; //break if backlink detected
-                }
-            }
-
-            logger.info("The URL \"" + h + "\" has >= 1 backlinks");
-
-        }
-
-        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, pagesWithBacklinks.size());
+        float backlinkRatio = AbstractEvaluator.percentualDivergence(this.linkAmount, numberOfPagesWithBacklink);
         final int BACKLINK_RATIO_IDEAL = 100; //%, 100 -> every page links back at least once
 
         EvaluationValueContainer backlinkRatioResults = new EvaluationValueContainer();
 
         backlinkRatioResults.add(EvaluatorKey.ACTUAL,
-                    new EvaluationValueFigure(backlinkRatio));
+        new EvaluationValueFigure(backlinkRatio));
         backlinkRatioResults.add(EvaluatorKey.IDEAL,
-                    new EvaluationValueFigure(BACKLINK_RATIO_IDEAL));
+        new EvaluationValueFigure(BACKLINK_RATIO_IDEAL));
         backlinkRatioResults.add(EvaluatorKey.DIV,
-                    new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
+        new EvaluationValueFigure(Math.abs(BACKLINK_RATIO_IDEAL-backlinkRatio)));
 
 
         Rating backlinkRatioRating;

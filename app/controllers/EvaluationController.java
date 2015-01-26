@@ -28,6 +28,7 @@ import collectors.enums.CollectorKey;
 import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.EvaluatorKey;
 import evaluators.SEOEvaluator;
+import evaluators.UsabilityEvaluator;
 import models.collection.CollectorValue;
 import models.evaluation.EvaluationValueFigure;
 import models.evaluation.EvaluationValue;
@@ -72,11 +73,17 @@ public class EvaluationController extends Controller {
 
         Map<? extends CollectorKey, CollectorValue> collectedData = collector.url(URL).get();
 
-        //Evaluation For Search Engine Optimization
+        //Evaluation of Search Engine Optimization
         evaluators.Evaluator seoEvaluator = new SEOEvaluator();
         seoEvaluator.pass(collectedData);
         ((TicketProcessor) seoEvaluator).setTicketNumber(TICKETNUMBER);
         evaluationResult.add(EvaluatorKey.SEO, seoEvaluator.get());
+
+        //Evaluation of Usability
+        evaluators.Evaluator usabilityEvaluator = new UsabilityEvaluator();
+        usabilityEvaluator.pass(collectedData);
+        ((TicketProcessor) usabilityEvaluator).setTicketNumber(TICKETNUMBER);
+        evaluationResult.add(EvaluatorKey.USABILITY, usabilityEvaluator.get());
 
         /* Assembling WebPage object from Collected data */
         WebPage webPage = (WebPage) collectedData.get(WebsiteHtmlCollectorKey.WEBPAGE).getValue();

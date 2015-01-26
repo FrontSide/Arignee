@@ -149,13 +149,15 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
         }
     }
 
-    private List<Hyperlink> getAllInternalLinks() {
+    public List<Hyperlink> getAllInternalLinks() {
         if (this.internalLinks == null) seperateInternalFromExternalLinks();
+        Logger.debug("internal Links Found on Website :: " + this.internalLinks);
         return this.internalLinks;
     }
 
-    private List<Hyperlink> getAllExternalLinks() {
+    public List<Hyperlink> getAllExternalLinks() {
         if (this.externalLinks == null) seperateInternalFromExternalLinks();
+        Logger.debug("external Links Found on Website :: " + this.externalLinks);
         return this.externalLinks;
     }
 

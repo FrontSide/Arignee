@@ -15,6 +15,7 @@ import evaluators.enums.Rating;
 import evaluators.enums.EvaluatorKey;
 import evaluators.subevaluators.LinkAmountEvaluator;
 import evaluators.subevaluators.seo.BacklinkEvaluator;
+import evaluators.subevaluators.seo.EBacklinkEvaluationStrategy;
 import models.persistency.Hyperlink;
 import models.persistency.WebPage;
 import models.evaluation.EvaluationValueContainer;
@@ -39,7 +40,7 @@ public class SEOEvaluator extends AbstractEvaluator {
         List<Hyperlink> externalLinks = (List<Hyperlink>) collected().get(WebsiteHtmlCollectorKey.EXTERNAL_LINKS).getList();
 
         this.updateTicketStatus(TicketStatus.EXTERN_BACKLINK_RATIO_EVAL);
-        BacklinkEvaluator extBacklinkEvaluator = new BacklinkEvaluator(webPage, externalLinks);
+        BacklinkEvaluator extBacklinkEvaluator = new BacklinkEvaluator(webPage, externalLinks, EBacklinkEvaluationStrategy.EXTERNAL);
         extBacklinkEvaluator.setTicketNumber(this.ticketNumber);
         this.result.add(EvaluatorKey.EXTERNAL_BACKLINK_RATIO, extBacklinkEvaluator.get());
 
