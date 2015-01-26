@@ -64,6 +64,11 @@ public class URLHandler {
             url = urlSplit[0] + "://www." + urlSplit[1];
         }
 
+        logger.debug("checked url-string before shlash reduction is :: " + url);
+
+        //Remove last slash if existing
+        if (url.charAt(url.length()-1) == '/') url = url.substring(0, url.length()-1);
+
         logger.debug("checked url-string is :: " + url);
 
         try {
@@ -92,15 +97,19 @@ public class URLHandler {
                                         throws IllegalArgumentException {
 
         protocol = (protocol == null) ? protocol = HTTP_PROTOCOL : protocol;
+        protocol = (protocol.contains("://")) ? protocol : protocol + "://";
         if (host == null) throw new IllegalArgumentException("No host given!");
+        if (StringUtils.countMatches(host, ".") < 1) throw new IllegalArgumentException("Invalid host given!");
+        host = (StringUtils.countMatches(host, ".") == 1) ? "www." + host : host;
         path = (path == null) ? "" : path;
         path = (path.startsWith("/")) ? path : "/" + path;
+        path = (isIrrelevantURLAppendix(path)) ? "" : path;
         query = (query == null) ? "" : query;
         ref = (ref == null) ? "" : "#" + ref;
 
         logger.debug("createFrom :: " + protocol + " :: " + host + " :: " + path + " :: " + query + " :: " + ref);
 
-        return this.create(protocol + "://" + host + path + query + ref);
+        return this.create(protocol + host + path + query + ref);
 
     }
 
@@ -167,6 +176,7 @@ public class URLHandler {
      */
     public static boolean isIrrelevantURLAppendix(String appendix) {
         logger.debug("isIrrelevantURLAppendix :: " + appendix);
+        appendix = appendix.trim();
         if (!isUrlAppendix(appendix)) return false;
         if (appendix.startsWith("#") || appendix.startsWith("/#") || appendix.equals("/") || appendix.equals("")) {
             logger.debug("true");
@@ -231,8 +241,8 @@ public class URLHandler {
         //Try converting linkHref to URL
         try {
 
-            return isARecursiveLink(parentPageUrl, URLHandler.getInstance()
-                                                    .create(linkHref));
+            URL url = URLHandler.getInstance().create(linkHref);
+            return isARecursiveLink(parentPageUrl, url);
 
         } catch (IllegalArgumentException e) {
             logger.warn("could not create url from :: " + linkHref);
@@ -241,8 +251,12 @@ public class URLHandler {
         //Check if linkHref is merely an URL appendix
         if (isUrlAppendix(linkHref)) {
 
+            logger.debug("isUrlAppendix :: " + linkHref);
+
             //If it's nothing but an irrelevant URL appendix it is already true
             if (isIrrelevantURLAppendix(linkHref)) return true;
+
+            logger.debug("is NOT IrrelevantURLAppendix :: " + linkHref);
 
             //Tring preceeding slash
             if (linkHref.startsWith("/"))
@@ -294,6 +308,8 @@ public class URLHandler {
 
         //First try String comparison before calling th URL equals
         if (parentPageUrl.toString().equals(linkHref.toString())) return true;
+
+        logger.debug("not same stinrg :: " + parentPageUrl.toString() + " :: " + linkHref.toString());
 
         //Compare URLs
         return parentPageUrl.equals(linkHref);
