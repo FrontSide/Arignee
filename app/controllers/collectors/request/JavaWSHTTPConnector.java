@@ -12,9 +12,9 @@ import play.libs.F.Promise;
 import java.net.URL;
 import java.net.MalformedURLException;
 
- public class JavaWSHTTPConnector extends HTTPConnector<String>
-                                implements HTTPConnectorStrategy<String>{
+ public class JavaWSHTTPConnector implements HTTPConnectorStrategy<String>{
 
+    @Override
     public String request(final URL URL) throws MalformedURLException {
 
         Logger.debug("Request url :: " + URL);
@@ -34,6 +34,11 @@ import java.net.MalformedURLException;
 
         return response;
 
+    }
+
+    @Override
+    public long getTimeToRespond() {
+        return -1;
     }
 
  }

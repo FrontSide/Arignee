@@ -15,6 +15,11 @@ public interface HTTPConnectorStrategy<T> {
     * @returns relevant segments of HTTP Resonse from Requested url
     *         in form of an Object from Class T
     */
-    public T request(final URL URL) throws MalformedURLException;
+    T request(final URL URL) throws MalformedURLException;
+
+    /**
+     * @return The time the requested webpage needed to respond
+     */
+    long getTimeToRespond();
 
 }

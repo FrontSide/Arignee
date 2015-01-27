@@ -14,8 +14,7 @@ import models.persistency.*;
 import play.Logger;
 import play.Logger.ALogger;
 
-public class WebsiteHtmlCollector<T>    extends AbstractCollector<T>
-                                        implements CollectorStrategyContext {
+public class WebsiteHtmlCollector<T>    extends AbstractCollector<T> {
 
     private static final ALogger logger = Logger.of(WebsiteHtmlCollector.class);
 
@@ -30,9 +29,12 @@ public class WebsiteHtmlCollector<T>    extends AbstractCollector<T>
         logger.debug("passing data to concrete collector strategy...");
         ((Collector)this.strategy).raw(this.raw());
         ((Collector)this.strategy).url(this.url());
+        this.strategy.setResponseTime(CONNECTOR.getTimeToRespond());
+        logger.debug("passData() to strategy - response time is :: " + CONNECTOR.getTimeToRespond());
     }
 
-    public Map<? extends CollectorKey, CollectorValue> executeExtract() {
+    @Override
+    public Map<? extends CollectorKey, CollectorValue> extract() {
         if (this.strategy == null) throw new NullPointerException("No WebsiteHtmlCollectorStrategy found");
         this.passData();
         return this.strategy.extractFromHtml();
@@ -43,6 +45,7 @@ public class WebsiteHtmlCollector<T>    extends AbstractCollector<T>
         this.passData();
         return this.strategy.getHyperlinks();
     }
+
 
     public WebPage getWebPage() {
         if (this.strategy == null) throw new NullPointerException("No WebsiteHtmlCollectorStrategy found");

@@ -26,7 +26,7 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
 
     private static final ALogger logger = Logger.of(AbstractCollector.class);
 
-    private final HTTPConnector CONNECTOR
+    protected final HTTPConnector CONNECTOR
                         = HTTPConnectorFactory.getInstance().create();
 
     private T raw;
@@ -64,13 +64,9 @@ public abstract class AbstractCollector<T> implements Collector<T>, TicketProces
                 this.updateTicketStatus(TicketStatus.INVALID_URL);
             }
         }
-        return this.initExtract();
-    }
 
-    public Map<? extends CollectorKey, CollectorValue> initExtract() {
-        return this.executeExtract();
+        return this.extract();
     }
-    public abstract Map<? extends CollectorKey, CollectorValue> executeExtract();
 
     /**
      * Uses an in the object instanziated HTTPConnector

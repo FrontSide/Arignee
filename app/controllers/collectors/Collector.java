@@ -59,17 +59,11 @@ public interface Collector<T> {
     void buildUrl();
 
     /**
-      * Extracts the useful data that is later used by an Evaluator
-      * from the fetched (raw) data returned from the HTTPConnector
-      * Implemented in the Concrete Collector - invoked by "get()"-method
-      * @return     collected and extracted data as Map
-      */
-    /**
      * Initiates the extraction of the collector data from the raw data
      * from the fetched (raw) data returned from the HTTPConnector
      * @return     Extracted Collector-Data as Map
      */
-    Map<? extends CollectorKey, CollectorValue> initExtract() throws RuntimeException;
+    Map<? extends CollectorKey, CollectorValue> extract() throws RuntimeException;
 
 
 

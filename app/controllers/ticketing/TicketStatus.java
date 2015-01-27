@@ -18,6 +18,7 @@ public enum TicketStatus {
     LINK_AMOUNT_EVAL,
     INTERN_BACKLINK_RATIO_EVAL,
     EXTERN_BACKLINK_RATIO_EVAL,
+    LANDING_PAGE_RESPONSE_EVAL,
 
     /* Post-Evaluation Statuses */
     EVALUATION_FINISHED, /* Assigned as soon as the evaluator has passed a result to the controller */

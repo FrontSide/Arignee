@@ -6,6 +6,7 @@ package collectors;
 
 import java.util.List;
 import java.util.Map;
+import collectors.request.HTTPConnector;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
 import models.persistency.*;
@@ -22,12 +23,14 @@ public interface WebsiteHtmlCollectorStrategy {
     * @return    a List with all HyperlinkObjects (models.Hyperlinks)
     *            of a WebPage
     */
-
     List<Hyperlink> getHyperlinks();
 
     /**
      * @return   the WebPage object with all links
      */
     WebPage getWebPage();
+
+    void setResponseTime(long timeToRespond);
+    long getResponseTime();
 
 }

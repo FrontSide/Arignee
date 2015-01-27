@@ -32,12 +32,17 @@ import url.URLHandler;
 
 import play.Logger;
 
-public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
+public class WebsiteHtmlJsoupCollector extends AbstractCollector<Element>
                                     implements WebsiteHtmlCollectorStrategy {
 
 
     Element collectedBody;
     Elements collectedLinks;
+
+    @Override
+    public Map<? extends CollectorKey, CollectorValue> extract() {
+        return this.extractFromHtml();
+    }
 
     @Override
     public Map<? extends CollectorKey, CollectorValue> extractFromHtml() {
@@ -61,9 +66,14 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
         results.put(WebsiteHtmlCollectorKey.EXTERNAL_LINKS,
                     new CollectorModelValue(getAllExternalLinks()));
 
-        /* Add extracted Title */
         results.put(WebsiteHtmlCollectorKey.TITLE,
                     new CollectorStringValue(((Document)this.raw()).title()));
+
+        Logger.debug("Set response Time in collector map :: " + getResponseTime());
+
+        results.put(WebsiteHtmlCollectorKey.RESPONSE_TIME,
+            new CollectorStringValue(Long.toString(getResponseTime())));
+
 
         return results;
 
@@ -159,6 +169,15 @@ public class WebsiteHtmlJsoupCollector extends WebsiteHtmlCollector<Element>
         if (this.externalLinks == null) seperateInternalFromExternalLinks();
         Logger.debug("external Links Found on Website :: " + this.externalLinks);
         return this.externalLinks;
+    }
+
+    private long responseTime;
+    public void setResponseTime(long timeToRespond) {
+        this.responseTime = timeToRespond;
+    }
+
+    public long getResponseTime() {
+        return this.responseTime;
     }
 
 }

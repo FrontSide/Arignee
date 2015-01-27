@@ -60,11 +60,20 @@ public abstract class AbstractEvaluator implements Evaluator<Map<? extends Colle
       * @returns : the percentual divergence from the REAL value to the
       *            desired value
       */
-    public static float percentualDivergence(final float DESIRED, final float ACTUAL) {
-        return (ACTUAL/DESIRED)*100;
+    public static float percentualDivergence(final double DESIRED, final double ACTUAL) {
+        return ((float) (ACTUAL/DESIRED)*100);
     }
+
+    public static float percentualDivergence(final float DESIRED, final float ACTUAL) {
+        return percentualDivergence((double) DESIRED, (double) ACTUAL);
+    }
+
     public static float percentualDivergence(final int DESIRED, final int ACTUAL) {
-        return percentualDivergence((float) DESIRED, (float) ACTUAL);
+        return percentualDivergence((double) DESIRED, (double) ACTUAL);
+    }
+
+    public static float percentualDivergence(final long DESIRED, final long ACTUAL) {
+        return percentualDivergence((double) DESIRED, (double) ACTUAL);
     }
 
 }

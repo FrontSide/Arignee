@@ -29,6 +29,7 @@ import collectors.enums.WebsiteHtmlCollectorKey;
 import evaluators.enums.EvaluatorKey;
 import evaluators.SEOEvaluator;
 import evaluators.UsabilityEvaluator;
+import evaluators.PerformanceEvaluator;
 import models.collection.CollectorValue;
 import models.evaluation.EvaluationValueFigure;
 import models.evaluation.EvaluationValue;
@@ -84,6 +85,12 @@ public class EvaluationController extends Controller {
         usabilityEvaluator.pass(collectedData);
         ((TicketProcessor) usabilityEvaluator).setTicketNumber(TICKETNUMBER);
         evaluationResult.add(EvaluatorKey.USABILITY, usabilityEvaluator.get());
+
+        //Evaluation of Performance
+        evaluators.Evaluator performanceEvaluator = new PerformanceEvaluator();
+        performanceEvaluator.pass(collectedData);
+        ((TicketProcessor) performanceEvaluator).setTicketNumber(TICKETNUMBER);
+        evaluationResult.add(EvaluatorKey.PERFORMANCE, performanceEvaluator.get());
 
         /* Assembling WebPage object from Collected data */
         WebPage webPage = (WebPage) collectedData.get(WebsiteHtmlCollectorKey.WEBPAGE).getValue();

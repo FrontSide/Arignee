@@ -26,8 +26,14 @@ public class HTTPConnector<T> {
      * @return        [description]
      */
     public T executeRequest(final URL URL) throws MalformedURLException {
-        HTTPConnector.logger.debug("triggering concrete HTTPConnector strategy...");
+        logger.debug("triggering concrete HTTPConnector strategy...");
         return (T) this.strategy.request(URL);
     }
+
+    public long getTimeToRespond() {
+        logger.debug("response time from strategry :: " + strategy.getTimeToRespond());
+        return strategy.getTimeToRespond();
+    }
+
 
 }

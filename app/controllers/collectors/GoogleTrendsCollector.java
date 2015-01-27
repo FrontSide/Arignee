@@ -13,8 +13,7 @@ import java.util.List;
 import collectors.enums.CollectorKey;
 import models.collection.CollectorValue;
 
-public class GoogleTrendsCollector<T>   extends AbstractCollector<T> 
-                                        implements CollectorStrategyContext {
+public class GoogleTrendsCollector<T>   extends AbstractCollector<T> {
 
     /**
     * Stores the concrete Strategy class/object
@@ -65,7 +64,7 @@ public class GoogleTrendsCollector<T>   extends AbstractCollector<T>
         return this.get();
     }
 
-    public Map<? extends CollectorKey, CollectorValue> executeExtract() {
+    public Map<? extends CollectorKey, CollectorValue> extract() {
         return this.strategy.extractFromRaw();
     }
 

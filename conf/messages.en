@@ -4,9 +4,10 @@
 # Keys taken from controllers.evaluators.enums.WebsiteHtmlEvaluatorKey.java
 SEO=SEO
 USABILITY=Usability
+PERFORMANCE=Performance
 
-
-AMOUNT=Amount of Links on the Page
+LANDING_PAGE_RESPONSE_TIME=Response Time
+LINK_AMOUNT=Amount of Links on the Page
 INTERNAL_BACKLINK_RATIO=Domain-Intern Backlink Ratio
 EXTERNAL_BACKLINK_RATIO=Domain-Extern Backlink Ratio
 
@@ -31,3 +32,4 @@ OK=OK
 TENUOUS=Tenuous
 POOR=Poor
 NOT_AVAILABLE=n/A
+NONE=n/A

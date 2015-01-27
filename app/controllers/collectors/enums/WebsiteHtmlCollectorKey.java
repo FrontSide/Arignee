@@ -10,6 +10,7 @@ public enum WebsiteHtmlCollectorKey implements CollectorKey {
     WEBPAGE,
     TITLE,
     INTERNAL_LINKS,
-    EXTERNAL_LINKS
+    EXTERNAL_LINKS,
+    RESPONSE_TIME
 
 }
