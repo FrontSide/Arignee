@@ -61,68 +61,154 @@ function getColor(COUNTER, ELEMENT) {
      websiteHtmlEvaluationHistoryBuilder(json)
  }
 
-/**
- * Renderd the Evaluation-Result-History chars
- * for a URL
- */
+
 function websiteHtmlEvaluationHistoryBuilder(json) {
 
     resetEvalRender()
     showContainerWrapper()
 
+
+
+    //Build new object where
+    var graphs = []
+    var names = []
+
     /* -------------------------------------------------- */
-    /* COLLECTING DATA ---------------------------------- */
+    /* GATHERING CATEGORIES AND SUB-CATEGORIES ---------- */
     /* -------------------------------------------------- */
 
-    var dates = []
-    var datasets = {}
+    //store categories with their sub-categories in objects
+    //with keys (categories) and arrays (list of sub-categories) as values
+    var categories = {}
 
-    /* Stores the overall ratings for the WebPage */
-    datasets["OVERALL"] = {}
-    datasets["OVERALL"]["OVERALL"] = []
+    console.log("gathering categories...")
 
     for (var i=0; i<json.length; i++) {
 
-        var kvPair = json[i]
+        var curDateEvalPair = json[i]
+        var curDate = Object.keys(curDateEvalPair)[0]
+        var curEval = curDateEvalPair[curDate]
 
-        console.log("kvPair :: " + kvPair)
+        console.log("CURRENT DATE :: " + curDate)
+        console.log("CURRENT EVAL :: %obj ", curEval)
 
-        var date = Object.keys(kvPair)[0]
-        var eval = kvPair[date]
+        //add not yet registered categories to the "categories" object
+        for (curCategory in curEval) {
 
-        dates.push(date)
-        datasets["OVERALL"]["OVERALL"].push(getIntOfRating(eval.RATING))
+            console.log("CURRENT CATEGORY :: " + curCategory)
 
-        /* Each Category gets one chart */
-        for (var cat in eval) {
-
-            /* Create Dataset for Category if not Existing */
-            if (datasets[cat] == null) {
-                console.log("category found :: " + cat)
-                datasets[cat] = {}
-                datasets[cat]["OVERALL"] = []
+            //If category not yet existing
+            //Add it to the categories object as key
+            if (categories[curCategory] == null) {
+                console.log("NEW CATEGORY :: " + curCategory)
+                categories[curCategory] = []
             }
 
-            datasets[cat]["OVERALL"].push(getIntOfRating(eval[cat].RATING))
+            //add not yet registered SUB-categories to the array
+            //assigned to each category(key) in the "categories" object
+            for (curSubCategory in curEval[curCategory]) {
 
-            /* Each Sub-Category gets one Line in the chart */
-            for (var subcat in eval[cat]) {
+                console.log("CURRENT SUB-CATEGORY :: " + curSubCategory)
 
-                /* Create Dataset for Subcategory if not Existing */
-                if (datasets[cat][subcat] == null) {
-                    console.log("sub-category found :: " + subcat)
-                    datasets[cat][subcat] = []
+                //If current Subcategory NOT in
+                //sub-categories array in categories object
+                //push sub-category into array
+                if ($.inArray(curSubCategory, categories[curCategory]) < 0) {
+                    console.log("NEW SUB-CATEGORY :: " + curSubCategory)
+                    categories[curCategory].push(curSubCategory)
                 }
-
-                datasets[cat][subcat].push(getIntOfRating(eval[cat][subcat].RATING))
             }
         }
 
     }
 
+    console.log("finished with gathering categories.")
+    console.log("category Object- Dump: %o", categories)
+
+
     /* -------------------------------------------------- */
-    /* RENDERING GRAPH ---------------------------------- */
+    /* COLLECTING DATA (RATINGS)  ----------------------- */
     /* -------------------------------------------------- */
+
+    //Store all graphs in "graphs" object whereas categories are keys
+    //which store objects that have sub-categories as keys which store
+    //key-value-pairs that are made from DATES(keys) and RATINGS(values)
+    //
+    // -CATEGORY
+    // --SUBCATEGORY
+    // ---DATE
+    // ----VALUE
+    // ---DATE
+    // ----VALUE
+    // --SUBCATEGORY
+    // .... etc ....
+    var graphs = {}
+
+    console.log("collecting rating data...")
+
+    for (var i=0; i<json.length; i++) {
+
+        var curDateEvalPair = json[i]
+        var curDate = Object.keys(curDateEvalPair)[0]
+        var curEval = curDateEvalPair[curDate]
+
+        console.log("CURRENT EVAL :: %o", curEval)
+
+        for (category in categories) {
+
+            console.log("CURRENT CATEGORY :: " + category)
+            console.log("VALUE FOR CURRENT CATEGORY :: %o", curEval[category])
+
+            //Create object for this category if not yet existing
+            if (graphs[category] == null) {
+                graphs[category] = {}
+                graphs[category].OVERALL = {}
+            }
+
+            if (curEval[category] == null || curEval[category].RATING == null) {
+                console.log("NO OVERALL RATING FOR CATEGORY FOUND :: " + category)
+                graphs[category].OVERALL[curDate] = 0
+            } else {
+                graphs[category].OVERALL[curDate] = getIntOfRating(curEval[category].RATING)
+            }
+
+            //Iterate through sub-categories array for this category
+            for (var j=0; j<categories[category].length; j++) {
+
+                var subcategory = categories[category][j]
+
+                console.log("CURRENT SUB-CATEGORY :: " + subcategory)
+
+                //Create object for this category if not yet existing
+                if (graphs[category][subcategory] == null) {
+                    graphs[category][subcategory] = {}
+                }
+
+                if (    curEval[category] == null
+                     || curEval[category][subcategory] == null
+                     || curEval[category][subcategory].RATING == null) {
+
+                    console.log("NO RATING FOR SUB-CATEGORY FOUND :: " + subcategory)
+                    graphs[category][subcategory][curDate] = 0
+
+                } else {
+                    graphs[category][subcategory][curDate] = getIntOfRating(curEval[category][subcategory].RATING)
+                }
+
+            }
+
+        }
+
+    }
+
+    console.log("finished with collecting data.")
+    console.log("graphs Object- Dump: %o", graphs)
+
+    /* -------------------------------------------------- */
+    /* DRAW GRAPHS -------------------------------------- */
+    /* -------------------------------------------------- */
+
+    console.log("rendering graphs...")
 
     /* Overwriting the axis of ordinates' (y-axis) labels*/
     var options = {
@@ -130,18 +216,18 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
         responsive : true,
         multiTooltipTemplate: "<%= Messages(getRatingOfInt(value)) %>",
         legendTemplate :
-            "<% for (var i=0; i<datasets.length; i++){%>"
-            +   "<div class=\"graphLegendElement\" style=\"border-color:<%=datasets[i].strokeColor%>\" >"
-            +       "<%if(datasets[i].label){%>"
-            +           "<%=datasets[i].label%>"
-            +       "<%}%>"
-            +   "</div>"
-            + "<%}%>"
+        "<% for (var i=0; i<datasets.length; i++){%>"
+        +   "<div class=\"graphLegendElement\" style=\"border-color:<%=datasets[i].strokeColor%>\" >"
+        +       "<%if(datasets[i].label){%>"
+        +           "<%=datasets[i].label%>"
+        +       "<%}%>"
+        +   "</div>"
+        + "<%}%>"
     };
 
+    for (graph in graphs) {
 
-    /* Iterate through datasets */
-    for (graph in datasets) {
+        console.log("graph is :: " + graph)
 
         var chartID = "chart" + graph
         var content = ""
@@ -157,14 +243,23 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
 
         appendContainerWrapperContent(content)
 
-        var lines = []
+        var lineData = []
 
         var i = 0
-        for (line in datasets[graph]) {
+        for (line in graphs[graph]) {
 
-            console.log("GRAPH :: " + graph + " :: LINE :: " + line + " :: DATA :: " + datasets[graph][line])
+            console.log("line is :: " + line)
 
-            var data = {
+            dates = []
+            ratings = []
+            for (date in graphs[graph][line]) {
+                dates.push(date)
+                ratings.push(graphs[graph][line][date])
+                console.log("date is :: " + date)
+                console.log("rating is :: " + graphs[graph][line][date])
+            }
+
+            var curLineData = {
                 label: Messages(line),
                 fillColor: getColor(i, "FILL"),
                 strokeColor: getColor(i, "STROKE"),
@@ -172,24 +267,24 @@ function websiteHtmlEvaluationHistoryBuilder(json) {
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: getColor(i, "STROKE"),
-                data: datasets[graph][line]
+                data: ratings
             }
 
-            lines.push(data)
+            lineData.push(curLineData)
             i++
+
         }
 
-        var data = {
+        var curGraphData = {
             labels: dates,
-            datasets: lines
+            datasets: lineData
         }
 
         var ctx = document.getElementById(chartID).getContext("2d");
-        var lineChart = new Chart(ctx).Line(data, options);
+        var lineChart = new Chart(ctx).Line(curGraphData, options);
 
         var legend = lineChart.generateLegend();
         $("#" + chartID + "container").append(legend)
-
     }
 
     hideProgressbar()

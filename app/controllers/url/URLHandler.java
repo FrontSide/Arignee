@@ -280,7 +280,7 @@ public class URLHandler {
 
         //Remove protocol and www from parentPage url
         //and call String, String overload
-        return isARecursiveLink(removeProtocolAndWWW(parentPageUrl), linkHref);
+        return removeProtocolAndWWW(parentPageUrl).equals(linkHref);
     }
 
     /* Overload */

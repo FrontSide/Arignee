@@ -82,7 +82,7 @@ public class WebPage extends Model {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = hash * 31 + this.url.hashCode();
+        hash = hash * 31 + this.url.getHost().hashCode();
         return hash;
     }
 

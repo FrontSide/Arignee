@@ -32,6 +32,7 @@ public class WebPageDAO implements DAO<WebPage> {
      */
     public void addEvaluationResult(WebPage webPage, EvaluationResult evalres) {
         logger.info("connection evalres to webpage");
+        logger.info("webpage id is :: " + webPage.id);
         WebPage existing = this.getById(webPage.id);
         if (existing == null) {
             logger.info("webpage does not seem to exist yet :: " + webPage);
